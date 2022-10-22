@@ -2,7 +2,12 @@
 #define DATA_MANAGER_H
 #include <Arduino.h>
 
-// Setup 
+//Digital Pins
+#define SD_CS 4 //SD enable pin
+#define ETH_CS 7 //Ethernet enable pin
+#define Cam_1_CS 48 //Arducam 1 enable pin
+
+//Setup 
 void setupSD();
 void setupCameras();
 //Server
@@ -13,8 +18,7 @@ void sendImage();
 void sendDataFile();
 void sendLastPicture();
 //SD save
-void saveLog(String dateTime, String action, String description, int errorCode);
-void saveLog(int code, String Message); //TODO
+void saveLog(int code, String name, int severity, String message); 
 void saveDataToSD(String data[], int sizeData);
 void capturePictureSD();
 String infoSD();

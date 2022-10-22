@@ -10,10 +10,7 @@
  * Digital Pins
  * Pin 2: DHT22
  * Pin 3: LED TEST
- * Pin 4: SD Enable (SPI)
  * Pin 31: Water Pump
- * Pin 7: Ethernet Enable (SPI)
- * Pin 48: Arducam 1 Enable (SPI)
  * 
  * Analog Pins
  * Pin A2: Water Level
@@ -28,44 +25,28 @@
  * MISO (50): SD, Ethernet and Arducam
  * MOSI (51): SD, Ethernet and Arducam
  * SCK (52): SD, Ethernet and Arducam
+ * Pin 4: SD Enable
+ * Pin 7: Ethernet Enable 
+ * Pin 48: Arducam 1 Enable 
  * 
  * Author: Michael Alvarado
  */
  
 #include <ArduinoJson.h>
-#include <Adafruit_Sensor.h>
-#include <DHT.h>
-#include <DHT_U.h>
-#include <Wire.h>
-#include <DS3231.h>
-#include <BH1750.h>
 #include <SD.h>
 #include "DataManager.h"
+#include "Sensors.h"
+#include "WaterSystem.h"
 
 //Digital Pins
-#define DHTPIN 2     // Digital pin connected to the DHT sensor 
-#define DHTTYPE    DHT22     // DHT 22
-DHT_Unified dht(DHTPIN, DHTTYPE);
 #define LedPin 3 //TEST LED
-//Analog Pins
-#define WaterLevel 2 //Analog Water Level Sensor
-#define SoilMoisture0 8 //Soil Moisture Sensor 0
-#define SoilMoisture1 9 //Soil Moisture Sensor 1
 
-//Actuators Pins
-#define WaterPump 31
-
-//RTC variable
-RTClib myRTC;
 //dateTime function to set DateTime on Files
 void dateTime(uint16_t* date, uint16_t* time){
-  DateTime RTC = myRTC.now();
+  DateTime RTC = currentTime();
   *date = FAT_DATE(RTC.year(), RTC.month(), RTC.day());
   *time = FAT_TIME(RTC.hour(),RTC.minute(), RTC.second());
 }
-
-//Light Sensor
-BH1750 lightMeter;
 
 //Communication variables
 int count;
@@ -74,7 +55,7 @@ int count;
 int dimLevel=255;
 
 //Loop Delay
-uint32_t delayMS;
+uint32_t delayMS = 500;
 
 //Timer Variable
 unsigned long startDataTime;
@@ -83,9 +64,9 @@ unsigned long startPictureTime;
 void setup() {
   // initialize serial communication:
   Serial.begin(57600);
-  
-  //Set RTC
-  Wire.begin();
+
+  //Setup Sensors
+  setupSensors();
 
   //Setup SD
   SdFile::dateTimeCallback(dateTime); //Calls dateTime function for getting datetime in files
@@ -96,28 +77,19 @@ void setup() {
   
   //Setup server
   //connectToServer();
-  
-  //Set DHT Sensor
-  dht.begin();
-  sensor_t sensor;
-  dht.temperature().getSensor(&sensor);
-  dht.humidity().getSensor(&sensor);
-  // Set delay between sensor readings based on sensor details.
-  delayMS = sensor.min_delay / 1000;
 
-  //Set Light Sensor
-  lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE);
+  //Setup Water System
+  setupWaterSystem();
 
-  //Set Water Pump
-  pinMode(WaterPump, OUTPUT);
-  digitalWrite(WaterPump, LOW);
-  
+  //Set LED PWM
+  pinMode(LedPin, OUTPUT);  // sets the pin as output
+
   //Set up timer
   startDataTime = millis();
   startPictureTime = millis();
 
   //Log the boot of system
-  saveLog(timeNow(), "Boot Complete", "", 0);
+  saveLog(01, "Boot Complete", 0, "");
   Serial.println("Boot complete");
 }
 
@@ -136,33 +108,37 @@ void loop() {
   doc["Soil_Moisture_0"] = measureMoisture(0);
   doc["Soil_Moisture_1"] = measureMoisture(1);
   doc["Water_Level"] = measureWaterLevel();
-  doc["Time"] = timeNow();
+  doc["Time"] = timeNowString();
   serializeJson(doc, Serial); 
   Serial.write("\n"); //This is to mark end of data (expected on GUI side)
 
   //Save data if timer pass value (10s)
   if((millis()-startDataTime)>= 10000){
     Serial.println("Data Collection Started:");
-    digitalWrite(LED_BUILTIN, HIGH);
-    int ColumnNumber = 13;
-    String data[ColumnNumber] = {timeNow(), (String)measureLight(), (String)measureTemperature(), (String)measureHumidity(), (String)measureMoisture(0), (String)measureMoisture(1),
+    digitalWrite(LED_BUILTIN, HIGH); //LED for Visual TEST
+    int ColumnNumber = 13; //Number of parameter
+    //Measure All data and save it in array as String
+    String data[ColumnNumber] = {timeNowString(), (String)measureLight(), (String)measureTemperature(), (String)measureHumidity(), (String)measureMoisture(0), (String)measureMoisture(1),
       (String)measureMoisture(2), (String)measureMoisture(3), (String)measureMoisture(4), (String)measureMoisture(5), (String)measureMoisture(6), (String)measureMoisture(7),
       (String)measureWaterLevel()};
+    //Save Data in CSV File
     saveDataToSD(data, ColumnNumber);
+    //Reset Timer
     startDataTime = millis();
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(LED_BUILTIN, LOW); //LED for Visual TEST
+    //Log the Success of Capture Data
+    saveLog(10, "Capture Data", 0, "");
     Serial.println("Data Collection Done");
   }
 
-  //Take picture
+  //Take picture if picture timer
   if(millis()-startPictureTime>=50000){
         Serial.println("Image Collection Started:");
         digitalWrite(LED_BUILTIN, HIGH);
-        saveLog(timeNow(), "Image Capture Initialize", "", 3);
         capturePictureSD();
         //connectToServer();
         startPictureTime = millis();
-        saveLog(timeNow(), "Image Capture Done", "", 4);
+        saveLog(10, "Capture Image", 0, "");
         digitalWrite(LED_BUILTIN, LOW);
         Serial.println("Image Collection Done");
   }
@@ -170,56 +146,18 @@ void loop() {
   //Water Check
   float moisture = measureMoisture();
   if(moisture < 50){
-      saveLog(timeNow(), "Moisture Level Low", "Moisture Level Low of: "+(String)moisture, 100);
-      //wateringLoop();
+      saveLog(20, "Watering Start", 0, "Moisture Level: "+(String)moisture);
+      //waterPlant();
   }
   
   delay(delayMS); //Loop delay
 }
 
-//Watering Check (TODO Check Water is flowing)
-void wateringLoop(){
-  //Safety Check Variables
-  long int startWaterTime = millis();
-  float startWaterLevel = measureWaterLevel();
-  //Check Initial Water Level
-  if(startWaterLevel >= 100){Serial.println("Water Level already Full");   saveLog(timeNow(), "Water Level already full", "Try to water plant when the water level is already full", -2); return;}
-  //Check if water Level have been reached
-  float waterLevel = measureWaterLevel();
-  //Log initialize Watering Proccess
-  saveLog(timeNow(), "Water Plant initializing", "", 1);
-  //Check Water Levels
-  while (waterLevel < 100){
-    //Water Pump On
-    //Turn Water Pump On
-    digitalWrite(LED_BUILTIN, HIGH);
-    digitalWrite(WaterPump, HIGH);
-    waterLevel = measureWaterLevel();
-    Serial.println(waterLevel);
-    //Safety Check
-    delay(100);
-    //If some time has passed and water level has not filled
-    long int currentTime = millis()-startWaterTime;
-    Serial.println("Time: " + (String)currentTime);
-    if(currentTime > (long int)1000){
-        //Stop the Water System
-        digitalWrite(LED_BUILTIN, LOW);
-        digitalWrite(WaterPump, LOW);
-        Serial.println("Water System Fail");
-        saveLog(timeNow(), "Water System Fail", "", -1);
-        return;
-    }
-  }
-  //Water level reached turn off water pump
-  digitalWrite(LED_BUILTIN, LOW);
-  digitalWrite(WaterPump, LOW);
-  saveLog(timeNow(), "Water Plant Successful", "", 0);
-  Serial.println("Water System has been successful");
-}
 
 //Run commands according to string received
 void runCommand(String command){
   Serial.println("Command received: " + command+"\n");
+  saveLog(16, "Command Received", 0, command);
   if (command == "LED ON"){
       digitalWrite(LedPin, HIGH);
       Serial.write("On");
@@ -243,14 +181,8 @@ void runCommand(String command){
       dimLevel = dimValue.toInt();
       analogWrite(LedPin, dimLevel);
     }
-    else if(command == "Water On"){
-      digitalWrite(WaterPump, HIGH);
-    }
-    else if (command == "Water Off"){
-      digitalWrite(WaterPump, LOW);
-    }
     else if(command == "Water Plant"){
-      wateringLoop();
+      waterPlant();
     }
     else if(command == "Get Data File"){
       sendDataFile();
@@ -261,87 +193,11 @@ void runCommand(String command){
     else if(command == "Last Picture"){
       sendLastPicture();
     }
-    else {saveLog(timeNow(), "Invalid Command Received", "Command received: " + command , -4);} //Invalid command
-}
-
-//Using BH1750
-float measureLight(){
-  while (!lightMeter.measurementReady(true)); //Wait for measurement to be ready
-  float lux = lightMeter.readLightLevel();
-  lightMeter.configure(BH1750::ONE_TIME_HIGH_RES_MODE);
-  return lux;
-}
-
-//Using Temperature DHT
-float measureTemperature() {
-  sensors_event_t event;
-  dht.temperature().getEvent(&event);
-  if (isnan(event.temperature)) {
-    saveLog(timeNow(), "Temperature Sensor Error", "", -5); //Log error
-    return -1; //Error
-  }
-  else {
-    return event.temperature;
-  }
-}
-
-//Using Humidity DHT
-float measureHumidity(){
-  sensors_event_t event;
-  dht.humidity().getEvent(&event);
-  if (isnan(event.relative_humidity)) {
-    saveLog(timeNow(), "Humidity Sensor Error", "", -6); //log error
-    return -1;   //Error
-  }
-  else {
-    return event.relative_humidity;
-  }
-}
-
-//Water Level Sensor
-float measureWaterLevel(){
-  return (float)analogRead(WaterLevel);
-}
-
-String timeNow(){
-  DateTime now = myRTC.now();
-  return (String) now.year() + "/"
-  + (String)now.month() + "/"
-  + (String)now.day()+ " "
-  + (String)now.hour()+ ":"
-  + (String)now.minute()+ ":"
-  + (String)now.second();
+    
+    else {//INVALID Command
+      Serial.println("Invalid Command");
+      saveLog(19, "Invalid Command", 2, command);
+    } 
 }
 
 
-float measureMoisture(){
-  return measureMoisture(1);
-}
-
-//Measure Soil Moisture (0,1,2,3,4,5,6,7) returns -1 if not valid input
-float measureMoisture(int sensor){
-  int sensorPin;
-  if (sensor == 0) sensorPin = SoilMoisture0;
-  else if (sensor == 1) {
-    sensorPin = SoilMoisture1; //Pin the sensor is located
-    float val = (float)analogRead(sensorPin); //Sense analog read
-    val = 100 - map(val, 200, 583, 0, 100); //Calibration (250(dry)-583(wet))
-    val = constrain(val, 0 , 100); //Contrain the values if needed
-    return val;
-    }
-  else if(sensor == 2) (1-(float)analogRead(SoilMoisture1)/1023)*100; //TEST
-  else if(sensor == 3) analogRead(SoilMoisture1); // Digital TEST
-  else return -1;
-  return (1-(float)analogRead(sensorPin)/1023)*100;
-}
-
-
-//NOT TESTED To increase accuracy it would be good to average multiple values taken in short term
-float averagedAnalogRead(int N, int pin){
-  float temp = 0;
-  for(int i=0; i=N; i++){
-      temp += analogRead(pin);
-      delay(50);
-  }
-  return temp/N;
-}

@@ -4,18 +4,13 @@
  * Author: Michael Alvarado
  */
 #include "DataManager.h"
+#include "Sensors.h"
 #include <SD.h>
 #include <SPI.h>
 #include <Ethernet.h>
 #include <ArduCAM.h>
 #include <Wire.h>
 #include "memorysaver.h"
-
-//Define Digital Pins
-#define SD_CS 4 //SD enable pin
-#define ETH_CS 7 //Ethernet enable pin
-#define Cam_1_CS 48 //Arducam 1 enable pin
-#define Cam_1_PW 46 //Arducam 1 Power Pin (Untested)
 
 //Call Camera memorysaver
 #if !(defined OV5642_MINI_5MP_PLUS || defined OV5642_MINI_5MP_BIT_ROTATION_FIXED || defined OV2640_MINI_2MP || defined OV3640_MINI_3MP)
@@ -73,9 +68,6 @@ void setupCameras(){
   uint8_t temp;
   Wire.begin();
   Serial.println(F("ArduCAM Start!"));
-  //set the PW as output
-  pinMode(Cam_1_PW, OUTPUT);
-  digitalWrite(Cam_1_PW, HIGH);
   
   //set the CS as an output:
   pinMode(Cam_1_CS,OUTPUT);
@@ -158,14 +150,9 @@ void setupCameras(){
     //myCAM.OV5642_set_Light_Mode(Auto);
   #endif
   delay(1000);
-  //Turn power off
-  digitalWrite(Cam_1_PW, LOW);
 }
 
 void capturePictureSD(){
-  //Turn Power ON
-  digitalWrite(Cam_1_PW, HIGH);
-
   String address;
   byte buf[256];
   static int i = 0;
@@ -251,8 +238,6 @@ void capturePictureSD(){
       buf[i++] = temp;   
     } 
   } 
-   //Turn Power OFF
-  digitalWrite(Cam_1_PW, LOW); 
 }
 
 //This method save all data in the array into a CSV file called Data.csv
@@ -282,13 +267,20 @@ void saveDataToSD(String data[], int sizeData){
   }
 }
 
-void saveLog(String dateTime, String action, String description, int errorCode){
+void saveLog(int code, String name, int severity, String message){
   //Write to SD
   File myFile = SD.open("Log.csv", FILE_WRITE);
   delay(1000);
+  //Get the Source from the code
+  String source = "";
+  if (code<10) source = "Setup";
+  else if (code<20) source = "Data";
+  else if (code<30) source = "Water System";
+  else if (code<30) source = "Light System";
+
   // if the file opened okay, write to it:
   if (myFile) {
-    String dataEntry = dateTime + ","+ action + "," + description + "," + (String)errorCode;
+    String dataEntry = timeNowString() + ","+ (String)code + ","+ source + "," + name + "," + (String)severity, message;
     myFile.println(dataEntry); //Add row
     // close the file:
     myFile.close();
