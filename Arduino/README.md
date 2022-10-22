@@ -58,8 +58,9 @@ List of Arduino Libraries require to compile and upload software.
 ## Software
 
 ### Command List
+
 | Command |String Format| Parameter |  Return |
-|--|--|--|--|--|
+|--|--|--|--|
 | All Light On| "LED ON"  |  |JSON (Status)
 | All Light Off | "LED OFF" | | JSON (Status) 
 | RGBW Light Dim | "LED DIM {0},{1},{2},{3}" | int[] (0-100) | JSON (Status) 
