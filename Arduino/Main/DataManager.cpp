@@ -15,7 +15,7 @@
 #define SD_CS 4 //SD enable pin
 #define ETH_CS 7 //Ethernet enable pin
 #define Cam_1_CS 48 //Arducam 1 enable pin
-#define Cam_1_PW 46 //Arducam 1 Power Pin
+#define Cam_1_PW 46 //Arducam 1 Power Pin (Untested)
 
 //Call Camera memorysaver
 #if !(defined OV5642_MINI_5MP_PLUS || defined OV5642_MINI_5MP_BIT_ROTATION_FIXED || defined OV2640_MINI_2MP || defined OV3640_MINI_3MP)
@@ -258,7 +258,7 @@ void capturePictureSD(){
 //This method save all data in the array into a CSV file called Data.csv
 void saveDataToSD(String data[], int sizeData){
    //Write to SD
-  File myFile = SD.open("Data.csv", FILE_WRITE);
+  File myFile = SD.open("DATA.csv", FILE_WRITE);
   delay(1000);
 
   // if the file opened okay, write to it:
@@ -279,6 +279,23 @@ void saveDataToSD(String data[], int sizeData){
   } else {
     // if the file didn't open, print an error:
     Serial.println("error saving data to SD");
+  }
+}
+
+void saveLog(String dateTime, String action, String description, int errorCode){
+  //Write to SD
+  File myFile = SD.open("Log.csv", FILE_WRITE);
+  delay(1000);
+  // if the file opened okay, write to it:
+  if (myFile) {
+    String dataEntry = dateTime + ","+ action + "," + description + "," + (String)errorCode;
+    myFile.println(dataEntry); //Add row
+    // close the file:
+    myFile.close();
+    Serial.println("Log saved to SD");
+  } else {
+    // if the file didn't open, print an error:
+    Serial.println("error saving log to SD");
   }
 }
 
@@ -374,8 +391,7 @@ void HTTPRequest(){
     //client.println(file.size()); //File Size
     client.println();
 }
-
-
+  
 void sendImage(){
   //Get the File from SD
   File myFile = SD.open(latestPic); 
