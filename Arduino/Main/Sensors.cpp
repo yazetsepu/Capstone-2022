@@ -1,3 +1,12 @@
+/*
+ * DHT22 : Humidity and temperature Sensor
+ * BH1750: Light Sensor
+ * DS3231: RTC 
+ * (8) Analog Soil Moisture Sensor
+ * Analog Water Level Sensor
+ *
+ * Author: Michael Alvarado
+ */
 #include "Sensors.h"
 #include "DataManager.h"
 #include <DHT.h>
@@ -14,9 +23,12 @@ BH1750 lightMeter;
 //RTC variable
 RTClib myRTC;
 
-void setupSensors(){
+void setupRTC(){
   //Set RTC
   Wire.begin();
+}
+
+void setupSensors(){
   //Set DHT Sensor
   dht.begin();
   sensor_t sensor;
@@ -87,9 +99,13 @@ float measureMoisture(int sensor){
     return val;
     }
   else if(sensor == 2) (1-(float)analogRead(SoilMoisture1)/1023)*100; //TEST
-  else if(sensor == 3) analogRead(SoilMoisture1); // Digital TEST
-  else return -1;
-  return (1-(float)analogRead(sensorPin)/1023)*100;
+  else if(sensor == 3) return analogRead(SoilMoisture1); // TEST soil 1 analog purely
+  else if(sensor == 4) return analogRead(SoilMoisture4); // Uncalibrated
+  else if(sensor == 5) return analogRead(SoilMoisture5); // Uncalibrated
+  else if(sensor == 6) return analogRead(SoilMoisture6); // Uncalibrated
+  else if(sensor == 7) return analogRead(SoilMoisture7); // Uncalibrated
+  else return -1; //Invalid Sensor Option
+  return (1-(float)analogRead(sensorPin)/1023)*100; //Equation of ADC Convertion in %
 }
 
 float measureMoisture(){

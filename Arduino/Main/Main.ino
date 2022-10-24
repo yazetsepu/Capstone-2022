@@ -16,6 +16,12 @@
  * Pin A2: Water Level
  * Pin A8: Soil Moisture 0
  * Pin A9: Soil Moisture 1
+ * Pin A10: Soil Moisture 2
+ * Pin A11: Soil Moisture 3
+ * Pin A12: Soil Moisture 4
+ * Pin A13: Soil Moisture 5
+ * Pin A14: Soil Moisture 6
+ * Pin A15: Soil Moisture 7
  * 
  * I2C Pins
  * SDA: BH1750, RTC and Arducam
@@ -31,28 +37,14 @@
  * 
  * Author: Michael Alvarado
  */
- 
-#include <ArduinoJson.h>
-#include <SD.h>
+
 #include "DataManager.h"
 #include "Sensors.h"
 #include "WaterSystem.h"
-
-//Digital Pins
-#define LedPin 3 //TEST LED
-
-//dateTime function to set DateTime on Files
-void dateTime(uint16_t* date, uint16_t* time){
-  DateTime RTC = currentTime();
-  *date = FAT_DATE(RTC.year(), RTC.month(), RTC.day());
-  *time = FAT_TIME(RTC.hour(),RTC.minute(), RTC.second());
-}
-
-//Communication variables
-int count;
-
-//Actuators Parameter;
-int dimLevel=255;
+#include "LightSystem.h"
+#include "Cameras.h"
+#include <ArduinoJson.h>
+#include <SD.h>
 
 //Loop Delay
 uint32_t delayMS = 500;
@@ -65,12 +57,14 @@ void setup() {
   // initialize serial communication:
   Serial.begin(57600);
 
-  //Setup Sensors
-  setupSensors();
+  //Setup RTC
+  setupRTC();
 
   //Setup SD
-  SdFile::dateTimeCallback(dateTime); //Calls dateTime function for getting datetime in files
   setupSD();
+
+  //Setup Sensors
+  setupSensors();
 
   //Setup Camera
   setupCameras();
@@ -81,15 +75,15 @@ void setup() {
   //Setup Water System
   setupWaterSystem();
 
-  //Set LED PWM
-  pinMode(LedPin, OUTPUT);  // sets the pin as output
+  //Setup Light System
+  setupLightSystem();
 
   //Set up timer
   startDataTime = millis();
   startPictureTime = millis();
 
   //Log the boot of system
-  saveLog(01, "Boot Complete", 0, "");
+  saveLog(1, "Boot Complete", 0, "Boot Time: "+millis());
   Serial.println("Boot complete");
 }
 
@@ -135,7 +129,7 @@ void loop() {
   if(millis()-startPictureTime>=50000){
         Serial.println("Image Collection Started:");
         digitalWrite(LED_BUILTIN, HIGH);
-        capturePictureSD();
+        Serial.println("Image Location: "+ captureImageToSD(1)); //Take Picture
         //connectToServer();
         startPictureTime = millis();
         saveLog(10, "Capture Image", 0, "");
@@ -150,6 +144,8 @@ void loop() {
       //waterPlant();
   }
   
+  checkSchedule();
+
   delay(delayMS); //Loop delay
 }
 
@@ -159,11 +155,11 @@ void runCommand(String command){
   Serial.println("Command received: " + command+"\n");
   saveLog(16, "Command Received", 0, command);
   if (command == "LED ON"){
-      digitalWrite(LedPin, HIGH);
+      dimBlue(250);
       Serial.write("On");
     }
     else if (command == "LED OFF"){
-      digitalWrite(LedPin, LOW);
+      dimBlue(0);
       Serial.write("Off");
     }
     else if (command == "Humidity"){
@@ -174,12 +170,10 @@ void runCommand(String command){
     }
     else if (command == "Temperature"){
       Serial.print(measureTemperature());
-      count++; //Testing command count
     }
     else if(command.indexOf("DIM") >= 0){
       String dimValue = command.substring(command.indexOf("(")+1, command.indexOf(")"));
-      dimLevel = dimValue.toInt();
-      analogWrite(LedPin, dimLevel);
+      dimBlue(dimValue.toInt());
     }
     else if(command == "Water Plant"){
       waterPlant();
@@ -193,7 +187,22 @@ void runCommand(String command){
     else if(command == "Last Picture"){
       sendLastPicture();
     }
-    
+    else if(command.indexOf("Add time Schedule") >= 0){
+      addSchedule(17, 19, 0, 0, 100, 250);
+    }
+    else if(command.indexOf("Schedule Dim") >= 0){
+      StaticJsonDocument<200> doc;
+      DeserializationError error = deserializeJson(doc, command.substring(12));
+      if (error) {
+        Serial.print(F("deserializeJson() failed: "));
+        Serial.println(error.f_str());
+        return;
+      }
+      addSchedule((int)doc["hour"], (int)doc["minute"], (int)doc["W"], (int)doc["R"], (int)doc["G"], (int)doc["B"]);
+    }
+    else if(command == "Light Schedule"){
+      getScheduleSerial();
+    }
     else {//INVALID Command
       Serial.println("Invalid Command");
       saveLog(19, "Invalid Command", 2, command);

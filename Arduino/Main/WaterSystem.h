@@ -1,5 +1,5 @@
-#ifndef Water_SYSTEM_H
-#define Water_SYSTEM_H
+#ifndef WATER_SYSTEM_H
+#define WATER_SYSTEM_H
 #include <Arduino.h>
 
 //Digital Pins

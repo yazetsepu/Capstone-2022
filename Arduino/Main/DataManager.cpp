@@ -1,5 +1,6 @@
 /*
  * Arducam Mini OV5642 Mini 5MP Plus, Wiznet Ethernet Shield
+ * This class manage Data Store locally and data transfer to the server/serial
  *
  * Author: Michael Alvarado
  */
@@ -8,23 +9,13 @@
 #include <SD.h>
 #include <SPI.h>
 #include <Ethernet.h>
-#include <ArduCAM.h>
-#include <Wire.h>
-#include "memorysaver.h"
 
-//Call Camera memorysaver
-#if !(defined OV5642_MINI_5MP_PLUS || defined OV5642_MINI_5MP_BIT_ROTATION_FIXED || defined OV2640_MINI_2MP || defined OV3640_MINI_3MP)
-  #error Please select the hardware platform and camera module in the ../libraries/ArduCAM/memorysaver.h file
-#endif
-
-//Camera Variables
-#define   FRAMES_NUM    0x06
-ArduCAM myCAM(OV5642, Cam_1_CS); //OVS5460_Mini_5MP_Plus 
-uint8_t read_fifo_burst(ArduCAM myCAM);
-bool is_header = false;
-int total_time = 0;
 String latestPic = ""; //TEST Set latest pic address to send serial
-String pictureAddress = "Pictures/"; //picture Address Folder (folder with Timestamp is later added on setup)
+String FileAddress = "CSS/"; //Root Address Folder (Index subfolder will be provided at setup)
+String getImageFolder() {return FileAddress+"Images";} //Return Folder Address to save images 
+String getLogAddress() {return FileAddress+"LOG.csv";}
+String getDataAddress() {return FileAddress+"DATA.csv";}
+String getLightScheduleAddress() {return FileAddress+"Light.csv";}
 
 
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED }; //physical mac address
@@ -46,204 +37,60 @@ unsigned long beginMicros, endMicros;
 unsigned long byteCount = 0;
 bool printWebData = true;  // set to false for better speed measurement
 
+//dateTime function to set DateTime on Files
+void dateTime(uint16_t* date, uint16_t* time){
+  DateTime RTC = currentTime();
+  *date = FAT_DATE(RTC.year(), RTC.month(), RTC.day());
+  *time = FAT_TIME(RTC.hour(),RTC.minute(), RTC.second());
+}
+
+
 void setupSD(){
-    // disable w5100 while setting up SD
+  pinMode(SD_CS,OUTPUT);
+  // disable w5100 while setting up SD
   pinMode(ETH_CS,OUTPUT);
-  digitalWrite(ETH_CS,HIGH);
+  digitalWrite(ETH_CS, HIGH);
+  //SD Start
   Serial.print("Starting SD..");
   if(!SD.begin(SD_CS)) Serial.println("failed");
   else {
     Serial.println("ok");
-    //Create a folder to store image files
+    //Set the SD dateTime to RTC
+    SdFile::dateTimeCallback(dateTime); //Calls dateTime function for getting datetime in files
+
+    //Create a Session folder to store files (Adds a folder with increasing number)
     int fileNumber = 0;
-    while(SD.exists(pictureAddress+(String)fileNumber)) fileNumber++; //Check last index to create folder
-    pictureAddress = pictureAddress+(String)fileNumber;
-    Serial.println("Create Folder: " + pictureAddress);
-    SD.mkdir(pictureAddress);
-  }
-}
+    while(SD.exists(FileAddress+(String)fileNumber)) fileNumber++; //Check last index to create folder
+    FileAddress = FileAddress+(String)fileNumber+"/"; //Add Session number to path (unique int)
+    Serial.println("Create Folder: " + FileAddress);
+    SD.mkdir(FileAddress); //Create Session Folder
+    SD.mkdir(getImageFolder()); //Create Image Session Folder
 
-void setupCameras(){
-  uint8_t vid, pid;
-  uint8_t temp;
-  Wire.begin();
-  Serial.println(F("ArduCAM Start!"));
-  
-  //set the CS as an output:
-  pinMode(Cam_1_CS,OUTPUT);
-  digitalWrite(Cam_1_CS, HIGH);
-  
-  delay(1000);
-  // initialize SPI:
-  SPI.begin();
-    
-  //Reset the CPLD
-  myCAM.write_reg(0x07, 0x80);
-  delay(100);
-  myCAM.write_reg(0x07, 0x00);
-  delay(100);
-    
-  while(1){
-    //Check if the ArduCAM SPI bus is OK
-    myCAM.write_reg(ARDUCHIP_TEST1, 0x55);
-    temp = myCAM.read_reg(ARDUCHIP_TEST1);
-    
-    if (temp != 0x55){
-      Serial.println(F("SPI interface Error!"));
-      delay(1000);continue;
-    }else{
-      Serial.println(F("SPI interface OK."));break;
-    }
-  }
-  
-  #if defined (OV2640_MINI_2MP)
-    while(1){
-      //Check if the camera module type is OV2640
-      myCAM.wrSensorReg8_8(0xff, 0x01);
-      myCAM.rdSensorReg8_8(OV2640_CHIPID_HIGH, &vid);
-      myCAM.rdSensorReg8_8(OV2640_CHIPID_LOW, &pid);
-      if ((vid != 0x26 ) && (( pid != 0x41 ) || ( pid != 0x42 ))){
-        Serial.println(F("Can't find OV2640 module!"));
-        delay(1000);continue;
-      }
-      else{
-        Serial.println(F("OV2640 detected."));break;
-      } 
-    }
-  #elif defined (OV3640_MINI_3MP)
-    while(1){
-      //Check if the camera module type is OV3640
-      myCAM.rdSensorReg16_8(OV3640_CHIPID_HIGH, &vid);
-      myCAM.rdSensorReg16_8(OV3640_CHIPID_LOW, &pid);
-      if ((vid != 0x36) || (pid != 0x4C)){
-        Serial.println(F("Can't find OV3640 module!"));
-        delay(1000);continue; 
-      }else{
-        Serial.println(F("OV3640 detected."));break;    
-      }
-   } 
-  #else
-    while(1){
-      //Check if the camera module type is OV5642
-      myCAM.wrSensorReg16_8(0xff, 0x01);
-      myCAM.rdSensorReg16_8(OV5642_CHIPID_HIGH, &vid);
-      myCAM.rdSensorReg16_8(OV5642_CHIPID_LOW, &pid);
-      if((vid != 0x56) || (pid != 0x42)){
-        Serial.println(F("Can't find OV5642 module!"));
-        delay(1000);continue;
-      }
-      else{
-        Serial.println(F("OV5642 detected."));break;
-      } 
-    }
-  #endif
-  myCAM.set_format(JPEG);
-  myCAM.InitCAM();
-  #if defined (OV2640_MINI_2MP)
-    myCAM.OV2640_set_JPEG_size(OV2640_320x240);
-  #elif defined (OV3640_MINI_3MP)
-    myCAM.OV3640_set_JPEG_size(OV3640_320x240);
-  #else
-    myCAM.write_reg(ARDUCHIP_TIM, VSYNC_LEVEL_MASK);   //VSYNC is active HIGH
-    myCAM.OV5642_set_JPEG_size(OV5642_2592x1944); //5MP
-    //myCAM.OV5642_set_JPEG_size(OV5642_2048x1536); //3MP
-    //myCAM.OV5642_set_Light_Mode(Auto);
-  #endif
-  delay(1000);
-}
 
-void capturePictureSD(){
-  String address;
-  byte buf[256];
-  static int i = 0;
-  static int k = 0; //Might deleted (used for naming files)
-  uint8_t temp = 0,temp_last=0;
-  uint32_t length = 0;
-  bool is_header = false;
-  File outFile;
-  //Flush the FIFO
-  myCAM.flush_fifo();
-  //Clear the capture done flag
-  myCAM.clear_fifo_flag();
-  //Start capture
-  myCAM.start_capture();
-  Serial.println(F("start Capture"));
-  while(!myCAM.get_bit(ARDUCHIP_TRIG , CAP_DONE_MASK));
-  Serial.println(F("Capture Done."));  
-  length = myCAM.read_fifo_length();
-  Serial.print(F("The fifo length is :"));
-  Serial.println(length, DEC);
-  if (length >= MAX_FIFO_SIZE) //384K
-  {
-    Serial.println(F("Over size."));
-    return ;
-  }
-  if (length == 0 ) //0 kb
-  {
-    Serial.println(F("Size is 0."));
-    return ;
-  }
-  //Construct a file name
-  k = k + 1;
-  //itoa(k, str, 10);
-  address = pictureAddress +"/"+(String)k + ".jpg";
-  //strcat(address, ".jpg");
-  Serial.println(address);
-  //Open the new file
-  outFile = SD.open(address, O_WRITE | O_CREAT | O_TRUNC);
-  if(!outFile){
-    Serial.println(F("File open failed"));
-    return;
-  }
-  myCAM.CS_LOW();
-  myCAM.set_fifo_burst();
-  while ( length-- )
-  {
-    temp_last = temp;
-    temp =  SPI.transfer(0x00);
-    //Read JPEG data from FIFO
-    if ( (temp == 0xD9) && (temp_last == 0xFF) ) //If find the end ,break while,
-    {
-      buf[i++] = temp;  //save the last  0XD9     
-      //Write the remain bytes in the buffer
-      myCAM.CS_HIGH();
-      outFile.write(buf, i);    
-      //Close the file
-      outFile.close();
-      Serial.println(F("Image save OK."));
-      is_header = false;
-      i = 0;
-      latestPic = address; //Set latest pic address to send serial
-    }  
-    if (is_header == true)
-    { 
-      //Write image data to buffer if not full
-      if (i < 256)
-      buf[i++] = temp;
-      else
-      {
-        //Write 256 bytes image data to file
-        myCAM.CS_HIGH();
-        outFile.write(buf, 256);
-        i = 0;
-        buf[i++] = temp;
-        myCAM.CS_LOW();
-        myCAM.set_fifo_burst();
-      }        
+    //Create Data CSV File and header titles
+    File dataFile = SD.open(getDataAddress(), FILE_WRITE);
+    delay(1000); //Load Delay
+    if(dataFile){
+      //Add header Title
+      dataFile.println("TimeStamp(YYYY/MM/DD HH:MM:SS),Light (lux),Temperature (C),Humidity(%RH),Soil Moisture 0 (%),Soil Moisture 1 (%),Soil Moisture 2 (%),Soil Moisture 3 (%),Soil Moisture 4 (%),Soil Moisture 5 (%),Soil Moisture 6 (%),Soil Moisture 7 (%),Water Level");
+      dataFile.close();   // close the file:
     }
-    else if ((temp == 0xD8) & (temp_last == 0xFF))
-    {
-      is_header = true;
-      buf[i++] = temp_last;
-      buf[i++] = temp;   
-    } 
-  } 
+    
+    //Create Log CSV File and header titles
+    File logFile = SD.open(getLogAddress(), FILE_WRITE);
+    delay(1000); //Load Delay
+    if(logFile){ 
+      //Add header Title
+      logFile.println("Time Stamp,Code,Source,Name,Severity,Message");
+      logFile.close();   // close the file:
+    }
+  }
 }
 
 //This method save all data in the array into a CSV file called Data.csv
 void saveDataToSD(String data[], int sizeData){
    //Write to SD
-  File myFile = SD.open("DATA.csv", FILE_WRITE);
+  File myFile = SD.open(getDataAddress(), FILE_WRITE);
   delay(1000);
 
   // if the file opened okay, write to it:
@@ -269,7 +116,7 @@ void saveDataToSD(String data[], int sizeData){
 
 void saveLog(int code, String name, int severity, String message){
   //Write to SD
-  File myFile = SD.open("Log.csv", FILE_WRITE);
+  File myFile = SD.open(getLogAddress(), FILE_WRITE);
   delay(1000);
   //Get the Source from the code
   String source = "";
@@ -374,6 +221,7 @@ void loopData() {
   }
 }
 
+//TEST
 void HTTPRequest(){
       // Make a HTTP request:
     client.println("GET /search?q=arduino HTTP/1.1");
@@ -448,7 +296,7 @@ void sendDataFile(){
 
 //Send latest Picture taken to Serial
 void sendLastPicture(){
-    File dataFile = SD.open(latestPic);
+  File dataFile = SD.open(latestPic);
   if (dataFile) {
     while (dataFile.available()) {
       Serial.write(dataFile.read());
