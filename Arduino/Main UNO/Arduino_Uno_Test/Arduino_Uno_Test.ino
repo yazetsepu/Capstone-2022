@@ -7,6 +7,11 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 int delayMS; //delay for loop
 
 #define WaterPump 6 
+#define SoilMoisture A3
+
+int water;
+const int dry = 550;
+const int wet = 209;
 
 void setup() {
   Serial.begin(9600);
@@ -33,6 +38,18 @@ void loop() {
   // put your main code here, to run repeatedly:
   Serial.println("Temperature: "+(String)measureTemperature());
   Serial.println("Humidity: "+(String)measureHumidity());
+
+  int soilMoistureValue = analogRead(SoilMoisture);
+  int percentageHumidity = map(soilMoistureValue, wet, dry, 100, 0);
+  Serial.print(percentageHumidity);
+  Serial.println("%");
+  delay(100);
+
+  digitalWrite(WaterPump, LOW); //activated 
+  delay(2000);
+  digitalWrite(WaterPump, HIGH); //deactivated
+  delay(2000);
+  
 
   delay(delayMS);
 }
