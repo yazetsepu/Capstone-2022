@@ -98,7 +98,13 @@ float measureMoisture(int sensor){
     val = constrain(val, 0 , 100); //Contrain the values if needed
     return val;
     }
-  else if(sensor == 2) (1-(float)analogRead(SoilMoisture1)/1023)*100; //TEST
+  else if(sensor == 2) {
+    sensorPin = SoilMoisture2; //Pin the sensor is located
+    float val = (float)analogRead(sensorPin); //Sense analog read
+    val = 100 - map(val, 200, 583, 0, 100); //Calibration (250(dry)-583(wet))
+    val = constrain(val, 0 , 100); //Contrain the values if needed
+    return val;
+  }
   else if(sensor == 3) return analogRead(SoilMoisture1); // TEST soil 1 analog purely
   else if(sensor == 4) return analogRead(SoilMoisture4); // Uncalibrated
   else if(sensor == 5) return analogRead(SoilMoisture5); // Uncalibrated

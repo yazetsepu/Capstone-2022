@@ -6,7 +6,7 @@
 #include <DS3231.h>
 
 //Actuators Parameter;
-int dimLevel=255;
+int dimLevel=255; //TEST 
 int nextW = 0;
 int nextR = 0;
 int nextG = 0;
@@ -14,7 +14,7 @@ int nextB = 0;
 //Next Schedule
 DateTime nextSchedule;
 void fetchNextSchedule();
-
+void dimAllToLevel(int level);
 void setupLightSystem(){
   pinMode(LedPin, OUTPUT);
 
@@ -23,9 +23,13 @@ void setupLightSystem(){
   delay(1000); //Load Delay
   if(scheduleFile){ 
     //Add header Title
-    scheduleFile.println("17,18,0,0,100,250"); //(H,M,W,R,G,B) Sample Test
-    scheduleFile.println("17,20,0,0,100,0"); //(H,M,W,R,G,B) Sample Test
-    scheduleFile.println("17,21,0,0,100,0"); //(H,M,W,R,G,B) Sample Test
+    int hour = currentTime().hour(); //Test 
+    int minute = currentTime().minute(); //Test 
+    scheduleFile.println((String)hour+","+(String)(minute+1)+","+"250,0,100,100"); //(H,M,W,R,G,B) Sample Test
+    scheduleFile.println((String)hour+","+(String)(minute+2)+","+"0,200,50,50"); //(H,M,W,R,G,B) Sample Test
+    scheduleFile.println((String)hour+","+(String)(minute+3)+","+"100,50,200,250"); //(H,M,W,R,G,B) Sample Test
+    scheduleFile.println((String)hour+","+(String)(minute+4)+","+"0,0,0,0"); //(H,M,W,R,G,B) Sample Test
+
     //scheduleFile.println("17,20,0,0,100,255"); //(H,M,W,R,G,B) Sample Test
     scheduleFile.close();   // close the file:
   }
@@ -34,34 +38,47 @@ void setupLightSystem(){
   }
   //nextSchedule = DateTime(0,0,0,14,17,0); //Test Schedule
   nextSchedule = DateTime(0,0,0,0,0,0);
+  dimAllToLevel(0);
   fetchNextSchedule();
 }
 
+
 void dimRed(int pwm){
-  analogWrite(LedPin, pwm);
+  analogWrite(RedLedPin, pwm);
 }
 
 void dimWhite(int pwm){
-  analogWrite(LedPin, pwm);
+  analogWrite(WhiteLedPin, pwm);
 }
 
 void dimGreen(int pwm){
-  analogWrite(LedPin, pwm);
+  analogWrite(GreenLedPin, pwm);
 }
 
 void dimBlue(int pwm){
-  analogWrite(LedPin, pwm);
+  analogWrite(BlueLedPin, pwm);
 }
 
-//(Private) 
+//(Private) Dim to schedule level
 void dimAllToLevel(){
-  dimBlue(dimLevel);
+  dimBlue(nextB);
+  dimGreen(nextG);
+  dimRed(nextR);
+  dimWhite(nextW);
 }
 
-//Check if next schedule is meet 
+//(Private) Dim given level
+void dimAllToLevel(int level){
+  dimBlue(level);
+  dimGreen(level);
+  dimRed(level);
+  dimWhite(level);
+}
+
+//Check if next schedule is meet and change intensity when schedule meets
 void checkSchedule(){
   if(currentTime().hour() >= nextSchedule.hour() && currentTime().minute() >= nextSchedule.minute()){
-    dimBlue(dimLevel);
+    dimAllToLevel();
     Serial.println("Schedule meet: "+(String)nextSchedule.hour() + ":" + (String)nextSchedule.minute());
     fetchNextSchedule();
   }
@@ -112,9 +129,6 @@ void fetchNextSchedule(){
           schedule = ""; //Reset Row String
       }
     }
-    //No Schedule Available for the day
-    nextSchedule = DateTime(0,0,0,24,59,59); //Set to new day
-    dimAllToLevel(); //Set the last WRGB levels 
     scheduleFile.close(); //Close File
   }
   // if the file isn't open, pop up an error:
@@ -122,6 +136,9 @@ void fetchNextSchedule(){
     Serial.println("error opening");
     return;
   }
+  //No Schedule Available for the day
+  nextSchedule = DateTime(0,0,0,24,59,59); //Set to new day
+  dimAllToLevel(); //Set the last WRGB levels 
   saveLog(30, "Schedule Set", 1, "Last Schedule until midnight");
 }
 

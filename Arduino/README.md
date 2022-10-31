@@ -35,6 +35,7 @@ Table of contents
 | A13 | Soil Moisture 5 |
 | A14| Soil Moisture 6 |
 | A15 | Soil Moisture 7 |
+
 **I2C Pins**
 |Pin| Devices |
 |--|--|
@@ -62,14 +63,17 @@ List of Arduino Libraries require to compile and upload software.
 ## Software
 
 ### Local Memory Management
-Each boot the system will create a session file. In this session file it will contain a DATA.CSV, LOG.CSV and a Image folder. 
-*Example SD Directory Tree* :
+Each boot the system will create a session folder in the SD project root folder "/CSS". In this session folder it will contain a DATA.CSV, LOG.CSV, LIGHT.CSV and a Image folder to store data collected for the session. All data and image flag to be sent to server will be store in DATAFLAG.txt (data in JSON format) and PATHFLAG.txt (Path of images addresses).
+*Example CSS Folder Directory Tree* :
 
-    |	Flag.txt
-    |
+    |	DATAFLAG.txt
+    |	PATHFLAG.txt
+    |	
+    |	
     +---1
     |   |	DATA.CSV
     |   |   LOG.CSV
+    |	|	LIGHT.CSV
     |   |
     |   \---IMAGES
     |           1.JPG
@@ -78,6 +82,7 @@ Each boot the system will create a session file. In this session file it will co
     \---2
         |   DATA.CSV
         |   LOG.CSV
+       	|	LIGHT.CSV
         |
         \---IMAGES
             1.JPG
@@ -108,7 +113,7 @@ Each boot the system will create a session file. In this session file it will co
 ### Command List
 
 | Command |String Format| Parameter |  Return |
-|--|--|--|--|--|
+|--|--|--|--|
 | All Light On| "LED ON"  |  |JSON (Status)
 | All Light Off | "LED OFF" | | JSON (Status) 
 | RGBW Light Dim | "LED DIM {0},{1},{2},{3}" | int[] (0-100) | JSON (Status) 
@@ -118,11 +123,16 @@ Each boot the system will create a session file. In this session file it will co
 | Capture Image | "Capture Image Cam: {0}" | int (0-3) | bytes[] (JPG) |
 | Timed Dim | "Schedule Dim {0}" | JSON (Timestamp, W,R,G,B) | bytes[] (JPG) |
 
-    Schedule Dim {"hour":19,"minute":45,"W":0,"R":0,"G":0,"B":200}
-JSON (command) example
+ #### *Command examples:* 
+ 
+*JSON (command) example*
 
-    {"Light":830.8333,"Temperature":30.6,"Humidity":70.1,"Soil_Moisture_0":71.74976,"Soil_Moisture_1":90,"Water_Level":0,"Time":"2022/10/21 10:58:48"}
-JSON (data) example
+    Schedule Dim {"hour":19,"minute":45,"W":0,"R":0,"G":0,"B":200}
+
+*JSON (data) example*
+
+    {"Light":27.5,"Temperature":27.5,"Humidity":85.7,"Soil_Moisture_0":69.59922,"Soil_Moisture_1":77,"Soil_Moisture_2":84,"Water_Level":295,"Time":"2022/10/24 21:11:35"}
+
 
 ### Log List
 

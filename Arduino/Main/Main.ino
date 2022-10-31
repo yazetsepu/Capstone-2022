@@ -3,37 +3,47 @@
  * Chamaecrista Sustainability System (CSS)
  * 
  * Functionality:
- * Light control (RGBW LED PWM)
- * Water Irrigation (Water pump, Water Valve)
- * Data Collection Humidity (RH), Temperature (C), Soil Moisture (%), Light (lux) and Images (JPG)
+ *  -Light control (RGBW LED PWM)
+ *  -Water Irrigation (Water pump, Water Valve)
+ *  -Data Collection Humidity (RH), Temperature (C), Soil Moisture (%), Light (lux) and Images (JPG)
+ *  -Web-Client (HTTP)
+ *  -Serial Communication
  * 
- * Digital Pins
- * Pin 2: DHT22
- * Pin 3: LED TEST
- * Pin 31: Water Pump
+ * PINOUT: 
+ * Digital Pins:
+ *  Pin D2: DHT22
+ *  Pin 3: LED TEST
+ *  Pin 5: Blue LED
+ *  Pin 6: Green LED
+ *  Pin 7: Red LED
+ *  Pin 8: White LED
+ *  Pin 31: Water Pump
  * 
- * Analog Pins
- * Pin A2: Water Level
- * Pin A8: Soil Moisture 0
- * Pin A9: Soil Moisture 1
- * Pin A10: Soil Moisture 2
- * Pin A11: Soil Moisture 3
- * Pin A12: Soil Moisture 4
- * Pin A13: Soil Moisture 5
- * Pin A14: Soil Moisture 6
- * Pin A15: Soil Moisture 7
+ * Analog Pins:
+ *  Pin A2: Water Level
+ *  Pin A8: Soil Moisture 0
+ *  Pin A9: Soil Moisture 1
+ *  Pin A10: Soil Moisture 2
+ *  Pin A11: Soil Moisture 3
+ *  Pin A12: Soil Moisture 4
+ *  Pin A13: Soil Moisture 5
+ *  Pin A14: Soil Moisture 6
+ *  Pin A15: Soil Moisture 7
  * 
- * I2C Pins
- * SDA: BH1750, RTC and Arducam
- * SCL: BH1750, RTC and Arducam
+ * I2C Pins:
+ *  SDA: BH1750, RTC and Arducam
+ *  SCL: BH1750, RTC and Arducam
  * 
- * SPI Pins
- * MISO (50): SD, Ethernet and Arducam
- * MOSI (51): SD, Ethernet and Arducam
- * SCK (52): SD, Ethernet and Arducam
- * Pin 4: SD Enable
- * Pin 7: Ethernet Enable 
- * Pin 48: Arducam 1 Enable 
+ * SPI Pins:
+ *  MISO: (50) SD, Ethernet and Arducam
+ *  MOSI: (51) SD, Ethernet and Arducam
+ *  SCK:  (52) SD, Ethernet and Arducam
+ *  Pin 4: SD Enable
+ *  Pin 10: Ethernet Enable
+ *  Pin 48: Arducam 1 Enable
+ *  Pin 49: Arducam 2 Enable
+ *  Pin 46: Arducam 3 Enable
+ *  Pin 47: Arducam 4 Enable
  * 
  * Author: Michael Alvarado
  */
@@ -57,11 +67,13 @@ void setup() {
   // initialize serial communication:
   Serial.begin(57600);
 
-  //Setup RTC
+  //Setup RTC (Needed first to have proper timestamp on everything else)
   setupRTC();
 
   //Setup SD
-  setupSD();
+  while(!setupSD()){
+    Serial.println("No SD. Cannot boot");
+  }
 
   //Setup Sensors
   setupSensors();
@@ -70,7 +82,7 @@ void setup() {
   setupCameras();
   
   //Setup server
-  //connectToServer();
+  connectToServer();
 
   //Setup Water System
   setupWaterSystem();
@@ -88,23 +100,27 @@ void setup() {
 }
 
 void loop() {
-  //Perform Commands sent by PC connection
-  if(Serial.available()){
-    String data = Serial.readString();
-    runCommand(data);
+  //Serial Connection
+  if(Serial){
+    //Perform Commands sent by PC connection
+    if(Serial.available()){
+      String data = Serial.readString();
+      runCommand(data);
+    }
+    
+    //Measure and send all data on Serial (JSON format)
+    StaticJsonDocument<1000> doc;
+    doc["Light"] = measureLight();
+    doc["Temperature"] = measureTemperature();
+    doc["Humidity"] = measureHumidity();
+    doc["Soil_Moisture_0"] = measureMoisture(0);
+    doc["Soil_Moisture_1"] = measureMoisture(1);
+    doc["Soil_Moisture_2"] = measureMoisture(2);
+    doc["Water_Level"] = measureWaterLevel();
+    doc["Time"] = timeNowString();
+    serializeJson(doc, Serial); 
+    Serial.write("\n"); //This is to mark end of data (expected on GUI side)
   }
-
-  //Measure and send all data on Serial (JSON format)
-  StaticJsonDocument<1000> doc;
-  doc["Light"] = measureLight();
-  doc["Temperature"] = measureTemperature();
-  doc["Humidity"] = measureHumidity();
-  doc["Soil_Moisture_0"] = measureMoisture(0);
-  doc["Soil_Moisture_1"] = measureMoisture(1);
-  doc["Water_Level"] = measureWaterLevel();
-  doc["Time"] = timeNowString();
-  serializeJson(doc, Serial); 
-  Serial.write("\n"); //This is to mark end of data (expected on GUI side)
 
   //Save data if timer pass value (10s)
   if((millis()-startDataTime)>= 10000){
@@ -117,6 +133,8 @@ void loop() {
       (String)measureWaterLevel()};
     //Save Data in CSV File
     saveDataToSD(data, ColumnNumber);
+    //Flag Data to send to Server
+    flagData();
     //Reset Timer
     startDataTime = millis();
     digitalWrite(LED_BUILTIN, LOW); //LED for Visual TEST
@@ -126,11 +144,12 @@ void loop() {
   }
 
   //Take picture if picture timer
-  if(millis()-startPictureTime>=50000){
+  if(millis()-startPictureTime>=10000){ //50000
         Serial.println("Image Collection Started:");
         digitalWrite(LED_BUILTIN, HIGH);
         Serial.println("Image Location: "+ captureImageToSD(1)); //Take Picture
-        //connectToServer();
+        Serial.println("Image Location: "+ captureImageToSD(2)); //Take Picture
+        connectToServer();
         startPictureTime = millis();
         saveLog(10, "Capture Image", 0, "");
         digitalWrite(LED_BUILTIN, LOW);
@@ -152,8 +171,10 @@ void loop() {
 
 //Run commands according to string received
 void runCommand(String command){
+  //Log Command
   Serial.println("Command received: " + command+"\n");
   saveLog(16, "Command Received", 0, command);
+  //Find Command
   if (command == "LED ON"){
       dimBlue(250);
       Serial.write("On");
@@ -192,7 +213,7 @@ void runCommand(String command){
     }
     else if(command.indexOf("Schedule Dim") >= 0){
       StaticJsonDocument<200> doc;
-      DeserializationError error = deserializeJson(doc, command.substring(12));
+      DeserializationError error = deserializeJson(doc, command.substring(12)); //12 is "Schedule Dim" size
       if (error) {
         Serial.print(F("deserializeJson() failed: "));
         Serial.println(error.f_str());
@@ -202,6 +223,10 @@ void runCommand(String command){
     }
     else if(command == "Light Schedule"){
       getScheduleSerial();
+    }
+    else if (command.indexOf("Get File") >= 0){
+      if(sendFile(command.substring(8))) saveLog(17, "Command Succesful", 1, command);
+      else saveLog(18, "Command Unsuccesful", 3, command);
     }
     else {//INVALID Command
       Serial.println("Invalid Command");

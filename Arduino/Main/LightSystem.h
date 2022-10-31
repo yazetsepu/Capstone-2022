@@ -3,7 +3,13 @@
 #include <Arduino.h>
 
 // Digital Pins
-#define LedPin 3 //TEST LED
+#define LedPin 3      //TEST LED
+#define WhiteLedPin 8 //
+#define RedLedPin 7   //
+#define GreenLedPin 6 //
+#define BlueLedPin 5  //
+
+
 
 // Setup
 void setupLightSystem();
