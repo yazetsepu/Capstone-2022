@@ -101,7 +101,8 @@ void loop() {
   doc["Humidity"] = measureHumidity();
   doc["Soil_Moisture_0"] = measureMoisture(0);
   doc["Soil_Moisture_1"] = measureMoisture(1);
-  doc["Water_Level"] = measureWaterLevel();
+  doc["Container_Water_Level"] = measureContainerWaterLevel();
+  doc["Reservoir_Water_Level"] = measureReservoirWaterLevel();
   doc["Time"] = timeNowString();
   serializeJson(doc, Serial); 
   Serial.write("\n"); //This is to mark end of data (expected on GUI side)
@@ -114,7 +115,7 @@ void loop() {
     //Measure All data and save it in array as String
     String data[ColumnNumber] = {timeNowString(), (String)measureLight(), (String)measureTemperature(), (String)measureHumidity(), (String)measureMoisture(0), (String)measureMoisture(1),
       (String)measureMoisture(2), (String)measureMoisture(3), (String)measureMoisture(4), (String)measureMoisture(5), (String)measureMoisture(6), (String)measureMoisture(7),
-      (String)measureWaterLevel()};
+      (String)measureContainerWaterLevel(), (String)measureReservoirWaterLevel()};
     //Save Data in CSV File
     saveDataToSD(data, ColumnNumber);
     //Reset Timer
@@ -138,10 +139,20 @@ void loop() {
   }
 
   //Water Check
-  float moisture = measureMoisture();
-  if(moisture < 50){
-      saveLog(20, "Watering Start", 0, "Moisture Level: "+(String)moisture);
-      //waterPlant();
+  float moistureSum = measureMoisture(0) + measureMoisture(1) + measureMoisture(2) + measureMoisture(3) + 
+   measureMoisture(4) + measureMoisture(5) + measureMoisture(6) + measureMoisture(7);
+  
+  float moistureAverage = moistureSum / 8.0;
+
+  if(moistureAverage < 50){
+      saveLog(20, "Watering Start", 0, "Moisture Level: "+(String)moistureAverage);
+      waterPlant();
+  }
+
+  //Reservoir Check
+  float reservoirWaterLevel = measureReservoirWaterLevel();
+  if(reservoirWaterLevel <= 0){
+    fillReservoir();
   }
   
   checkSchedule();
@@ -177,6 +188,9 @@ void runCommand(String command){
     }
     else if(command == "Water Plant"){
       waterPlant();
+    }
+    else if(command == "Calibrate Moisture"){
+      calibrateMoisture(500,200,2); //for example
     }
     else if(command == "Get Data File"){
       sendDataFile();

@@ -12,7 +12,7 @@ void setupWaterSystem(){
 void waterPlant(){
   //Safety Check Variables
   long int startWaterTime = millis();
-  float startWaterLevel = measureWaterLevel();
+  float startWaterLevel = measureContainerWaterLevel();
   //Check Initial Water Level
   if(startWaterLevel >= 100){
     Serial.println("Water Level already Full");  
@@ -20,7 +20,7 @@ void waterPlant(){
     return;
   }
   //Check if water Level have been reached
-  float waterLevel = measureWaterLevel();
+  float waterLevel = measureContainerWaterLevel();
   //Log initialize Watering Proccess
   saveLog(20, "Watering Start", 0, "");
   //Check Water Levels
@@ -29,7 +29,7 @@ void waterPlant(){
     //Turn Water Pump On
     digitalWrite(LED_BUILTIN, HIGH);
     digitalWrite(WaterPump, HIGH);
-    waterLevel = measureWaterLevel();
+    waterLevel = measureContainerWaterLevel();
     Serial.println(waterLevel);
     //Safety Check
     delay(100);
@@ -51,4 +51,49 @@ void waterPlant(){
   saveLog(22, "Watering Successful", 1, "");
   Serial.println("Water System has been successful");
 }
+
+/* Fill Reservoir */
+/* Adding the saveLogs is Missing */
+void fillReservoir(){
+  //Safety Check Variables
+  long int startWaterTime = millis();
+  float startWaterLevel = measureReservoirWaterLevel();
+  //Check Initial Reservoir Water Level
+  if(startWaterLevel >= 100){
+    Serial.println("Reservoir Water Level already Full");  
+    return;
+  }
+  //Check if Reservoir Water Level have been reached
+  float waterLevel = measureReservoirWaterLevel();
+  //Log initialize Reservoir Watering Proccess
+  //Check Reservoir Water Levels
+  while (waterLevel < 100){
+    //Solenoid Valve On
+    //Turn Solenoid Valve On
+    //digitalWrite(LED_BUILTIN, HIGH);
+    digitalWrite(SolenoidValve, LOW);
+    waterLevel = measureReservoirWaterLevel();
+    Serial.println(waterLevel);
+    //Safety Check
+    delay(100);
+    //If some time has passed and reservoir water level has not filled
+    //water level or solenoid valve damaged
+    //*** Check quantity of time
+    long int currentTime = millis()-startWaterTime;
+    Serial.println("Time: " + (String)currentTime);
+    if(currentTime > (long int)20000){
+        //Stop the Reservoir Water System
+        //digitalWrite(LED_BUILTIN, LOW);
+        digitalWrite(SolenoidValve, HIGH);
+        Serial.println("Reservoir Filling Fail");
+        return;
+    }
+  }
+  //Reservoir Water level reached turn off solenoid valve
+  //digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(SolenoidValve, LOW);
+  Serial.println("Reservoir Filling has been successful");
+}
+
+
 

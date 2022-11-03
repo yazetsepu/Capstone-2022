@@ -4,9 +4,12 @@
 
 //Digital Pins
 #define WaterPump 31
+#define SolenoidValve 32 //Check
 
 void setupWaterSystem();
 void waterPlant();
-float measureWaterLevel();
+void fillReservoir();
+float measureContainerWaterLevel();
+float measureReservoirWaterLevel();
 
 #endif

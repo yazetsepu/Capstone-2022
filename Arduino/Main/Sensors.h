@@ -4,7 +4,8 @@
 #include <DS3231.h>
 
 //Analog Pins
-#define WaterLevel 2     //Analog Water Level Sensor
+#define ContainerWaterLevel 2     //Analog Container Water Level Sensor
+#define ReservoirWaterLevel 3     //Analog Reservoir Water Level Sensor
 #define SoilMoisture0 8  //Soil Moisture Sensor 0
 #define SoilMoisture1 9  //Soil Moisture Sensor 1
 #define SoilMoisture2 10 //Soil Moisture Sensor 2
@@ -30,7 +31,9 @@ DateTime currentTime();
 //Analog Soil Moisture
 float measureMoisture();
 float measureMoisture(int sensor);
+void calibrateMoisture(int dry, int wet, int sensor);
 //Analog Water Level
-float measureWaterLevel();
+float measureContainerWaterLevel();
+float measureReservoirWaterLevel();
 
 #endif
