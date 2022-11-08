@@ -1,35 +1,31 @@
+import '../styles/DataTable.css';
 import Table from 'react-bootstrap/Table';
+import { envData } from '../Util/dummyData'
 
 function BasicTable() {
     return (
-        <Table striped bordered hover>
+        <Table striped bordered hover className='table'>
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Username</th>
+                    <th>Timestamp</th>
+                    <th>Leaf Status</th>
+                    <th>Temperature (C)</th>
+                    <th>Soil Moisture (%)</th>
+                    <th>Air Humidity (%)</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
+                {envData.map((data, key) => (
+                <tr key = {key}>
+                    <td>{data.id}</td>
+                    <td>{data.timestamp}</td>
+                    <td>{data.leafstatus}</td>
+                    <td>{data.temperature}</td>
+                    <td>{data.soilmoisture}</td>
+                    <td>{data.airhumidity}</td>
                 </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Larry</td>
-                    <td>von Bird</td>
-                    <td>@twitter</td>
-                </tr>
+                ))}
             </tbody>
         </Table>
     );

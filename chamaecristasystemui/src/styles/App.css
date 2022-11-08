@@ -2,11 +2,16 @@
   text-align: center;
 }
 
-.navbar {
-    background-color:green;
+.top-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 1rem;
+  margin-left: 1rem;
 }
-
-#navigation {
-    background-color: green;
-    color:green;
+.top-container-btns{
+  margin-right: 1rem;
+}
+.middle-container{
+  margin: 1rem;
 }
