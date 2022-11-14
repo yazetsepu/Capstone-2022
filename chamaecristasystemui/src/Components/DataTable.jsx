@@ -6,22 +6,17 @@ import { envData } from '../Util/dummyData'
 function BasicTable() {
 
     const [envData, setEnvData] = useState([])
-    const [picture, setPicture] = useState([])
     
     const fetchData = async () => {
-        const response = await fetch("https://cssrumapi.azurewebsites.net/EnvironmentalDataAll")
+        const response = await fetch("https://cssrumapi.azurewebsites.net/environmentaldata/classid")
         const data = await response.json()
         setEnvData(data)
-        
-        // const picId = envData.picturesId
-        // const picResponse = await fetch("https://cssrumapi.azurewebsites.net/Pictures/" + picId)
-        // const picData = await response.json()
-        // setPicture(picData)
+
+        console.log(data)
       }
     
       useEffect(() => {
         fetchData()
-
       }, [])
 
     return (
@@ -30,7 +25,7 @@ function BasicTable() {
                 <tr>
                     <th>#</th>
                     <th>Timestamp</th>
-                    {/* <th>Leaf Status</th> */}
+                    <th>Leaf Status</th>
                     <th>Water Level</th>
                     <th>Temperature (C)</th>
                     <th>Soil Moisture (%)</th>
@@ -42,7 +37,7 @@ function BasicTable() {
                 <tr key = {key}>
                     <td>{data.entry_Id}</td>
                     <td>{data.times_tamps}</td>
-                    {/* <td>{data.pictures.classification_id}</td> */}
+                    {/* <td>{data.classification_id == 0? "Open" : "Closed"}</td> */}
                     <td>{data.water_level}</td>
                     <td>{data.temperature}</td>
                     <td>{data.soil_moisture}</td>
