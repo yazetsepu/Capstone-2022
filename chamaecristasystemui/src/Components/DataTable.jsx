@@ -20,7 +20,7 @@ function BasicTable() {
       }, [])
 
     return (
-        <Table striped bordered hover className='table'>
+        <Table striped bordered hover variant="dark" className='table'>
             <thead>
                 <tr>
                     <th>#</th>
@@ -37,7 +37,9 @@ function BasicTable() {
                 <tr key = {key}>
                     <td>{data.entry_Id}</td>
                     <td>{data.times_tamps}</td>
-                    {/* <td>{data.classification_id == 0? "Open" : "Closed"}</td> */}
+                    <td>{data.classification_id == 0? "Open" :
+                         data.classification_id == 1? "Closed" :
+                         "Not Available"}</td>
                     <td>{data.water_level}</td>
                     <td>{data.temperature}</td>
                     <td>{data.soil_moisture}</td>

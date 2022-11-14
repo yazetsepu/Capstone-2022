@@ -1,3 +1,7 @@
+body{
+  width: 100%;
+}
+
 .App {
   text-align: center;
 }
@@ -10,8 +14,128 @@
   margin-left: 1rem;
 }
 .top-container-btns{
+  display: flex;
   margin-right: 1rem;
+  width: 21rem;
+  justify-content: space-between;
 }
 .middle-container{
   margin: 1rem;
+}
+
+.bottom-container{
+  display: flex;
+  justify-content: space-between;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.bottom-container-water{
+  display: flex;
+  margin-right: 1rem ;
+}
+
+.bottom-container-light{
+  display: flex;
+}
+
+.bottom-container-left{
+  display: flex;
+}
+
+.bottom-container-export{
+  display: flex;
+  margin-right: 1rem;
+}
+
+.bottom-container-graph{
+  display: flex;
+}
+
+.bottom-container-right{
+  display: flex;
+}
+
+@media only screen and (max-width: 1100px) {
+  .top-container-btns{
+    display: flex;
+    flex-direction: column;
+    height: 7rem;
+    margin-right: 1rem;
+    width: 21rem;
+    justify-content: space-between;
+  }
+
+  .bottom-container-water{
+    display: flex;
+    /* margin-right: 1rem ; */
+    margin-bottom: 1rem;
+  }
+  
+  .bottom-container-light{
+    display: flex;
+  }
+  
+  .bottom-container-left{
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .bottom-container-export{
+    display: flex;
+    margin-right: 0;
+    margin-bottom: 1rem;
+    justify-content: flex-end;
+  }
+  
+  .bottom-container-graph{
+    display: flex;
+  }
+  
+  .bottom-container-right{
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .top-container-btns{
+    display: flex;
+    flex-direction: column;
+    height: 7rem;
+    margin-right: 1rem;
+    width: 21rem;
+    justify-content: space-between;
+  }
+
+  .bottom-container-water{
+    display: flex;
+    /* margin-right: 1rem ; */
+    margin-bottom: 1rem;
+  }
+  
+  .bottom-container-light{
+    display: flex;
+  }
+  
+  .bottom-container-left{
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .bottom-container-export{
+    display: flex;
+    margin-right: 0;
+    margin-bottom: 1rem;
+    justify-content: flex-end;
+  }
+  
+  .bottom-container-graph{
+    display: flex;
+  }
+  
+  .bottom-container-right{
+    display: flex;
+    flex-direction: column;
+  }
 }

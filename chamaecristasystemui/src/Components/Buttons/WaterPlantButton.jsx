@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/ViewCapturesButton.css';
 import Button from 'react-bootstrap/Button';
 
 function simulateNetworkRequest() {
   return new Promise((resolve) => setTimeout(resolve, 2000));
 }
 
-function ViewCapturesButton() {
+function WaterPlantButton(props) {
   const [isLoading, setLoading] = useState(false);
+  const bText = props.text;
 
   useEffect(() => {
     if (isLoading) {
@@ -21,15 +21,14 @@ function ViewCapturesButton() {
 
   return (
     <Button
-      className='but'
       variant="primary"
       size="lg"
       disabled={isLoading}
       onClick={!isLoading ? handleClick : null}
     >
-      {isLoading ? 'Loading…' : 'View Captures'}
+      {isLoading ? 'Loading…' : 'Water Plant'}
     </Button>
   );
 }
 
-export default ViewCapturesButton
+export default WaterPlantButton
