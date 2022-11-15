@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 
 function simulateNetworkRequest() {
-  return new Promise((resolve) => setTimeout(resolve, 2000));
+  return new Promise(
+    // API Calls 
+  );
 }
 
 function ExportAsCsvButton(props) {
   const [isLoading, setLoading] = useState(false);
-  const bText = props.text;
 
   useEffect(() => {
     if (isLoading) {

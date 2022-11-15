@@ -1,6 +1,12 @@
+/* .top-nav{
+    width: 205vh;
+}
+ */
+
 .nav-container{
     margin: 0;
 }
+
 .container{
     display: flex;
     align-items: baseline;
