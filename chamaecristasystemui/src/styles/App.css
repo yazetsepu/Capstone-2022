@@ -16,7 +16,9 @@
   justify-content: space-between;
 }
 .middle-container{
-  margin: 1rem;
+  margin-right: 1rem;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
 }
 
 .bottom-container{
@@ -24,6 +26,7 @@
   justify-content: space-between;
   margin-left: 1rem;
   margin-right: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .bottom-container-water{

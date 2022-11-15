@@ -20,7 +20,10 @@ async function simulateNetworkRequest() {
 function ChangeLightLevelButton(props) {
   const [isLoading, setLoading] = useState(false);
 
-  const [rvalue, setrValue] = useState(0);
+  const [rValue, setRValue] = useState(0);
+  const [gValue, setGValue] = useState(0);
+  const [bValue, setBValue] = useState(0);
+  const [wValue, setWValue] = useState(0);
 
   useEffect(() => {
     // if (isLoading) {
@@ -33,7 +36,7 @@ function ChangeLightLevelButton(props) {
   const handleClick = () => setLoading(true);
   const handleClose = () => setLoading(false)
 
-  const handleChange = (newVal) => setrValue(newVal)
+  const handleChange = (newVal) => setRValue(newVal)
 
   return (
     <div>
@@ -48,28 +51,33 @@ function ChangeLightLevelButton(props) {
       
       <Modal show={isLoading} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Change Light Output Colors</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="name@example.com"
-                autoFocus
-              />
-            </Form.Group>
-            <Form.Group
-              className="mb-3"
-              controlId="exampleForm.ControlTextarea1"
-            >
-              <Form.Label>Example textarea</Form.Label>
-              <Form.Control as="textarea" rows={3} />
-            </Form.Group>
+            <Form.Label>Red</Form.Label>
             <RangeSlider
-              value={rvalue}
-              onChange={changeEvent => setrValue(changeEvent.target.value)}
+              max={255}
+              value={rValue}
+              onChange={changeEvent => setRValue(changeEvent.target.value)}
+            />
+            <Form.Label>Green</Form.Label>
+            <RangeSlider
+              max={255}
+              value={gValue}
+              onChange={changeEvent => setGValue(changeEvent.target.value)}
+            />
+            <Form.Label>Blue</Form.Label>
+            <RangeSlider
+              max={255}
+              value={bValue}
+              onChange={changeEvent => setBValue(changeEvent.target.value)}
+            />
+            <Form.Label>White</Form.Label>
+            <RangeSlider
+              max={255}
+              value={wValue}
+              onChange={changeEvent => setWValue(changeEvent.target.value)}
             />
           </Form>
         </Modal.Body>
