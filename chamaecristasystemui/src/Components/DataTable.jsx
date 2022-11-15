@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/DataTable.css';
 import Table from 'react-bootstrap/Table';
-import { envData } from '../Util/dummyData'
 
 function BasicTable() {
 
@@ -37,8 +36,8 @@ function BasicTable() {
                 <tr key = {key}>
                     <td>{data.entry_Id}</td>
                     <td>{data.times_tamps}</td>
-                    <td>{data.classification_id == 0? "Open" :
-                         data.classification_id == 1? "Closed" :
+                    <td>{data.classification_id === 0? "Open" :
+                         data.classification_id === 1? "Closed" :
                          "Not Available"}</td>
                     <td>{data.water_level}</td>
                     <td>{data.temperature}</td>

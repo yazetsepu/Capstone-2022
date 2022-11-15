@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
-// import RangeSlider from 'react-bootstrap-range-slider';
+import RangeSlider from 'react-bootstrap-range-slider';
+import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 
 async function simulateNetworkRequest() {
   const requestOptions = {
@@ -66,10 +67,10 @@ function ChangeLightLevelButton(props) {
               <Form.Label>Example textarea</Form.Label>
               <Form.Control as="textarea" rows={3} />
             </Form.Group>
-            {/* <RangeSlider
+            <RangeSlider
               value={rvalue}
               onChange={changeEvent => setrValue(changeEvent.target.value)}
-            /> */}
+            />
           </Form>
         </Modal.Body>
         <Modal.Footer>
