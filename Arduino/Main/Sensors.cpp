@@ -41,6 +41,16 @@ void setupSensors(){
   //Set Light Sensor
   lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE);
   saveLog(00, "Setup Sensors", 0 , "");
+
+  //Set Reservoir Water Level Sensors
+  pinMode(ReservoirWaterLevel1, INPUT);
+  digitalWrite(ReservoirWaterLevel1, HIGH);
+  pinMode(ReservoirWaterLevel2, INPUT);
+  digitalWrite(ReservoirWaterLevel2, HIGH);
+  pinMode(ReservoirWaterLevel3, INPUT);
+  digitalWrite(ReservoirWaterLevel3, HIGH);
+  pinMode(ReservoirWaterLevel4, INPUT);
+  digitalWrite(ReservoirWaterLevel4, HIGH);
 }
 
 //Using BH1750
@@ -137,7 +147,7 @@ float measureMoisture(int sensor){
     cal_wet = wet0;
   } 
   else if (sensor == 1){
-    sensorPin = SoilMoisture0;
+    sensorPin = SoilMoisture1;
     cal_dry = dry1;
     cal_wet = wet1;
   } 
@@ -204,9 +214,45 @@ float measureContainerWaterLevel(){
   return (float)analogRead(ContainerWaterLevel);
 }
 
+
 //Reservoir Water Level Sensor
-float measureReservoirWaterLevel(){
-  return (float)analogRead(ReservoirWaterLevel);
+/*Measure all Reservoir Water Levels (HIGH or LOW)*/
+int measureReservoirWaterLevel(int sensor){
+  if(sensor == 1){
+    return (int)digitalRead(ReservoirWaterLevel1);
+  }
+  else if(sensor == 2){
+    return (int)digitalRead(ReservoirWaterLevel2);
+  }
+  else if(sensor == 3){
+    return (int)digitalRead(ReservoirWaterLevel3);
+  }
+  else if(sensor == 4){
+    return (int)digitalRead(ReservoirWaterLevel4);
+  }
+  else{
+    return -1;
+  }
+}
+
+/*Reservoir Water Level(VERY HIGH, HIGH, MEDIUM, LOW ,VERY LOW)*/
+/*Depends on the measurements obtained from the different reservoir water levels*/
+String getReservoirWaterLevel(){
+  if(measureReservoirWaterLevel(1) == HIGH){
+    Serial.println("VERY HIGH");
+  }
+  else if(measureReservoirWaterLevel(1) == LOW && measureReservoirWaterLevel(2) == HIGH){
+    Serial.println("HIGH");
+  }
+  else if(measureReservoirWaterLevel(2) == LOW && measureReservoirWaterLevel(3) == HIGH){
+    Serial.println("MEDIUM");
+  }
+  else if(measureReservoirWaterLevel(3) == LOW && measureReservoirWaterLevel(4) == HIGH){
+    Serial.println("LOW");
+  }
+  else{ //measureReservoirWaterLevel(4) == LOW
+    Serial.println("VERY LOW");
+  }
 }
 
 //NOT TESTED To increase accuracy it would be good to average multiple values taken in short term

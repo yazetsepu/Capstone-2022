@@ -5,7 +5,12 @@
 
 //Analog Pins
 #define ContainerWaterLevel 2     //Analog Container Water Level Sensor
-#define ReservoirWaterLevel 3     //Analog Reservoir Water Level Sensor
+#define ReservoirWaterLevel1 22     //Digital Reservoir Water Level Sensor 1
+#define ReservoirWaterLevel2 23     //Digital Reservoir Water Level Sensor 2
+#define ReservoirWaterLevel3 24     //Digital Reservoir Water Level Sensor 3
+#define ReservoirWaterLevel4 25     //Digital Reservoir Water Level Sensor 4
+
+
 #define SoilMoisture0 8  //Soil Moisture Sensor 0
 #define SoilMoisture1 9  //Soil Moisture Sensor 1
 #define SoilMoisture2 10 //Soil Moisture Sensor 2
@@ -34,6 +39,7 @@ float measureMoisture(int sensor);
 void calibrateMoisture(int dry, int wet, int sensor);
 //Analog Water Level
 float measureContainerWaterLevel();
-float measureReservoirWaterLevel();
+int measureReservoirWaterLevel(int sensor);
+String getReservoirWaterLevel();
 
 #endif

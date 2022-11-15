@@ -4,8 +4,7 @@
 
 //Digital Pins
 #define WaterPump 31
-#define SolenoidValve 32 //Check
-
+//#define SolenoidValve 32 //Check
 void setupWaterSystem();
 void waterPlant();
 void fillReservoir();

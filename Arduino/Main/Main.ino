@@ -102,7 +102,7 @@ void loop() {
   doc["Soil_Moisture_0"] = measureMoisture(0);
   doc["Soil_Moisture_1"] = measureMoisture(1);
   doc["Container_Water_Level"] = measureContainerWaterLevel();
-  doc["Reservoir_Water_Level"] = measureReservoirWaterLevel();
+  doc["Reservoir_Water_Level"] = getReservoirWaterLevel(); //String VERY HIGH, HIGH, MEDIUM, LOW, VERY LOW
   doc["Time"] = timeNowString();
   serializeJson(doc, Serial); 
   Serial.write("\n"); //This is to mark end of data (expected on GUI side)
@@ -115,7 +115,7 @@ void loop() {
     //Measure All data and save it in array as String
     String data[ColumnNumber] = {timeNowString(), (String)measureLight(), (String)measureTemperature(), (String)measureHumidity(), (String)measureMoisture(0), (String)measureMoisture(1),
       (String)measureMoisture(2), (String)measureMoisture(3), (String)measureMoisture(4), (String)measureMoisture(5), (String)measureMoisture(6), (String)measureMoisture(7),
-      (String)measureContainerWaterLevel(), (String)measureReservoirWaterLevel()};
+      (String)measureContainerWaterLevel(), (String)getReservoirWaterLevel()};
     //Save Data in CSV File
     saveDataToSD(data, ColumnNumber);
     //Reset Timer
@@ -149,12 +149,9 @@ void loop() {
       waterPlant();
   }
 
-  //Reservoir Check
-  float reservoirWaterLevel = measureReservoirWaterLevel();
-  if(reservoirWaterLevel <= 0){
-    fillReservoir();
-  }
-  
+  //Reservoir Check 
+  getReservoirWaterLevel(); //Not necessary?
+
   checkSchedule();
 
   delay(delayMS); //Loop delay
@@ -166,61 +163,61 @@ void runCommand(String command){
   Serial.println("Command received: " + command+"\n");
   saveLog(16, "Command Received", 0, command);
   if (command == "LED ON"){
-      dimBlue(250);
-      Serial.write("On");
+    dimBlue(250);
+    Serial.write("On");
+  }
+  else if (command == "LED OFF"){
+    dimBlue(0);
+    Serial.write("Off");
+  }
+  else if (command == "Humidity"){
+    Serial.print(measureHumidity());
+  }
+  else if (command == "Light"){
+    Serial.print(measureLight());
+  }
+  else if (command == "Temperature"){
+    Serial.print(measureTemperature());
+  }
+  else if(command.indexOf("DIM") >= 0){
+    String dimValue = command.substring(command.indexOf("(")+1, command.indexOf(")"));
+    dimBlue(dimValue.toInt());
+  }
+  else if(command == "Water Plant"){
+    waterPlant();
+  }
+  else if(command.indexOf("Calibrate Moisture") >= 0){
+    calibrateMoisture(500,200,2); //for example
+  }
+  else if(command == "Get Data File"){
+    sendDataFile();
+  }
+  else if(command == "SD info"){
+    infoSD();
+  }
+  else if(command == "Last Picture"){
+    sendLastPicture();
+  }
+  else if(command.indexOf("Add time Schedule") >= 0){
+    addSchedule(17, 19, 0, 0, 100, 250);
+  }
+  else if(command.indexOf("Schedule Dim") >= 0){
+    StaticJsonDocument<200> doc;
+    DeserializationError error = deserializeJson(doc, command.substring(12));
+    if (error) {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+      return;
     }
-    else if (command == "LED OFF"){
-      dimBlue(0);
-      Serial.write("Off");
-    }
-    else if (command == "Humidity"){
-      Serial.print(measureHumidity());
-    }
-    else if (command == "Light"){
-      Serial.print(measureLight());
-    }
-    else if (command == "Temperature"){
-      Serial.print(measureTemperature());
-    }
-    else if(command.indexOf("DIM") >= 0){
-      String dimValue = command.substring(command.indexOf("(")+1, command.indexOf(")"));
-      dimBlue(dimValue.toInt());
-    }
-    else if(command == "Water Plant"){
-      waterPlant();
-    }
-    else if(command == "Calibrate Moisture"){
-      calibrateMoisture(500,200,2); //for example
-    }
-    else if(command == "Get Data File"){
-      sendDataFile();
-    }
-    else if(command == "SD info"){
-      infoSD();
-    }
-    else if(command == "Last Picture"){
-      sendLastPicture();
-    }
-    else if(command.indexOf("Add time Schedule") >= 0){
-      addSchedule(17, 19, 0, 0, 100, 250);
-    }
-    else if(command.indexOf("Schedule Dim") >= 0){
-      StaticJsonDocument<200> doc;
-      DeserializationError error = deserializeJson(doc, command.substring(12));
-      if (error) {
-        Serial.print(F("deserializeJson() failed: "));
-        Serial.println(error.f_str());
-        return;
-      }
-      addSchedule((int)doc["hour"], (int)doc["minute"], (int)doc["W"], (int)doc["R"], (int)doc["G"], (int)doc["B"]);
-    }
-    else if(command == "Light Schedule"){
-      getScheduleSerial();
-    }
-    else {//INVALID Command
-      Serial.println("Invalid Command");
-      saveLog(19, "Invalid Command", 2, command);
-    } 
+    addSchedule((int)doc["hour"], (int)doc["minute"], (int)doc["W"], (int)doc["R"], (int)doc["G"], (int)doc["B"]);
+  }
+  else if(command == "Light Schedule"){
+    getScheduleSerial();
+  }
+  else {//INVALID Command
+    Serial.println("Invalid Command");
+    saveLog(19, "Invalid Command", 2, command);
+  } 
 }
 
 

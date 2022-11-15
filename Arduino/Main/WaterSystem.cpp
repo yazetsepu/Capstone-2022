@@ -52,9 +52,10 @@ void waterPlant(){
   Serial.println("Water System has been successful");
 }
 
+/*ELIMINATE?*/
 /* Fill Reservoir */
 /* Adding the saveLogs is Missing */
-void fillReservoir(){
+/*void fillReservoir(){
   //Safety Check Variables
   long int startWaterTime = millis();
   float startWaterLevel = measureReservoirWaterLevel();
@@ -93,7 +94,7 @@ void fillReservoir(){
   //digitalWrite(LED_BUILTIN, LOW);
   digitalWrite(SolenoidValve, LOW);
   Serial.println("Reservoir Filling has been successful");
-}
+}*/
 
 
 
