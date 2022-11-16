@@ -23,7 +23,8 @@ function ChangeLightLevelButton(props) {
   const [rValue, setRValue] = useState(0);
   const [gValue, setGValue] = useState(0);
   const [bValue, setBValue] = useState(0);
-  const [wValue, setWValue] = useState(0);
+  const [nWValue, setNWValue] = useState(0);
+  const [wWValue, setWWValue] = useState(0);
 
   useEffect(() => {
     // if (isLoading) {
@@ -73,11 +74,17 @@ function ChangeLightLevelButton(props) {
               value={bValue}
               onChange={changeEvent => setBValue(changeEvent.target.value)}
             />
-            <Form.Label>White</Form.Label>
+            <Form.Label>Natural White</Form.Label>
             <RangeSlider
               max={255}
-              value={wValue}
-              onChange={changeEvent => setWValue(changeEvent.target.value)}
+              value={nWValue}
+              onChange={changeEvent => setNWValue(changeEvent.target.value)}
+            />
+            <Form.Label>Warm White</Form.Label>
+            <RangeSlider
+              max={255}
+              value={wWValue}
+              onChange={changeEvent => setWWValue(changeEvent.target.value)}
             />
           </Form>
         </Modal.Body>
