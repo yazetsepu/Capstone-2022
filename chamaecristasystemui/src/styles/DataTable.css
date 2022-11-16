@@ -1,3 +1,8 @@
 .table{
     margin: 0;
 }
+
+.paginator{
+    display: flex;
+    justify-content: center;
+}

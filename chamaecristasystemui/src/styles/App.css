@@ -63,6 +63,7 @@
     margin-right: 1rem;
     width: 21rem;
     justify-content: space-between;
+    margin-bottom: 1rem;
   }
 
   .bottom-container-water{
@@ -102,10 +103,6 @@
     text-align: center;
   }
 
-  .middle-container{
-    margin-right: 1rem;
-  }
-
   .top-container{
     display: flex;
     flex-direction: column;
@@ -113,6 +110,11 @@
     justify-content: space-between;
     margin-top: 1rem;
     margin-left: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .middle-container{
+    margin-right: 1rem;
   }
 
   .top-container-btns{

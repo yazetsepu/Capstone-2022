@@ -9,10 +9,12 @@ function BasicTable() {
     const [envData, setEnvData] = useState([])
     //to store the first 12-15 elements returned from fetch and stored in envData
     //gets replaced with a call from a button by the next 12-15
-    const [limEnvData, setLimEnvData] = useState([])
-    const [currNum, setCurrNum] = useState(0)
-    const [isActive, setIsActive] = useState(false);
     const dataPerPage = 2;
+    const [limEnvData, setLimEnvData] = useState([])
+    const [currNum, setCurrNum] = useState(dataPerPage)
+    const [isNextActive, setIsNextActive] = useState(false);
+    const [isPrevActive, setIsPrevActive] = useState(true);
+    
     
     const fetchData = async () => {
         const response = await fetch("https://cssrumapi.azurewebsites.net/environmentaldata/classid")
@@ -20,7 +22,7 @@ function BasicTable() {
         setEnvData(data)
         if(data.length <= dataPerPage){
             setLimEnvData(data.slice(0)) 
-            setIsActive(true) 
+            setIsNextActive(true) 
         }
         else{
             setLimEnvData(data.slice(0, dataPerPage));
@@ -33,29 +35,50 @@ function BasicTable() {
 
       const showNextData = () => {
         if(limEnvData.length <= dataPerPage-1 ){
-            console.log("Finished 1 ")
-            setIsActive(true)
+            setIsNextActive(true)
             return null;
         }
         setCurrNum(currNum + limEnvData.length)
-        envData.slice(currNum, envData.length).length > dataPerPage? setLimEnvData(envData.slice(currNum, currNum+dataPerPage)) : 
-        envData.slice(currNum, envData.length).length <=dataPerPage && envData.slice(currNum, envData.length).length > 0? setLimEnvData(envData.slice(currNum)) :
-        setIsActive(true);        
+
+        if(envData.slice(currNum, envData.length).length > dataPerPage){
+            setLimEnvData(envData.slice(currNum, currNum+dataPerPage));
+            setIsPrevActive(false);
+        }
+        else if(envData.slice(currNum, envData.length).length <=dataPerPage && envData.slice(currNum, envData.length).length > 0){
+            setLimEnvData(envData.slice(currNum));
+            setIsNextActive(true);
+            // setCurrNum(currNum - dataPerPage)
+        }
+        else{
+            setIsNextActive(true);
+        }      
       }
 
       const showPrevData = () => {
-        if(limEnvData.length <= dataPerPage-1 ){
-            console.log("Finished 1 ")
-            setIsActive(true)
+        if(currNum <= 0){
+            setIsPrevActive(true)
             return null;
         }
+        
         setCurrNum(currNum - limEnvData.length)
-        envData.slice(currNum, envData.length).length > dataPerPage? setLimEnvData(envData.slice(currNum, currNum+dataPerPage)) : 
-        envData.slice(currNum, envData.length).length <=dataPerPage && envData.slice(currNum, envData.length).length > 0? setLimEnvData(envData.slice(currNum)) :
-        setIsActive(true);        
+        
+        if(envData.slice(currNum-limEnvData.length, envData.length).length >= dataPerPage){
+            setLimEnvData(envData.slice(currNum-limEnvData.length, currNum));
+            setIsNextActive(false);
+        }
+        else if (currNum <= dataPerPage){
+            setLimEnvData(envData.slice(currNum-limEnvData.length, currNum));
+            setIsPrevActive(true);
+            // setCurrNum(currNum + limEnvData.length)
+        }
+        else {
+            setIsPrevActive(true);
+        }
+                   
       }
 
-      const handleClick = () => showNextData();
+      const handleNextClick = () => showNextData();
+      const handlePrevClick = () => showPrevData();
 
     return (
         <div>
@@ -96,20 +119,22 @@ function BasicTable() {
                     ))}
                 </tbody>
             </Table>
-            <Pagination>
-                <Pagination.First />
-                <Pagination.Prev />
-                <Pagination.Item>{1}</Pagination.Item>
+            <div className='paginator'>
+                <Pagination>
+                    <Pagination.Prev 
+                        onClick={handlePrevClick}
+                        disabled={isPrevActive}/>
+                    <Pagination.Item>{1}</Pagination.Item>
 
-                <Pagination.Ellipsis />
+                    <Pagination.Ellipsis />
 
-                <Pagination.Item>{envData.length/dataPerPage}</Pagination.Item>
-                <Pagination.Next 
-                    onClick={handleClick}
-                    disabled={isActive}
-                />
-                <Pagination.Last />
-            </Pagination>
+                    <Pagination.Item>{envData.length/dataPerPage}</Pagination.Item>
+                    <Pagination.Next 
+                        onClick={handleNextClick}
+                        disabled={isNextActive}
+                    />
+                </Pagination>
+            </div>
         </div>
     );
 }
