@@ -38,6 +38,10 @@
   display: flex;
 }
 
+.bottom-container-moisture{
+  margin-left: 1rem;
+}
+
 .bottom-container-left{
   display: flex;
 }

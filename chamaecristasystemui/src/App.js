@@ -10,6 +10,7 @@ import WaterPlantButton from './Components/Buttons/WaterPlantButton';
 import ChangeLightLevelButton from './Components/Buttons/ChangeLightLevelButton';
 import ExportAsCsvButton from './Components/Buttons/ExportAsCsvButton';
 import ViewAsGraphButton from './Components/Buttons/ViewAsGraphButton';
+import CalibrateMoistureButton from './Components/Buttons/CalibrateMoistureButton';
 
 export default class App extends Component {
     static displayName = App.name;
@@ -40,6 +41,9 @@ export default class App extends Component {
                         </div>
                         <div className='bottom-container-light'>
                             <ChangeLightLevelButton/>
+                        </div>
+                        <div className='bottom-container-moisture'>
+                            <CalibrateMoistureButton />
                         </div>
                     </div>
                     <div className='bottom-container-right'>

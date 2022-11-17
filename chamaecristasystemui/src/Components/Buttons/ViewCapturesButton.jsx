@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 
 function simulateNetworkRequest() {
-  return new Promise((resolve) => setTimeout(resolve, 2000));
+  this.props.history.push("/c");
 }
 
 function ViewCapturesButton() {
+  const navigate = useNavigate();
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -24,7 +26,7 @@ function ViewCapturesButton() {
       variant="primary"
       size="lg"
       disabled={isLoading}
-      onClick={!isLoading ? handleClick : null}
+      onClick={() => navigate("/c")}
     >
       {isLoading ? 'Loading…' : 'View Captures'}
     </Button>
