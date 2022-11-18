@@ -101,6 +101,12 @@ void loop() {
   doc["Humidity"] = measureHumidity();
   doc["Soil_Moisture_0"] = measureMoisture(0);
   doc["Soil_Moisture_1"] = measureMoisture(1);
+  doc["Soil_Moisture_2"] = measureMoisture(2);
+  doc["Soil_Moisture_3"] = measureMoisture(3);
+  doc["Soil_Moisture_4"] = measureMoisture(4);
+  doc["Soil_Moisture_5"] = measureMoisture(5);
+  doc["Soil_Moisture_6"] = measureMoisture(6);
+  doc["Soil_Moisture_7"] = measureMoisture(7);
   doc["Container_Water_Level"] = measureContainerWaterLevel();
   doc["Reservoir_Water_Level"] = getReservoirWaterLevel(); //String VERY HIGH, HIGH, MEDIUM, LOW, VERY LOW
   doc["Time"] = timeNowString();
@@ -111,11 +117,11 @@ void loop() {
   if((millis()-startDataTime)>= 10000){
     Serial.println("Data Collection Started:");
     digitalWrite(LED_BUILTIN, HIGH); //LED for Visual TEST
-    int ColumnNumber = 13; //Number of parameter
+    int ColumnNumber = 14; //Number of parameter
     //Measure All data and save it in array as String
     String data[ColumnNumber] = {timeNowString(), (String)measureLight(), (String)measureTemperature(), (String)measureHumidity(), (String)measureMoisture(0), (String)measureMoisture(1),
       (String)measureMoisture(2), (String)measureMoisture(3), (String)measureMoisture(4), (String)measureMoisture(5), (String)measureMoisture(6), (String)measureMoisture(7),
-      (String)measureContainerWaterLevel(), (String)getReservoirWaterLevel()};
+      (String)measureContainerWaterLevel(), (String)getReservoirWaterLevel()}; 
     //Save Data in CSV File
     saveDataToSD(data, ColumnNumber);
     //Reset Timer
@@ -140,7 +146,7 @@ void loop() {
 
   //Water Check
   float moistureSum = measureMoisture(0) + measureMoisture(1) + measureMoisture(2) + measureMoisture(3) + 
-   measureMoisture(4) + measureMoisture(5) + measureMoisture(6) + measureMoisture(7);
+  measureMoisture(4) + measureMoisture(5) + measureMoisture(6) + measureMoisture(7);
   
   float moistureAverage = moistureSum / 8.0;
 
@@ -186,8 +192,19 @@ void runCommand(String command){
   else if(command == "Water Plant"){
     waterPlant();
   }
-  else if(command.indexOf("Calibrate Moisture") >= 0){
-    calibrateMoisture(500,200,2); //for example
+  else if(command.indexOf("Calibrate Moisture") >= 0){ //Ex Calibrate Moisture(550[209]1) 
+    int index0 = command.indexOf("("); 
+    int index1 = command.indexOf("["); 
+    int index2 = command.indexOf("]"); 
+    int index3 = command.indexOf(")"); 
+    int dryval = command.substring(index0 + 1, index1).toInt();
+    Serial.println(dryval);
+    int wetval = command.substring(index1 + 1, index2).toInt();
+    Serial.println(wetval);
+    int soilMoisture = command.substring(index2 + 1, index3).toInt();
+    Serial.println(soilMoisture);
+    calibrateMoisture(dryval,wetval,soilMoisture);
+    //calibrateMoisture(500,200,2); //for example
   }
   else if(command == "Get Data File"){
     sendDataFile();

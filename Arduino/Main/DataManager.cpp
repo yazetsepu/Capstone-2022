@@ -123,7 +123,7 @@ void saveLog(int code, String name, int severity, String message){
   if (code<10) source = "Setup";
   else if (code<20) source = "Data";
   else if (code<30) source = "Water System";
-  else if (code<30) source = "Light System";
+  else if (code<40) source = "Light System";
 
   // if the file opened okay, write to it:
   if (myFile) {

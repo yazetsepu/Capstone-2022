@@ -40,17 +40,17 @@ void setupSensors(){
   dht.humidity().getSensor(&sensor);
   //Set Light Sensor
   lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE);
+  //Set Reservoir Water Level Sensors
+  pinMode(ReservoirFloatSensor1, INPUT);
+  digitalWrite(ReservoirFloatSensor1, HIGH);
+  pinMode(ReservoirFloatSensor2, INPUT);
+  digitalWrite(ReservoirFloatSensor2, HIGH);
+  pinMode(ReservoirFloatSensor3, INPUT);
+  digitalWrite(ReservoirFloatSensor3, HIGH);
+  pinMode(ReservoirFloatSensor4, INPUT);
+  digitalWrite(ReservoirFloatSensor4, HIGH);
   saveLog(00, "Setup Sensors", 0 , "");
 
-  //Set Reservoir Water Level Sensors
-  pinMode(ReservoirWaterLevel1, INPUT);
-  digitalWrite(ReservoirWaterLevel1, HIGH);
-  pinMode(ReservoirWaterLevel2, INPUT);
-  digitalWrite(ReservoirWaterLevel2, HIGH);
-  pinMode(ReservoirWaterLevel3, INPUT);
-  digitalWrite(ReservoirWaterLevel3, HIGH);
-  pinMode(ReservoirWaterLevel4, INPUT);
-  digitalWrite(ReservoirWaterLevel4, HIGH);
 }
 
 //Using BH1750
@@ -138,9 +138,11 @@ void calibrateMoisture(int dry, int wet, int sensor){
 
 //Measure Soil Moisture (0,1,2,3,4,5,6,7) returns -1 if not valid input
 float measureMoisture(int sensor){
+
   int sensorPin;
   int cal_dry;
   int cal_wet;
+
   if (sensor == 0){
     sensorPin = SoilMoisture0;
     cal_dry = dry0;
@@ -215,20 +217,20 @@ float measureContainerWaterLevel(){
 }
 
 
-//Reservoir Water Level Sensor
-/*Measure all Reservoir Water Levels (HIGH or LOW)*/
-int measureReservoirWaterLevel(int sensor){
+//Reservoir Float Switch Sensor
+/*Measure all Reservoir Float Switch Sensors (HIGH or LOW)*/
+int measureReservoirFloatSensor(int sensor){
   if(sensor == 1){
-    return (int)digitalRead(ReservoirWaterLevel1);
+    return (int)digitalRead(ReservoirFloatSensor1);
   }
   else if(sensor == 2){
-    return (int)digitalRead(ReservoirWaterLevel2);
+    return (int)digitalRead(ReservoirFloatSensor2);
   }
   else if(sensor == 3){
-    return (int)digitalRead(ReservoirWaterLevel3);
+    return (int)digitalRead(ReservoirFloatSensor3);
   }
   else if(sensor == 4){
-    return (int)digitalRead(ReservoirWaterLevel4);
+    return (int)digitalRead(ReservoirFloatSensor4);
   }
   else{
     return -1;
@@ -236,22 +238,40 @@ int measureReservoirWaterLevel(int sensor){
 }
 
 /*Reservoir Water Level(VERY HIGH, HIGH, MEDIUM, LOW ,VERY LOW)*/
-/*Depends on the measurements obtained from the different reservoir water levels*/
+/*Depends on the measurements obtained from the different reservoir float sensors*/
 String getReservoirWaterLevel(){
-  if(measureReservoirWaterLevel(1) == HIGH){
+  int ReservoirFloatSensor_1 = measureReservoirFloatSensor(1);
+  int ReservoirFloatSensor_2 = measureReservoirFloatSensor(2);
+  int ReservoirFloatSensor_3 = measureReservoirFloatSensor(3);
+  int ReservoirFloatSensor_4 = measureReservoirFloatSensor(4);
+
+  if(ReservoirFloatSensor_1 == HIGH && ReservoirFloatSensor_2 == HIGH && ReservoirFloatSensor_3 == HIGH && ReservoirFloatSensor_4 == HIGH ){
     Serial.println("VERY HIGH");
+    return "VERY HIGH";
   }
-  else if(measureReservoirWaterLevel(1) == LOW && measureReservoirWaterLevel(2) == HIGH){
+  else if(ReservoirFloatSensor_1 == LOW && ReservoirFloatSensor_2 == HIGH && ReservoirFloatSensor_3 == HIGH && ReservoirFloatSensor_4 == HIGH){
     Serial.println("HIGH");
+    return "HIGH";
   }
-  else if(measureReservoirWaterLevel(2) == LOW && measureReservoirWaterLevel(3) == HIGH){
+  else if(ReservoirFloatSensor_1 == LOW && ReservoirFloatSensor_2 == LOW && ReservoirFloatSensor_3 == HIGH && ReservoirFloatSensor_4 == HIGH){
     Serial.println("MEDIUM");
+    return "MEDIUM";
   }
-  else if(measureReservoirWaterLevel(3) == LOW && measureReservoirWaterLevel(4) == HIGH){
+  else if(ReservoirFloatSensor_1 == LOW && ReservoirFloatSensor_2 == LOW && ReservoirFloatSensor_3 == LOW && ReservoirFloatSensor_4 == HIGH){
     Serial.println("LOW");
+    return "LOW";
   }
-  else{ //measureReservoirWaterLevel(4) == LOW
+  else if(ReservoirFloatSensor_1 == LOW && ReservoirFloatSensor_2 == LOW && ReservoirFloatSensor_3 == LOW && ReservoirFloatSensor_4 == LOW){
     Serial.println("VERY LOW");
+    saveLog(25, "Very Low Reservoir Water Level", 4, "Very Low water level in reservoir");
+    return "VERY LOW";
+  }
+  else{ 
+    Serial.println("ERROR"); //add savelog that shows all measureReservoirWaterLevel() so they can spot the float switch that is giving problems.
+    saveLog(28, "Reservoir Water Level Error", 4, (String)("Float sensors conflicting values: ") + "Reservoir Float Sensor 1: " + (String)ReservoirFloatSensor_1 + " Reservoir Float Sensor 2: " 
+    + (String)ReservoirFloatSensor_2 + " Reservoir Float Sensor 3: " + (String)ReservoirFloatSensor_3 + " Reservoir Float Sensor 4: " + (String)ReservoirFloatSensor_4);
+    return "ERROR";
+    
   }
 }
 
