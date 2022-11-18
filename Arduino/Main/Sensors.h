@@ -5,10 +5,10 @@
 
 //Analog Pins
 #define ContainerWaterLevel 2     //Analog Container Water Level Sensor
-#define ReservoirFloatSensor1 22     //Digital Reservoir Water Level Sensor 1
-#define ReservoirFloatSensor2 23     //Digital Reservoir Water Level Sensor 2
-#define ReservoirFloatSensor3 24     //Digital Reservoir Water Level Sensor 3
-#define ReservoirFloatSensor4 25     //Digital Reservoir Water Level Sensor 4
+#define ReservoirFloatSensor1 22     //Digital Reservoir Float Switch Sensor 1
+#define ReservoirFloatSensor2 23     //Digital Reservoir Float Switch Sensor 2
+#define ReservoirFloatSensor3 24     //Digital Reservoir Float Switch Sensor 3
+#define ReservoirFloatSensor4 25     //Digital Reservoir Float Switch Sensor 4
 
 
 #define SoilMoisture0 8  //Soil Moisture Sensor 0

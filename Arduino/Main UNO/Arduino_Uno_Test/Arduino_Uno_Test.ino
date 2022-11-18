@@ -36,7 +36,7 @@ void setup() {
   //Set Water Pump Pin
   pinMode(WaterPump, OUTPUT);
 
-  //Set Reservoir Water Level Sensors
+  //Set Reservoir Float Switch Sensors
   pinMode(ReservoirFloatSensor1, INPUT);
   digitalWrite(ReservoirFloatSensor1, HIGH);
   pinMode(ReservoirFloatSensor2, INPUT);
@@ -48,18 +48,18 @@ void setup() {
 }
 
 void loop() {
-   //Perform Commands sent by PC connection
+  //Perform Commands sent by PC connection
   if(Serial.available()){
     String data = Serial.readString();
     runCommand(data);
   }
 
   /*Temperature and Humidity*/
- // Serial.println("Temperature: "+(String)measureTemperature());
-  //Serial.println("Humidity: "+(String)measureHumidity());
+  Serial.println("Temperature: "+(String)measureTemperature());
+  Serial.println("Humidity: "+(String)measureHumidity());
 
   /*Reservoir Water Level*/
- // getReservoirWaterLevel();
+  getReservoirWaterLevel();
 
   /*Tests*/
   /*Serial.println(digitalRead(ReservoirWaterLevel1));
@@ -95,10 +95,10 @@ void loop() {
   /*Water Check*/
   float moisture = measureMoisture(1);
   Serial.println(measureContainerWaterLevel());
-  /*if(moisture < 50){
+  if(moisture < 50){
     //saveLog(20, "Watering Start", 0, "Moisture Level: "+(String)moisture);
     waterPlant();
-  }*/
+  }
 
   delay(delayMS);
 }
@@ -109,9 +109,50 @@ void runCommand(String command){
   else if(command.indexOf("Water Off") >= 0) {Serial.println("Off"); digitalWrite(WaterPump, LOW);}
   else if(command == "Water Plant"){
     waterPlant();
+  }
+  else if(command.indexOf("DIM") >= 0){ // DIM {250},{20},{10},{0} DIM {R},{G},{B},{W}
+    int index0 = command.indexOf("{");
+    int index1 = command.indexOf("}");
+    int index2 = command.indexOf("{", index1 + 1);
+    int index3 = command.indexOf("}", index1 + 1);
+    int index4 = command.indexOf("{", index3 + 1);
+    int index5 = command.indexOf("}", index3 + 1);
+    int index6 = command.indexOf("{", index5 + 1);
+    int index7 = command.indexOf("}", index5 + 1);
+    
+    int dimValue1 = command.substring(index0 + 1, index1).toInt();
+    Serial.println(dimValue1);
+    int dimValue2 = command.substring(index2 + 1, index3).toInt();
+    Serial.println(dimValue2);
+    int dimValue3 = command.substring(index4 + 1, index5).toInt();
+    Serial.println(dimValue3);
+    int dimValue4 = command.substring(index6 + 1, index7).toInt();
+    Serial.println(dimValue4);
+
+    /*dimRed(dimValue1);
+    dimGreen(dimValue2)
+    dimBlue(dimValue3);
+    dimWhite(dimValue4);*/
+
+    /*String dimValue = command.substring(command.indexOf("(")+1, command.indexOf(")"));
+    dimBlue(dimValue.toInt());*/
   } 
-  else if(command.indexOf("Calibrate Moisture") >= 0){ //Ex Calibrate Moisture(550[209]1)
-    int index0 = command.indexOf("("); 
+  else if(command.indexOf("Calibrate Moisture") >= 0){ //Ex Calibrate Moisture {dry},{wet},{sensor}  Calibrate Moisture {550},{209},{1}
+    int index0 = command.indexOf("{");
+    int index1 = command.indexOf("}");
+    int index2 = command.indexOf("{", index1 + 1);
+    int index3 = command.indexOf("}", index1 + 1);
+    int index4 = command.indexOf("{", index3 + 1);
+    int index5 = command.indexOf("}", index3 + 1);
+    int dryval = command.substring(index0 + 1, index1).toInt();
+    Serial.println(dryval);
+    int wetval = command.substring(index2 + 1, index3).toInt();
+    Serial.println(wetval);
+    int soilMoisture = command.substring(index4 + 1, index5).toInt();
+    Serial.println(soilMoisture);
+    calibrateMoisture(dryval,wetval,soilMoisture);
+
+    /*int index0 = command.indexOf("("); 
     int index1 = command.indexOf("["); 
     int index2 = command.indexOf("]"); 
     int index3 = command.indexOf(")"); 
@@ -121,7 +162,7 @@ void runCommand(String command){
     Serial.println(wetval);
     int soilMoisture = command.substring(index2 + 1, index3).toInt();
     Serial.println(soilMoisture);
-    calibrateMoisture(dryval,wetval,soilMoisture);
+    calibrateMoisture(dryval,wetval,soilMoisture);*/
   }
   else {//INVALID Command
       Serial.println("Invalid Command");
@@ -261,7 +302,7 @@ int measureReservoirFloatSensor(int sensor){
 }
 
 /*Reservoir Water Level(VERY HIGH, HIGH, MEDIUM, LOW ,VERY LOW)*/
-/*Depends on the measurements obtained from the different reservoir water levels*/
+/*Depends on the measurements obtained from the different reservoir float switch sensors*/
 String getReservoirWaterLevel(){
   int ReservoirFloatSensor_1 = measureReservoirFloatSensor(1);
   int ReservoirFloatSensor_2 = measureReservoirFloatSensor(2);
@@ -308,11 +349,6 @@ float measureMoisture(int sensor){
     sensorPin = SoilMoisture1; //Pin the sensor is located
     cal_dry = dry1;
     cal_wet = wet1;
-    /*float val = (float)analogRead(sensorPin); //Sense analog read
-    val = 100 - map(val, 200, 583, 0, 100); //Calibration (250(dry)-583(wet))
-    val = constrain(val, 0 , 100); //Contrain the values if needed
-    Serial.println(val);
-    return val;*/
   }
   else return -1; //Invalid Sensor Option
   float val = (float)analogRead(sensorPin); //Sense analog read
@@ -321,13 +357,6 @@ float measureMoisture(int sensor){
   val = constrain(val, 0 , 100); //Contrain the values if needed
   Serial.println(val);
   return val;
- /* else if(sensor == 2) (1-(float)analogRead(SoilMoisture1)/1023)*100; //TEST
-  else if(sensor == 3) return analogRead(SoilMoisture1); // TEST soil 1 analog purely
-  else if(sensor == 4) return analogRead(SoilMoisture4); // Uncalibrated
-  else if(sensor == 5) return analogRead(SoilMoisture5); // Uncalibrated
-  else if(sensor == 6) return analogRead(SoilMoisture6); // Uncalibrated
-  else if(sensor == 7) return analogRead(SoilMoisture7); // Uncalibrated */
-  //return (1-(float)analogRead(sensorPin)/1023)*100; //Equation of ADC Convertion in %
 }
 
 float measureMoisture(){

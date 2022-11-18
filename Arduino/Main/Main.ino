@@ -169,11 +169,17 @@ void runCommand(String command){
   Serial.println("Command received: " + command+"\n");
   saveLog(16, "Command Received", 0, command);
   if (command == "LED ON"){
+    dimRed(250);
+    dimGreen(250);
     dimBlue(250);
+    dimWhite(250);
     Serial.write("On");
   }
   else if (command == "LED OFF"){
+    dimRed(0);
+    dimGreen(0);
     dimBlue(0);
+    dimWhite(0);
     Serial.write("Off");
   }
   else if (command == "Humidity"){
@@ -185,26 +191,46 @@ void runCommand(String command){
   else if (command == "Temperature"){
     Serial.print(measureTemperature());
   }
-  else if(command.indexOf("DIM") >= 0){
-    String dimValue = command.substring(command.indexOf("(")+1, command.indexOf(")"));
-    dimBlue(dimValue.toInt());
+  else if(command.indexOf("LED DIM") >= 0){ //Ex. DIM {R},{G},{B},{W}  DIM {250},{20},{10},{0} 
+    int index0 = command.indexOf("{");
+    int index1 = command.indexOf("}");
+    int index2 = command.indexOf("{", index1 + 1);
+    int index3 = command.indexOf("}", index1 + 1);
+    int index4 = command.indexOf("{", index3 + 1);
+    int index5 = command.indexOf("}", index3 + 1);
+    int index6 = command.indexOf("{", index5 + 1);
+    int index7 = command.indexOf("}", index5 + 1);
+    
+    int dimValue1 = command.substring(index0 + 1, index1).toInt();
+    int dimValue2 = command.substring(index2 + 1, index3).toInt();
+    int dimValue3 = command.substring(index4 + 1, index5).toInt();
+    int dimValue4 = command.substring(index6 + 1, index7).toInt();
+
+    dimRed(dimValue1);
+    dimGreen(dimValue2);
+    dimBlue(dimValue3);
+    dimWhite(dimValue4);
+    
+    /*String dimValue = command.substring(command.indexOf("(")+1, command.indexOf(")"));
+    dimBlue(dimValue.toInt());*/
   }
   else if(command == "Water Plant"){
     waterPlant();
   }
-  else if(command.indexOf("Calibrate Moisture") >= 0){ //Ex Calibrate Moisture(550[209]1) 
-    int index0 = command.indexOf("("); 
-    int index1 = command.indexOf("["); 
-    int index2 = command.indexOf("]"); 
-    int index3 = command.indexOf(")"); 
+  else if(command.indexOf("Calibrate Moisture") >= 0){ //Ex Calibrate Moisture {dry},{wet},{sensor}  Calibrate Moisture {550},{209},{1} 
+    int index0 = command.indexOf("{");
+    int index1 = command.indexOf("}");
+    int index2 = command.indexOf("{", index1 + 1);
+    int index3 = command.indexOf("}", index1 + 1);
+    int index4 = command.indexOf("{", index3 + 1);
+    int index5 = command.indexOf("}", index3 + 1);
     int dryval = command.substring(index0 + 1, index1).toInt();
     Serial.println(dryval);
-    int wetval = command.substring(index1 + 1, index2).toInt();
+    int wetval = command.substring(index2 + 1, index3).toInt();
     Serial.println(wetval);
-    int soilMoisture = command.substring(index2 + 1, index3).toInt();
+    int soilMoisture = command.substring(index4 + 1, index5).toInt();
     Serial.println(soilMoisture);
     calibrateMoisture(dryval,wetval,soilMoisture);
-    //calibrateMoisture(500,200,2); //for example
   }
   else if(command == "Get Data File"){
     sendDataFile();
@@ -215,9 +241,9 @@ void runCommand(String command){
   else if(command == "Last Picture"){
     sendLastPicture();
   }
-  else if(command.indexOf("Add time Schedule") >= 0){
+  /*else if(command.indexOf("Add time Schedule") >= 0){ 
     addSchedule(17, 19, 0, 0, 100, 250);
-  }
+  }*/
   else if(command.indexOf("Schedule Dim") >= 0){
     StaticJsonDocument<200> doc;
     DeserializationError error = deserializeJson(doc, command.substring(12));

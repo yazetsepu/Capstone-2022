@@ -23,7 +23,8 @@ BH1750 lightMeter;
 //RTC variable
 RTClib myRTC;
 
-//Soil Moisture
+/*Soil Moistures dry and wet global variables
+  Allows Calibration for each soil moisture */
 int dry0, wet0, dry1, wet1, dry2, wet2, dry3, wet3, dry4, wet4, dry5, wet5, dry6, wet6, dry7, wet7;
 
 
@@ -40,7 +41,7 @@ void setupSensors(){
   dht.humidity().getSensor(&sensor);
   //Set Light Sensor
   lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE);
-  //Set Reservoir Water Level Sensors
+  //Set Reservoir Float Switch Sensors
   pinMode(ReservoirFloatSensor1, INPUT);
   digitalWrite(ReservoirFloatSensor1, HIGH);
   pinMode(ReservoirFloatSensor2, INPUT);
@@ -101,6 +102,7 @@ DateTime currentTime(){
   return myRTC.now();
 }
 
+/* Calibrate Soil Moisture Sensor when receiving Command */
 void calibrateMoisture(int dry, int wet, int sensor){
   if(sensor == 0){
     dry0 = dry;
