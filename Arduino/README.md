@@ -114,7 +114,7 @@ Each boot the system will create a session file. In this session file it will co
 | RGBW Light Dim | "LED DIM {0},{1},{2},{3}" | int (0-255) | JSON (Status) 
 | Water Plant | "Water Plant" |  | JSON (Status) 
 | Send SD Info | "SD info" | | JSON (SD files directory)|
-| Get Current Measurements | "Get Data" | | JSON (data) |
+| Get Current Measurements | "Get Data File" | | JSON (data) |
 | Capture Image | "Capture Image Cam {0}" | int (0-3) | bytes[] (JPG) |
 | Timed Dim | "Schedule Dim {0}" | JSON (Timestamp, W,R,G,B) | bytes[] (JPG) |
 | Calibrate Moisture | "Calibrate Moisture {dry},{wet},{sensor}" | For dry, wet: int(0-1023) For sensor: int(0 - 7) | JSON (Status) |
