@@ -109,10 +109,10 @@ Each boot the system will create a session file. In this session file it will co
 
 | Command |String Format| Parameter |  Return |
 |--|--|--|--|--|
-| All Light On| "LED ON"  |  |JSON (Status)
+| All Light On| "LED ON"  |  |JSON (Status) |
 | All Light Off | "LED OFF" | | JSON (Status) 
-| RGBW Light Dim | "LED DIM {0},{1},{2},{3}" | int (0-255) | JSON (Status) 
-| Water Plant | "Water Plant" |  | JSON (Status) 
+| RGBW Light Dim | "LED DIM {0},{1},{2},{3}" | int (0-255) | JSON (Status) |
+| Water Plant | "Water Plant" |  | JSON (Status) |
 | Send SD Info | "SD info" | | JSON (SD files directory)|
 | Get Current Measurements | "Get Data" | | JSON (data) |
 | Capture Image | "Capture Image Cam {0}" | int (0-3) | bytes[] (JPG) |
