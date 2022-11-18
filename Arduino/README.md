@@ -169,9 +169,10 @@ All action performed by the CSS system will the log for further improvements and
 | 22 | Water System | Watering Successful | 1 |  |
 | 23 | Water System | Watering Error | 4 | Water level not rising when watering |
 | 24 | Water System | Watering Full Level | 3 | Water level in plant container is already full |
-| 25 | Water System | Low Reservoir Level | 4 | Low water level in reservoir |
+| 25 | Water System | Very Low Reservoir Water Level | 4 | Very Low water level in reservoir |
 | 26 | Water System | Watering Check | 2 | Water Level above {Threshold+%}| 
 | 27 | Water System | Watering Critical Check | 3 | Water Level above {critical}| 
+| 28 | Water System | Reservoir Water Level Error | 4 | Float sensors conflicting values | 
 
 Threshold is a value where contact with water is true. 
 
