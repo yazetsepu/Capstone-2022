@@ -40,7 +40,7 @@ As part of the necessary packages and installation of dependencies:
     "PostgreSQLConnection": 
     "Server=chamaecristarum.postgres.database.azure.com;
      Port=5432;
-     Database=CSSDb;User 
+     Database=CSSRUMDb;User 
      Id=chamaecristaadmin;
      Password=*****************;
      Ssl Mode=VerifyFull;" }
