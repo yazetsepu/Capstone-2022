@@ -83,7 +83,7 @@ Pictures:
 
 
 **Db Context for EntityFrameworkCore Creation:**
-![DBContext](https://user-images.githubusercontent.com/31049645/200149395-0beac508-3330-437d-bccc-a815427c65d8.png)
+![image](https://user-images.githubusercontent.com/31049645/202927961-b1c08b90-d67b-4e04-925d-7d0844c3de8d.png)
 
 
 **Routes and API JSON examples:**
