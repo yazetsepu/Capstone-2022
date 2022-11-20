@@ -175,6 +175,8 @@ All action performed by the CSS system will the log for further improvements and
 | 26 | Water System | Watering Check | 2 | Water Level above {Threshold+%}| 
 | 27 | Water System | Watering Critical Check | 3 | Water Level above {critical}| 
 | 28 | Water System | Reservoir Water Level Error | 4 | Float sensors conflicting values | 
+| 29 | Water System | Invalid Sensor Calibration | 1 | |
+| 30 | Water System | Soil Moisture Calibrated Successfully | 1 | Soil Moisture{sensor} Calibrated {dry} {wet} |
 
 Threshold is a value where contact with water is true. 
 
@@ -182,8 +184,8 @@ Threshold is a value where contact with water is true.
 #### Light System 
 | Code |Source | Name | Severity | Message
 |--|--|--|--|--|
-| 30 |  Light System | Schedule Set | 1 | {next_schedule} |
-| 31 |  Light System | Schedule Added | 1 | {schedule_values} |
+| 31 |  Light System | Schedule Set | 1 | {next_schedule} |
+| 32 |  Light System | Schedule Added | 1 | {schedule_values} |
 
 
 
