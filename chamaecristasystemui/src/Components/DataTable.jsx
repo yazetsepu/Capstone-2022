@@ -9,7 +9,7 @@ function BasicTable() {
     const [envData, setEnvData] = useState([])
     //to store the first 12-15 elements returned from fetch and stored in envData
     //gets replaced with a call from a button by the next 12-15
-    const dataPerPage = 2;
+    const dataPerPage = 10;
     const [limEnvData, setLimEnvData] = useState([])
     const [currNum, setCurrNum] = useState(dataPerPage)
     const [isNextActive, setIsNextActive] = useState(false);
@@ -19,6 +19,16 @@ function BasicTable() {
     const fetchData = async () => {
         const response = await fetch("https://cssrumapi.azurewebsites.net/environmentaldata/classid")
         const data = await response.json()
+        //Trying this out
+        let amountLeftOver = data.length % dataPerPage;
+        if(amountLeftOver > 0){
+            for (let i = amountLeftOver ; i < dataPerPage ; i++){
+                data.push({
+                    "soil_moisture" : "N/A", "soil_moisture_2" : "N/A", "soil_moisture_3" : "N/A", "soil_moisture_4" : "N/A", 
+                    "soil_moisture_5" : "N/A", "soil_moisture_6" : "N/A", "soil_moisture_7" : "N/A",
+                    "soil_moisture_8" : "N/A"})
+            }
+        }
         setEnvData(data)
         if(data.length <= dataPerPage){
             setLimEnvData(data.slice(0)) 
@@ -47,7 +57,6 @@ function BasicTable() {
         else if(envData.slice(currNum, envData.length).length <=dataPerPage && envData.slice(currNum, envData.length).length > 0){
             setLimEnvData(envData.slice(currNum));
             setIsNextActive(true);
-            // setCurrNum(currNum - dataPerPage)
         }
         else{
             setIsNextActive(true);
@@ -97,25 +106,25 @@ function BasicTable() {
                 </thead>
                 <tbody>
                     {limEnvData.map((data, key) => (
-                    <tr key = {key}>
-                        <td>{data.entry_Id}</td>
-                        <td>{data.times_tamps}</td>
-                        <td>{data.classification_id === 0? "Open" :
-                            data.classification_id === 1? "Closed" :
-                            "Not Available"}</td>
-                        <td>{data.water_level}</td>
-                        <td>{data.temperature}</td>
-                        <td>{"S1 - " + data.soil_moisture}</td>
-                        <td>{"S2 - " + data.soil_moisture_2}</td>
-                        <td>{"S3 - " + data.soil_moisture_3}</td>
-                        <td>{"S4 - " + data.soil_moisture_4}</td>
-                        <td>{"S5 - " + data.soil_moisture_5}</td>
-                        <td>{"S6 - " + data.soil_moisture_6}</td>
-                        <td>{"S7 - " + data.soil_moisture_7}</td>
-                        <td>{"S8 - " + data.soil_moisture_8}</td>
-                        <td>{data.humidity}</td>
-                        <td>{data.light}</td>
-                    </tr>
+                        <tr key = {key}>
+                            <td>{data.entry_Id}</td>
+                            <td>{data.times_tamps}</td>
+                            <td>{data.classification_id === 0? "Open" :
+                                data.classification_id === 1? "Closed" :
+                                "Empty"}</td>
+                            <td>{data.water_level}</td>
+                            <td>{data.temperature}</td>
+                            <td>{"S1 - " + data.soil_moisture}</td>
+                            <td>{"S2 - " + data.soil_moisture_2}</td>
+                            <td>{"S3 - " + data.soil_moisture_3}</td>
+                            <td>{"S4 - " + data.soil_moisture_4}</td>
+                            <td>{"S5 - " + data.soil_moisture_5}</td>
+                            <td>{"S6 - " + data.soil_moisture_6}</td>
+                            <td>{"S7 - " + data.soil_moisture_7}</td>
+                            <td>{"S8 - " + data.soil_moisture_8}</td>
+                            <td>{data.humidity}</td>
+                            <td>{data.light}</td>
+                        </tr>
                     ))}
                 </tbody>
             </Table>
