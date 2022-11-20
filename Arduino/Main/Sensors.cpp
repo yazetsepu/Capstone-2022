@@ -108,34 +108,41 @@ void calibrateMoisture(int dry, int wet, int sensor){
     dry0 = dry;
     wet0 = wet;
   }
-  if(sensor == 1){
+  else if(sensor == 1){
     dry1 = dry;
     wet1 = wet;
   }
-  if(sensor == 2){
+  else if(sensor == 2){
     dry2 = dry;
     wet2 = wet;
   }
-  if(sensor == 3){
+  else if(sensor == 3){
     dry3 = dry;
     wet3 = wet;
   }
-  if(sensor == 4){
+  else if(sensor == 4){
     dry4 = dry;
     wet4 = wet;
   }
-  if(sensor == 5){
+  else if(sensor == 5){
     dry5 = dry;
     wet5 = wet;
   }
-  if(sensor == 6){
+  else if(sensor == 6){
     dry6 = dry;
     wet6 = wet;
   }
-  if(sensor == 7){
+  else if(sensor == 7){
     dry7 = dry;
     wet7 = wet;
   }
+  else{
+    Serial.println("Invalid Sensor Calibration");
+    saveLog(29, "Invalid Sensor Calibration", 1, "");
+    return;
+  }
+  Serial.println("Soil Moisture Calibrated Successfully");
+  saveLog(30, "Soil Moisture Calibrated Successfully", 1, "Soil Moisture " + (String)sensor + " Calibrated dry: " + (String)dry + " wet: " + (String)wet);
 }
 
 //Measure Soil Moisture (0,1,2,3,4,5,6,7) returns -1 if not valid input
@@ -269,11 +276,11 @@ String getReservoirWaterLevel(){
     return "VERY LOW";
   }
   else{ 
-    Serial.println("ERROR"); //add savelog that shows all measureReservoirWaterLevel() so they can spot the float switch that is giving problems.
+    Serial.println("ERROR"); 
+    //add savelog that shows all measureReservoirWaterLevel() so they can spot the float switch that is giving problems.
     saveLog(28, "Reservoir Water Level Error", 4, (String)("Float sensors conflicting values: ") + "Reservoir Float Sensor 1: " + (String)ReservoirFloatSensor_1 + " Reservoir Float Sensor 2: " 
     + (String)ReservoirFloatSensor_2 + " Reservoir Float Sensor 3: " + (String)ReservoirFloatSensor_3 + " Reservoir Float Sensor 4: " + (String)ReservoirFloatSensor_4);
     return "ERROR";
-    
   }
 }
 

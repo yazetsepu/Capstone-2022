@@ -334,8 +334,9 @@ String getReservoirWaterLevel(){
     Serial.println("ERROR"); //add savelog that shows all measureReservoirWaterLevel() so they can spot the float switch that is giving problems.
     /*saveLog(28, "Reservoir Water Level Error", 4, (String)("Float sensors conflicting values: ") + "Reservoir Float Sensor 1: " + (String)ReservoirFloatSensor_1 + "Reservoir Float Sensor 2: " 
     + (String)ReservoirFloatSensor_2 + "Reservoir Float Sensor 3: " + (String)ReservoirFloatSensor_3 + "Reservoir Float Sensor 4: " + (String)ReservoirFloatSensor_4);*/
+    Serial.println((String)("Float sensors conflicting values: ") + "Reservoir Float Sensor 1: " + (String)ReservoirFloatSensor_1 + "Reservoir Float Sensor 2: " 
+    + (String)ReservoirFloatSensor_2 + "Reservoir Float Sensor 3: " + (String)ReservoirFloatSensor_3 + "Reservoir Float Sensor 4: " + (String)ReservoirFloatSensor_4);
     return "ERROR";
-    
   }
 }
 

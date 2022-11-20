@@ -125,7 +125,7 @@ void loop() {
     //Save Data in CSV File
     saveDataToSD(data, ColumnNumber);
     //Reset Timer
-    startDataTime = millis();
+    startDataTime = millis();  
     digitalWrite(LED_BUILTIN, LOW); //LED for Visual TEST
     //Log the Success of Capture Data
     saveLog(10, "Capture Data", 0, "");
@@ -154,10 +154,7 @@ void loop() {
       saveLog(20, "Watering Start", 0, "Moisture Level: "+(String)moistureAverage);
       waterPlant();
   }
-
-  //Reservoir Check 
-  getReservoirWaterLevel(); //Not necessary?
-
+  
   checkSchedule();
 
   delay(delayMS); //Loop delay
@@ -252,7 +249,7 @@ void runCommand(String command){
       Serial.println(error.f_str());
       return;
     }
-    addSchedule((int)doc["hour"], (int)doc["minute"], (int)doc["W"], (int)doc["R"], (int)doc["G"], (int)doc["B"]);
+    addSchedule((int)doc["hour"], (int)doc["minute"], (int)doc["W"], (int)doc["R"], (int)doc["G"], (int)doc["B"]); 
   }
   else if(command == "Light Schedule"){
     getScheduleSerial();

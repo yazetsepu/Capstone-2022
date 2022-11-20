@@ -7,8 +7,8 @@
 //#define SolenoidValve 32 //Check
 void setupWaterSystem();
 void waterPlant();
-void fillReservoir();
+//void fillReservoir();
 float measureContainerWaterLevel();
-float measureReservoirWaterLevel();
+//float measureReservoirWaterLevel();
 
 #endif
