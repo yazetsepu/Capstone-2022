@@ -47,27 +47,6 @@ As part of the necessary packages and installation of dependencies:
 }
 
 
-**Models:**
-Admins: 
-
-![Admin model example](https://user-images.githubusercontent.com/31049645/200149215-8b3c7ada-9fc9-459b-a803-062e67e8bbb8.png)
-
-Commands:
-
-![Commands model example](https://user-images.githubusercontent.com/31049645/200149295-bd0edbc7-5495-4be5-8e2a-566ccd47b327.png)
-
-EnviromentalData:
-
-![EnviromentalData model example](https://user-images.githubusercontent.com/31049645/200149298-7f4f86f2-1270-4600-8065-2cc88310de68.png)
-
-Logs:
-
-![Logs model example](https://user-images.githubusercontent.com/31049645/200149302-c0587caa-f03c-4f30-b850-0578adb91550.png)
-
-Pictures:
-
-![Picture model example](https://user-images.githubusercontent.com/31049645/200149303-c16aaad5-b7c9-4c82-9390-cd84aafa8bd5.png)
-
 
 **Migrations commands for table creation:**
 
@@ -90,24 +69,22 @@ Pictures:
 
 #Table Schemas:
 Admins:
-
-![image](https://user-images.githubusercontent.com/31049645/200150354-c63f4845-b1fb-43c4-9431-52ffca4a89d9.png)
+![image](https://user-images.githubusercontent.com/31049645/202928286-cd3f7819-103d-4c2d-9410-4fe295148e94.png)
 
 Commands:
-
-![image](https://user-images.githubusercontent.com/31049645/200150366-48e0cfcf-ef36-426e-9881-ac61efff9dc9.png)
+![image](https://user-images.githubusercontent.com/31049645/202928394-79d808c4-6fcd-4102-8ad9-b1a6f58fc94a.png)
 
 EnvironmentalData:
 
-![image](https://user-images.githubusercontent.com/31049645/200150375-98081aef-c8e7-4ab1-8c5b-482156ccb521.png)
+![image](https://user-images.githubusercontent.com/31049645/202928353-bf87ac09-7e76-4c83-9665-3c5efeee1c53.png)
 
 Logs:
 
-![image](https://user-images.githubusercontent.com/31049645/200150327-b4b2b055-fe28-42cb-820e-8deaa65416f9.png)
+![image](https://user-images.githubusercontent.com/31049645/202928370-6f1260a0-5193-4f3e-bc7a-e88e14d6b715.png)
 
 Pictures:
 
-![image](https://user-images.githubusercontent.com/31049645/200150390-4d59b85a-1022-487e-9392-0c9fe726a7de.png)
+![image](https://user-images.githubusercontent.com/31049645/202928379-75557947-2232-4568-a2e9-f2b72c447d24.png)
 
 # Routes:
 ## Admins
