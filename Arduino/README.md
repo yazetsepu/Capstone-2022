@@ -114,7 +114,7 @@ Each boot the system will create a session file. In this session file it will co
 | RGBW Light Dim | "LED DIM {0},{1},{2},{3}" | int (0-255) | JSON (Status) 
 | Water Plant | "Water Plant" |  | JSON (Status) 
 | Send SD Info | "SD info" | | JSON (SD files directory)|
-| Get Current Measurements | "Get Data" | | JSON (data) |
+| Get Current Measurements | "Get Data File" | | JSON (data) |
 | Capture Image | "Capture Image Cam {0}" | int (0-3) | bytes[] (JPG) |
 | Timed Dim | "Schedule Dim {0}" | JSON (Timestamp, W,R,G,B) | bytes[] (JPG) |
 | Calibrate Moisture | "Calibrate Moisture {dry},{wet},{sensor}" | For dry, wet: int(0-1023) For sensor: int(0 - 7) | JSON (Status) |
@@ -175,6 +175,8 @@ All action performed by the CSS system will the log for further improvements and
 | 26 | Water System | Watering Check | 2 | Water Level above {Threshold+%}| 
 | 27 | Water System | Watering Critical Check | 3 | Water Level above {critical}| 
 | 28 | Water System | Reservoir Water Level Error | 4 | Float sensors conflicting values | 
+| 29 | Water System | Invalid Sensor Calibration | 1 | |
+| 30 | Water System | Soil Moisture Calibrated Successfully | 1 | Soil Moisture{sensor} Calibrated {dry} {wet} |
 
 Threshold is a value where contact with water is true. 
 
@@ -182,8 +184,8 @@ Threshold is a value where contact with water is true.
 #### Light System 
 | Code |Source | Name | Severity | Message
 |--|--|--|--|--|
-| 30 |  Light System | Schedule Set | 1 | {next_schedule} |
-| 31 |  Light System | Schedule Added | 1 | {schedule_values} |
+| 31 |  Light System | Schedule Set | 1 | {next_schedule} |
+| 32 |  Light System | Schedule Added | 1 | {schedule_values} |
 
 
 
