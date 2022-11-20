@@ -69,9 +69,11 @@ As part of the necessary packages and installation of dependencies:
 
 #Table Schemas:
 Admins:
+
 ![image](https://user-images.githubusercontent.com/31049645/202928286-cd3f7819-103d-4c2d-9410-4fe295148e94.png)
 
 Commands:
+
 ![image](https://user-images.githubusercontent.com/31049645/202928394-79d808c4-6fcd-4102-8ad9-b1a6f58fc94a.png)
 
 EnvironmentalData:
