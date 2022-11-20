@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MinimalAPIPostgresSqlCSS.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MinimalAPIPostgresSqlCSS.Migrations
 {
     [DbContext(typeof(CSSDb))]
-    partial class CSSDbModelSnapshot : ModelSnapshot
+    [Migration("20221119225221_migrationtest")]
+    partial class migrationtest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,9 +103,6 @@ namespace MinimalAPIPostgresSqlCSS.Migrations
 
                     b.Property<int?>("PicturesId")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Reservoir_water_level")
-                        .HasColumnType("text");
 
                     b.Property<float?>("Soil_moisture")
                         .HasColumnType("real");

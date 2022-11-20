@@ -10,7 +10,7 @@ namespace MinimalAPIPostgresSqlCSS.Models
         public string? Admin_Password { get; set; }
 
         //Foreign key connection.
+       
         public ICollection<Commands>? Commands { get; set; }
-
     }
 }

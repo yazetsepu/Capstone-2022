@@ -7,7 +7,8 @@ namespace MinimalAPIPostgresSqlCSS.Data
     {
         public CSSDb(DbContextOptions<CSSDb>options) :base(options)
         {
-
+            //This line give acces to change timezone on timestamps.From utc to others.
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
         public DbSet<Admins> Admins => Set<Admins>();
         public DbSet<Commands> Commands => Set<Commands>();
@@ -18,3 +19,8 @@ namespace MinimalAPIPostgresSqlCSS.Data
         
     }
 }
+
+
+
+
+
