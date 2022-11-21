@@ -47,16 +47,16 @@ app.UseCors(MyAllowSpecificOrigins);
 
 
 //HttpPost Admin table David Ortiz
-app.MapPost("/admins/", async (Admins a, CSSDb db) =>
+app.MapPost("/Admins/", async (Admins a, CSSDb db) =>
 {
     
     db.Admins.Add(a);
     await db.SaveChangesAsync();
 
-    return Results.Created($"/admins/{a.User_Id}", a);
+    return Results.Created($"/Admins/{a.User_Id}", a);
 });
 
-app.MapGet("/admins/{id:int}", async (int id, CSSDb db) =>
+app.MapGet("/Admins/{id:int}", async (int id, CSSDb db) =>
 {
     return await db.Admins.FindAsync(id)
     is Admins a
@@ -65,12 +65,12 @@ app.MapGet("/admins/{id:int}", async (int id, CSSDb db) =>
 
 });
 
-app.MapGet("/adminsAll", async (CSSDb db) =>await db.Admins.ToListAsync());
+app.MapGet("/AdminsAll", async (CSSDb db) =>await db.Admins.ToListAsync());
 
-app.MapPut("/admins/{id:int}", async (int id, Admins a, CSSDb db) =>
+app.MapPut("/Admins/{id:int}", async (int id, Admins a, CSSDb db) =>
 {
 
-   // if (a.User_id != id) return Results.BadRequest();
+   // if (a.User_Id != id) return Results.BadRequest();
 
 
 
@@ -89,7 +89,7 @@ app.MapPut("/admins/{id:int}", async (int id, Admins a, CSSDb db) =>
 
 });
 
-app.MapDelete("/admins/{id:int}", async (int id, CSSDb db) =>
+app.MapDelete("/Admins/{id:int}", async (int id, CSSDb db) =>
 {
     var admins = await db.Admins.FindAsync(id);
     if (admins is null) return Results.NotFound();
@@ -100,14 +100,14 @@ app.MapDelete("/admins/{id:int}", async (int id, CSSDb db) =>
     return Results.NoContent();
 });
 
-app.MapGet("/admins/Commands/{id:int}", async (int id, CSSDb db)  =>
+app.MapGet("/Admins/Commands/{id:int}", async (int id, CSSDb db)  =>
 {
     var properties = (from Commands in db.Commands.Where(st => st.AdminsUser_Id == id).DefaultIfEmpty()
                       select new
                       {
                           AdminsUser_Id = (int?)Commands.AdminsUser_Id,
                           Command_Id = (int?)Commands.Command_Id,
-                          Command_string = (string?)Commands.Command_string
+                          Command_string = (string?)Commands.Command_String
                           
 
                       }); ;
@@ -147,7 +147,7 @@ app.MapGet("/CommandsAll", async (CSSDb db) => await db.Commands.ToListAsync());
 app.MapPut("/Commands/{id:int}", async (int id, Commands a, CSSDb db) =>
 {
 
-    // if (a.User_id != id) return Results.BadRequest();
+    // if (a.User_Id != id) return Results.BadRequest();
 
 
 
@@ -156,14 +156,14 @@ app.MapPut("/Commands/{id:int}", async (int id, Commands a, CSSDb db) =>
     if (Commands is null) return Results.NotFound();
 
     Commands.Command_Id = a.Command_Id;
-    Commands.Command_string = a.Command_string;
-    Commands.Command_value = a.Command_value;
-    Commands.Command_received = a.Command_received;
-    Commands.Command_performed = a.Command_performed;
-    Commands.Command_read = a.Command_read;
-    Commands.Duplicate_flag = a.Duplicate_flag;
+    Commands.Command_String = a.Command_String;
+    Commands.Command_Value = a.Command_Value;
+    Commands.Command_Received = a.Command_Received;
+    Commands.Command_Performed = a.Command_Performed;
+    Commands.Command_Read = a.Command_Read;
+    Commands.Duplicate_Flag = a.Duplicate_Flag;
     Commands.AdminsUser_Id = a.AdminsUser_Id;
-    Commands.Logid = a.Logid;
+    Commands.Log_Id = a.Log_Id;
 
     await db.SaveChangesAsync();
     return Results.Ok(Commands);
@@ -172,10 +172,10 @@ app.MapPut("/Commands/{id:int}", async (int id, Commands a, CSSDb db) =>
 
 });
 
-app.MapPut("/Commands/Command_read/{id:int}", async (int id, Commands a, CSSDb db) =>
+app.MapPut("/Commands/Command_Read/{id:int}", async (int id, Commands a, CSSDb db) =>
 {
 
-    // if (a.User_id != id) return Results.BadRequest();
+    // if (a.User_Id != id) return Results.BadRequest();
 
 
 
@@ -184,7 +184,7 @@ app.MapPut("/Commands/Command_read/{id:int}", async (int id, Commands a, CSSDb d
     if (Commands is null) return Results.NotFound();
     
 
-    Commands.Command_read = a.Command_read;
+    Commands.Command_Read = a.Command_Read;
 
     await db.SaveChangesAsync();
     return Results.Ok(Commands);
@@ -192,10 +192,10 @@ app.MapPut("/Commands/Command_read/{id:int}", async (int id, Commands a, CSSDb d
 
 
 });
-app.MapPut("/Commands/Command_performed/{id:int}", async (int id, Commands a, CSSDb db) =>
+app.MapPut("/Commands/Command_Performed/{id:int}", async (int id, Commands a, CSSDb db) =>
 {
 
-    // if (a.User_id != id) return Results.BadRequest();
+    // if (a.User_Id != id) return Results.BadRequest();
 
 
 
@@ -204,7 +204,7 @@ app.MapPut("/Commands/Command_performed/{id:int}", async (int id, Commands a, CS
     if (Commands is null) return Results.NotFound();
     
 
-    Commands.Command_performed = a.Command_performed;
+    Commands.Command_Performed = a.Command_Performed;
 
     await db.SaveChangesAsync();
     return Results.Ok(Commands);
@@ -248,30 +248,30 @@ app.MapGet("/EnvironmentalData/classidTest", async ( CSSDb db) =>
 
     var properties = db.EnvironmentalData
     .Join(db.Pictures,
-      p => p.PicturesId,
+      p => p.Pictures_Id,
       d => d.Pic_Id,
       (p, d) => new
       {
           p.Entry_Id,
-          p.Water_level,
+          p.Water_Level,
           p.Temperature,
-          p.Soil_moisture,
+          p.Soil_Moisture_1,
           p.Humidity,
-          p.Times_tamps,
+          p.Timestamps,
           d.Pic_Id,
-          d.Classification_id
+          d.Classification_Id_1
 
       })
    .Select(r => new
    {
        Entry_Id = r.Entry_Id,
-       Water_level = r.Water_level,
+       Water_Level = r.Water_Level,
        Temperature = r.Temperature,
-       Soil_moisture = r.Soil_moisture,
+       Soil_Moisture_1 = r.Soil_Moisture_1,
        Humidity = r.Humidity,
-       Times_tamps = r.Times_tamps,
+       Timestamps = r.Timestamps,
        Pic_Id = r.Pic_Id,
-       Classification_id =r.Classification_id
+       Classification_Id_1 =r.Classification_Id_1
 
    });
     
@@ -284,7 +284,7 @@ app.MapGet("/EnvironmentalData/classidTest2", async (CSSDb db) =>
 
     var properties = from EnvironmentalData in db.EnvironmentalData
                      join Pictures in db.Pictures
-                     on EnvironmentalData.PicturesId equals Pictures.Pic_Id into grouping
+                     on EnvironmentalData.Pictures_Id equals Pictures.Pic_Id into grouping
                      from Pictures in grouping.DefaultIfEmpty()
                      select new { Enviromental = EnvironmentalData, Picture= Pictures };
 
@@ -292,31 +292,31 @@ app.MapGet("/EnvironmentalData/classidTest2", async (CSSDb db) =>
     return Results.Ok(properties);
 
 });*/
-app.MapGet("/EnvironmentalData/classid", async (CSSDb db) =>
+app.MapGet("/EnvironmentalData/Classid", async (CSSDb db) =>
 {
 
     var properties = (from EnvironmentalData in db.EnvironmentalData
-                      from Pictures in db.Pictures.Where(st => st.Pic_Id == EnvironmentalData.PicturesId).DefaultIfEmpty()
+                      from Pictures in db.Pictures.Where(st => st.Pic_Id == EnvironmentalData.Pictures_Id).DefaultIfEmpty()
                       select new
                       {
                           EnvironmentalData.Entry_Id,
                           EnvironmentalData.Temperature,
                           EnvironmentalData.Humidity,
-                          EnvironmentalData.Soil_moisture,
-                          EnvironmentalData.Soil_moisture_2,
-                          EnvironmentalData.Soil_moisture_3,    
-                          EnvironmentalData.Soil_moisture_4,
-                          EnvironmentalData.Soil_moisture_5,
-                          EnvironmentalData.Soil_moisture_6,
-                          EnvironmentalData.Soil_moisture_7,
-                          EnvironmentalData.Soil_moisture_8,
+                          EnvironmentalData.Soil_Moisture_1,
+                          EnvironmentalData.Soil_Moisture_2,
+                          EnvironmentalData.Soil_Moisture_3,    
+                          EnvironmentalData.Soil_Moisture_4,
+                          EnvironmentalData.Soil_Moisture_5,
+                          EnvironmentalData.Soil_Moisture_6,
+                          EnvironmentalData.Soil_Moisture_7,
+                          EnvironmentalData.Soil_Moisture_8,
                           EnvironmentalData.Light,
-                          EnvironmentalData.Reservoir_water_level,
-                          EnvironmentalData.Times_tamps,
-                          EnvironmentalData.Water_level,
-                          EnvironmentalData.PicturesId,
+                          EnvironmentalData.Reservoir_Water_Level,
+                          EnvironmentalData.Timestamps,
+                          EnvironmentalData.Water_Level,
+                          EnvironmentalData.Pictures_Id,
                           Pic_Id = (int?)Pictures.Pic_Id,
-                          Classification_id = (int?)Pictures.Classification_id
+                          Classification_id = (int?)Pictures.Classification_Id_1
 
                       }).OrderByDescending(x =>x.Entry_Id);
 
@@ -328,7 +328,7 @@ app.MapGet("/EnvironmentalDataAll", async (CSSDb db) => await db.EnvironmentalDa
 app.MapPut("/EnvironmentalData/{id:int}", async (int id, EnvironmentalData a, CSSDb db) =>
 {
 
-    // if (a.User_id != id) return Results.BadRequest();
+    // if (a.User_Id != id) return Results.BadRequest();
 
 
 
@@ -339,19 +339,19 @@ app.MapPut("/EnvironmentalData/{id:int}", async (int id, EnvironmentalData a, CS
     EnvironmentalData.Entry_Id = a.Entry_Id;
     EnvironmentalData.Humidity = a.Humidity;
     EnvironmentalData.Temperature = a.Temperature;
-    EnvironmentalData.Water_level = a.Water_level;
+    EnvironmentalData.Water_Level = a.Water_Level;
     EnvironmentalData.Light = a.Light;
-    EnvironmentalData.PicturesId = a.PicturesId;
-    EnvironmentalData.Soil_moisture = a.Soil_moisture;
-    EnvironmentalData.Soil_moisture_2=a.Soil_moisture_2;
-    EnvironmentalData.Soil_moisture_3 = a.Soil_moisture_3;    
-    EnvironmentalData.Soil_moisture_4=a.Soil_moisture_4;
-    EnvironmentalData.Soil_moisture_5=a.Soil_moisture_5;
-    EnvironmentalData.Soil_moisture_6=a.Soil_moisture_6;
-    EnvironmentalData.Soil_moisture_7=a.Soil_moisture_7;
-    EnvironmentalData.Soil_moisture_8=a.Soil_moisture_8;
-    EnvironmentalData.Reservoir_water_level=a.Reservoir_water_level;
-    EnvironmentalData.Times_tamps = a.Times_tamps;
+    EnvironmentalData.Pictures_Id = a.Pictures_Id;
+    EnvironmentalData.Soil_Moisture_1 = a.Soil_Moisture_1;
+    EnvironmentalData.Soil_Moisture_2=a.Soil_Moisture_2;
+    EnvironmentalData.Soil_Moisture_3 = a.Soil_Moisture_3;    
+    EnvironmentalData.Soil_Moisture_4=a.Soil_Moisture_4;
+    EnvironmentalData.Soil_Moisture_5=a.Soil_Moisture_5;
+    EnvironmentalData.Soil_Moisture_6=a.Soil_Moisture_6;
+    EnvironmentalData.Soil_Moisture_7=a.Soil_Moisture_7;
+    EnvironmentalData.Soil_Moisture_8=a.Soil_Moisture_8;
+    EnvironmentalData.Reservoir_Water_Level=a.Reservoir_Water_Level;
+    EnvironmentalData.Timestamps = a.Timestamps;
    
 
     await db.SaveChangesAsync();
@@ -378,7 +378,7 @@ app.MapPost("/Logs/", async (Logs a, CSSDb db) =>
     db.Logs.Add(a);
     await db.SaveChangesAsync();
 
-    return Results.Created($"/Logs/{a.Log_id}", a);
+    return Results.Created($"/Logs/{a.Log_Id}", a);
 });
 
 app.MapGet("/Logs/{id:int}", async (int id, CSSDb db) =>
@@ -395,7 +395,7 @@ app.MapGet("/LogsAll", async (CSSDb db) => await db.Logs.ToListAsync());
 app.MapPut("/Logs/{id:int}", async (int id, Logs a, CSSDb db) =>
 {
 
-    // if (a.User_id != id) return Results.BadRequest();
+    // if (a.User_Id != id) return Results.BadRequest();
 
 
 
@@ -403,9 +403,9 @@ app.MapPut("/Logs/{id:int}", async (int id, Logs a, CSSDb db) =>
 
     if (Logs is null) return Results.NotFound();
 
-    Logs.Log_id = a.Log_id;
-    Logs.Log_text = a.Log_text;
-    Logs.Times_tamps = a.Times_tamps;
+    Logs.Log_Id = a.Log_Id;
+    Logs.Log_Text = a.Log_Text;
+    Logs.Timestamps = a.Timestamps;
     
 
     await db.SaveChangesAsync();
@@ -446,7 +446,7 @@ app.MapGet("/Pictures/{id:int}", async (int id, CSSDb db) =>
 
 app.MapGet("/PicturesAll", async (CSSDb db) => await db.Pictures.ToListAsync());
 
-app.MapGet("/Pictures/desc", async (CSSDb db) =>
+app.MapGet("/Pictures/Desc", async (CSSDb db) =>
 {
 
     var properties = (
@@ -458,15 +458,15 @@ app.MapGet("/Pictures/desc", async (CSSDb db) =>
                           Camera_Pic_Path_2= Pictures.Camera_Pic_Path_2,    
                           Camera_Pic_Path_3= Pictures.Camera_Pic_Path_3,    
                           Camera_Pic_Path_4= Pictures.Camera_Pic_Path_4,
-                          Classification_accurracy=Pictures.Classification_accurracy,
-                          Classification_accurracy_2=Pictures.Classification_accurracy_2,
-                          Classification_accurracy_3= Pictures.Classification_accurracy_3,
-                          Classification_accurracy_4= Pictures.Classification_accurracy_4,
-                          Classification_id=Pictures.Classification_id,
-                          Classification_id_2=Pictures.Classification_id_2,
-                          Classification_id_3=Pictures.Classification_id_3,
-                          Classification_id_4=Pictures.Classification_id_4,
-                          Times_tamps=Pictures.Times_tamps
+                          Classification_accurracy=Pictures.Classification_Accurracy_1,
+                          Classification_accurracy_2=Pictures.Classification_Accurracy_2,
+                          Classification_accurracy_3= Pictures.Classification_Accurracy_3,
+                          Classification_accurracy_4= Pictures.Classification_Accurracy_4,
+                          Classification_id=Pictures.Classification_Id_1,
+                          Classification_id_2=Pictures.Classification_Id_2,
+                          Classification_id_3=Pictures.Classification_Id_3,
+                          Classification_id_4=Pictures.Classification_Id_4,
+                          Times_tamps=Pictures.Timestamps
 
 
                       }).OrderByDescending(x => x.Pic_Id);
@@ -478,7 +478,7 @@ app.MapGet("/Pictures/desc", async (CSSDb db) =>
 app.MapPut("/Pictures/{id:int}", async (int id, Pictures a, CSSDb db) =>
 {
 
-    // if (a.User_id != id) return Results.BadRequest();
+    // if (a.User_Id != id) return Results.BadRequest();
 
 
 
@@ -487,19 +487,19 @@ app.MapPut("/Pictures/{id:int}", async (int id, Pictures a, CSSDb db) =>
     if (Pictures is null) return Results.NotFound();
 
     Pictures.Pic_Id = a.Pic_Id;
-    Pictures.Classification_accurracy = a.Classification_accurracy;
-    Pictures.Classification_accurracy_2 = a.Classification_accurracy_2;
-    Pictures.Classification_accurracy_3 = a.Classification_accurracy_3;
-    Pictures.Classification_accurracy_4 = a.Classification_accurracy_4;
-    Pictures.Classification_id = a.Classification_id;
-    Pictures.Classification_id_2 = a.Classification_id_2;
-    Pictures.Classification_id_3 = a.Classification_id_3;
-    Pictures.Classification_id_4 = a.Classification_id_4;
+    Pictures.Classification_Accurracy_1 = a.Classification_Accurracy_1;
+    Pictures.Classification_Accurracy_2 = a.Classification_Accurracy_2;
+    Pictures.Classification_Accurracy_3 = a.Classification_Accurracy_3;
+    Pictures.Classification_Accurracy_4 = a.Classification_Accurracy_4;
+    Pictures.Classification_Id_1 = a.Classification_Id_1;
+    Pictures.Classification_Id_2 = a.Classification_Id_2;
+    Pictures.Classification_Id_3 = a.Classification_Id_3;
+    Pictures.Classification_Id_4 = a.Classification_Id_4;
     Pictures.Camera_Pic_Path_1 = a.Camera_Pic_Path_1;
     Pictures.Camera_Pic_Path_2 = a.Camera_Pic_Path_2;
     Pictures.Camera_Pic_Path_3 = a.Camera_Pic_Path_3;
     Pictures.Camera_Pic_Path_4 = a.Camera_Pic_Path_4;
-    Pictures.Times_tamps = a.Times_tamps;
+    Pictures.Timestamps = a.Timestamps;
     
 
 
@@ -523,11 +523,5 @@ app.MapDelete("/Pictures/{id:int}", async (int id, CSSDb db) =>
     return Results.NoContent();
 });
 
+
 app.Run();
-
-
-
-internal record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

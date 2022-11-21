@@ -17,7 +17,6 @@ namespace MinimalAPIPostgresSqlCSS.Models
 
         public string? Command_string { get; set; } //Command name execute.
 
-        public string? Command_value  { get; set; }//Command value that is use from arduino to be performed.
 
         //Foreign Key for Standard for Admins 
         public int? AdminsUser_Id { get; set; } //This is the  admin id that performe this command.

@@ -12,10 +12,6 @@ namespace MinimalAPIPostgresSqlCSS.Models
         [Key]
         public int Entry_Id { get; set; }
 
-        public float? Water_level { get; set; }      
-
-        public float? Temperature { get; set; }  
-
         public float? Soil_moisture  { get; set; }
 
         public float? Soil_moisture_2 { get; set; }
@@ -25,18 +21,11 @@ namespace MinimalAPIPostgresSqlCSS.Models
         public float? Soil_moisture_6 { get; set; }
         public float? Soil_moisture_7 { get; set; }
         public float? Soil_moisture_8 { get; set; }
-
         public float? Humidity { get; set; }
         public float? Light { get; set; }
-
        public string? Reservoir_water_level { get; set; }
-
-        //The atribute can be applied to the navigation
-        //property and the related foreign key property.
-
         public int? PicturesId { get; set; } 
         public Pictures? Pictures { get; set; }
-
         public DateTime Times_tamps { get; set; } = DateTime.UtcNow;
     }
 }

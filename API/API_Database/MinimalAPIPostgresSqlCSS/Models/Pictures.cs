@@ -19,21 +19,12 @@ namespace MinimalAPIPostgresSqlCSS.Models
         public float? Classification_accurracy { get; set; }
 
         public float? Classification_accurracy_2 { get; set; }
-
         public float? Classification_accurracy_3 { get; set; }
-
         public float? Classification_accurracy_4 { get; set; }
-
         public string? Camera_Pic_Path_1 { get; set; }
-
         public string? Camera_Pic_Path_2 { get; set; }
-
         public string? Camera_Pic_Path_3 { get; set; }
-
         public string? Camera_Pic_Path_4 { get; set; }
-
-
-        
         public DateTime Times_tamps { get; set; } = DateTime.UtcNow;
 
 
