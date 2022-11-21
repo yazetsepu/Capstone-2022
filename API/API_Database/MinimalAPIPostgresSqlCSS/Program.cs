@@ -311,6 +311,7 @@ app.MapGet("/EnvironmentalData/classid", async (CSSDb db) =>
                           EnvironmentalData.Soil_moisture_7,
                           EnvironmentalData.Soil_moisture_8,
                           EnvironmentalData.Light,
+                          EnvironmentalData.Reservoir_water_level,
                           EnvironmentalData.Times_tamps,
                           EnvironmentalData.Water_level,
                           EnvironmentalData.PicturesId,
@@ -349,6 +350,7 @@ app.MapPut("/EnvironmentalData/{id:int}", async (int id, EnvironmentalData a, CS
     EnvironmentalData.Soil_moisture_6=a.Soil_moisture_6;
     EnvironmentalData.Soil_moisture_7=a.Soil_moisture_7;
     EnvironmentalData.Soil_moisture_8=a.Soil_moisture_8;
+    EnvironmentalData.Reservoir_water_level=a.Reservoir_water_level;
     EnvironmentalData.Times_tamps = a.Times_tamps;
    
 
