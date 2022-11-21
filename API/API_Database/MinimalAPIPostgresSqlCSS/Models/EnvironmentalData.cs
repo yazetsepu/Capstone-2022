@@ -12,20 +12,25 @@ namespace MinimalAPIPostgresSqlCSS.Models
         [Key]
         public int Entry_Id { get; set; }
 
-        public float? Soil_moisture  { get; set; }
+        [ForeignKey("Pictures")]
+        public int? Pictures_Id { get; set; }
 
-        public float? Soil_moisture_2 { get; set; }
-        public float? Soil_moisture_3 { get; set; }
-        public float? Soil_moisture_4 { get; set; }
-        public float? Soil_moisture_5 { get; set; }
-        public float? Soil_moisture_6 { get; set; }
-        public float? Soil_moisture_7 { get; set; }
-        public float? Soil_moisture_8 { get; set; }
+        public float? Water_Level { get; set; }      
+        public float? Temperature { get; set; }  
+        public float? Soil_Moisture_1  { get; set; }
+        public float? Soil_Moisture_2 { get; set; }
+        public float? Soil_Moisture_3 { get; set; }
+        public float? Soil_Moisture_4 { get; set; }
+        public float? Soil_Moisture_5 { get; set; }
+        public float? Soil_Moisture_6 { get; set; }
+        public float? Soil_Moisture_7 { get; set; }
+        public float? Soil_Moisture_8 { get; set; }
         public float? Humidity { get; set; }
         public float? Light { get; set; }
-       public string? Reservoir_water_level { get; set; }
-        public int? PicturesId { get; set; } 
-        public Pictures? Pictures { get; set; }
-        public DateTime Times_tamps { get; set; } = DateTime.UtcNow;
+        public string? Reservoir_Water_Level { get; set; }
+  
+
+        public virtual Pictures? Pictures { get; set; }
+        public DateTime Timestamps { get; set; } = DateTime.UtcNow;
     }
 }

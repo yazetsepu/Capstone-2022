@@ -10,22 +10,20 @@ namespace MinimalAPIPostgresSqlCSS.Models
     {
         [Key]
         public int Pic_Id { get; set; } 
-
-        public int? Classification_id { get; set; }
-        public int? Classification_id_2 { get; set; }
-        public int? Classification_id_3 { get; set; }
-        public int? Classification_id_4 { get; set; }
-
-        public float? Classification_accurracy { get; set; }
-
-        public float? Classification_accurracy_2 { get; set; }
-        public float? Classification_accurracy_3 { get; set; }
-        public float? Classification_accurracy_4 { get; set; }
+        public int? Classification_Id_1 { get; set; }
+        public int? Classification_Id_2 { get; set; }
+        public int? Classification_Id_3 { get; set; }
+        public int? Classification_Id_4 { get; set; }
+        public float? Classification_Accurracy_1 { get; set; }
+        public float? Classification_Accurracy_2 { get; set; }
+        public float? Classification_Accurracy_3 { get; set; }
+        public float? Classification_Accurracy_4 { get; set; }
         public string? Camera_Pic_Path_1 { get; set; }
         public string? Camera_Pic_Path_2 { get; set; }
         public string? Camera_Pic_Path_3 { get; set; }
         public string? Camera_Pic_Path_4 { get; set; }
-        public DateTime Times_tamps { get; set; } = DateTime.UtcNow;
+    
+        public DateTime Timestamps { get; set; } = DateTime.UtcNow;
 
 
     }

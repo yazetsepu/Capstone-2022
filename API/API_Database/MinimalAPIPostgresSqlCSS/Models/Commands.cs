@@ -6,29 +6,26 @@ using MinimalAPIPostgresSqlCSS.Models;
 
 namespace MinimalAPIPostgresSqlCSS.Models
 {
-    public class Commands //This is the model for de Commands table, for the DBcontex to create the database Entity framework design.
-
-
+    public class Commands 
     {
         [Key]
-        public int Command_Id { get; set; } //Command_Id is the id that identify this command.
+        public int Command_Id { get; set; }
 
-        public int? Duplicate_flag { get; set; } //This determines if the command was receive more than one time and the arduino does not execute twice, and ignore them.
+        [ForeignKey("Logs")]
+        public int? Log_Id { get; set; }
 
-        public string? Command_string { get; set; } //Command name execute.
+        [ForeignKey("Admins")]
+        public int? AdminsUser_Id { get; set; }
 
 
-        //Foreign Key for Standard for Admins 
-        public int? AdminsUser_Id { get; set; } //This is the  admin id that performe this command.
-        public Admins? Admins { get; set; }  //Admin instance of the table Logs.
-      
-        public int? Logid { get; set; } //Log id that is created as the command is perform.
-        public Logs? Logs { get; set; } //Log instance of the table Logs.
+        public int? Duplicate_Flag { get; set; } 
+        public string? Command_String { get; set; }
+        public string? Command_Value  { get; set; }
 
-        public DateTime Command_received { get; set; } = DateTime.UtcNow; //This is the time that the command was posted.
-
-        public DateTime? Command_read { get; set; } = DateTime.UtcNow; //This is the time that the command is read by the arduino.
-
-        public DateTime? Command_performed { get; set; } = DateTime.UtcNow; //This is the time that the command is performed.
+        public virtual Admins? Admins { get; set; }  
+        public virtual Logs? Logs { get; set; } 
+        public DateTime Command_Received { get; set; } = DateTime.UtcNow; 
+        public DateTime? Command_Read { get; set; } = DateTime.UtcNow; 
+        public DateTime? Command_Performed { get; set; } = DateTime.UtcNow; 
     }
 }

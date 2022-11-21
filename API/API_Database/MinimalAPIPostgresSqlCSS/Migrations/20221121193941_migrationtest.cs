@@ -28,14 +28,14 @@ namespace MinimalAPIPostgresSqlCSS.Migrations
                 name: "Logs",
                 columns: table => new
                 {
-                    Log_id = table.Column<int>(type: "integer", nullable: false)
+                    Log_Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Log_text = table.Column<string>(type: "text", nullable: true),
-                    Times_tamps = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    Log_Text = table.Column<string>(type: "text", nullable: true),
+                    Timestamps = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Logs", x => x.Log_id);
+                    table.PrimaryKey("PK_Logs", x => x.Log_Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -44,19 +44,19 @@ namespace MinimalAPIPostgresSqlCSS.Migrations
                 {
                     Pic_Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Classification_id = table.Column<int>(type: "integer", nullable: true),
-                    Classification_id_2 = table.Column<int>(type: "integer", nullable: true),
-                    Classification_id_3 = table.Column<int>(type: "integer", nullable: true),
-                    Classification_id_4 = table.Column<int>(type: "integer", nullable: true),
-                    Classification_accurracy = table.Column<float>(type: "real", nullable: true),
-                    Classification_accurracy_2 = table.Column<float>(type: "real", nullable: true),
-                    Classification_accurracy_3 = table.Column<float>(type: "real", nullable: true),
-                    Classification_accurracy_4 = table.Column<float>(type: "real", nullable: true),
+                    Classification_Id_1 = table.Column<int>(type: "integer", nullable: true),
+                    Classification_Id_2 = table.Column<int>(type: "integer", nullable: true),
+                    Classification_Id_3 = table.Column<int>(type: "integer", nullable: true),
+                    Classification_Id_4 = table.Column<int>(type: "integer", nullable: true),
+                    Classification_Accurracy_1 = table.Column<float>(type: "real", nullable: true),
+                    Classification_Accurracy_2 = table.Column<float>(type: "real", nullable: true),
+                    Classification_Accurracy_3 = table.Column<float>(type: "real", nullable: true),
+                    Classification_Accurracy_4 = table.Column<float>(type: "real", nullable: true),
                     Camera_Pic_Path_1 = table.Column<string>(type: "text", nullable: true),
                     Camera_Pic_Path_2 = table.Column<string>(type: "text", nullable: true),
                     Camera_Pic_Path_3 = table.Column<string>(type: "text", nullable: true),
                     Camera_Pic_Path_4 = table.Column<string>(type: "text", nullable: true),
-                    Times_tamps = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    Timestamps = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -69,15 +69,14 @@ namespace MinimalAPIPostgresSqlCSS.Migrations
                 {
                     Command_Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Duplicate_flag = table.Column<int>(type: "integer", nullable: true),
-                    Command_string = table.Column<string>(type: "text", nullable: true),
-                    Command_value = table.Column<string>(type: "text", nullable: true),
+                    Log_Id = table.Column<int>(type: "integer", nullable: true),
                     AdminsUser_Id = table.Column<int>(type: "integer", nullable: true),
-                    Logid = table.Column<int>(type: "integer", nullable: true),
-                    LogsLog_id = table.Column<int>(type: "integer", nullable: true),
-                    Command_received = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Command_read = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    Command_performed = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    Duplicate_Flag = table.Column<int>(type: "integer", nullable: true),
+                    Command_String = table.Column<string>(type: "text", nullable: true),
+                    Command_Value = table.Column<string>(type: "text", nullable: true),
+                    Command_Received = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    Command_Read = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    Command_Performed = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -88,10 +87,10 @@ namespace MinimalAPIPostgresSqlCSS.Migrations
                         principalTable: "Admins",
                         principalColumn: "User_Id");
                     table.ForeignKey(
-                        name: "FK_Commands_Logs_LogsLog_id",
-                        column: x => x.LogsLog_id,
+                        name: "FK_Commands_Logs_Log_Id",
+                        column: x => x.Log_Id,
                         principalTable: "Logs",
-                        principalColumn: "Log_id");
+                        principalColumn: "Log_Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -100,27 +99,28 @@ namespace MinimalAPIPostgresSqlCSS.Migrations
                 {
                     Entry_Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Water_level = table.Column<float>(type: "real", nullable: true),
+                    Pictures_Id = table.Column<int>(type: "integer", nullable: true),
+                    Water_Level = table.Column<float>(type: "real", nullable: true),
                     Temperature = table.Column<float>(type: "real", nullable: true),
-                    Soil_moisture = table.Column<float>(type: "real", nullable: true),
-                    Soil_moisture_2 = table.Column<float>(type: "real", nullable: true),
-                    Soil_moisture_3 = table.Column<float>(type: "real", nullable: true),
-                    Soil_moisture_4 = table.Column<float>(type: "real", nullable: true),
-                    Soil_moisture_5 = table.Column<float>(type: "real", nullable: true),
-                    Soil_moisture_6 = table.Column<float>(type: "real", nullable: true),
-                    Soil_moisture_7 = table.Column<float>(type: "real", nullable: true),
-                    Soil_moisture_8 = table.Column<float>(type: "real", nullable: true),
+                    Soil_Moisture_1 = table.Column<float>(type: "real", nullable: true),
+                    Soil_Moisture_2 = table.Column<float>(type: "real", nullable: true),
+                    Soil_Moisture_3 = table.Column<float>(type: "real", nullable: true),
+                    Soil_Moisture_4 = table.Column<float>(type: "real", nullable: true),
+                    Soil_Moisture_5 = table.Column<float>(type: "real", nullable: true),
+                    Soil_Moisture_6 = table.Column<float>(type: "real", nullable: true),
+                    Soil_Moisture_7 = table.Column<float>(type: "real", nullable: true),
+                    Soil_Moisture_8 = table.Column<float>(type: "real", nullable: true),
                     Humidity = table.Column<float>(type: "real", nullable: true),
                     Light = table.Column<float>(type: "real", nullable: true),
-                    PicturesId = table.Column<int>(type: "integer", nullable: true),
-                    Times_tamps = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    Reservoir_Water_Level = table.Column<string>(type: "text", nullable: true),
+                    Timestamps = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EnvironmentalData", x => x.Entry_Id);
                     table.ForeignKey(
-                        name: "FK_EnvironmentalData_Pictures_PicturesId",
-                        column: x => x.PicturesId,
+                        name: "FK_EnvironmentalData_Pictures_Pictures_Id",
+                        column: x => x.Pictures_Id,
                         principalTable: "Pictures",
                         principalColumn: "Pic_Id");
                 });
@@ -131,14 +131,14 @@ namespace MinimalAPIPostgresSqlCSS.Migrations
                 column: "AdminsUser_Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Commands_LogsLog_id",
+                name: "IX_Commands_Log_Id",
                 table: "Commands",
-                column: "LogsLog_id");
+                column: "Log_Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EnvironmentalData_PicturesId",
+                name: "IX_EnvironmentalData_Pictures_Id",
                 table: "EnvironmentalData",
-                column: "PicturesId");
+                column: "Pictures_Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MinimalAPIPostgresSqlCSS.Migrations
 {
     [DbContext(typeof(CSSDb))]
-    [Migration("20221120211318_migrationtest1")]
-    partial class migrationtest1
+    [Migration("20221121193941_migrationtest")]
+    partial class migrationtest
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -54,35 +54,32 @@ namespace MinimalAPIPostgresSqlCSS.Migrations
                     b.Property<int?>("AdminsUser_Id")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("Command_performed")
+                    b.Property<DateTime?>("Command_Performed")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime?>("Command_read")
+                    b.Property<DateTime?>("Command_Read")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("Command_received")
+                    b.Property<DateTime>("Command_Received")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("Command_string")
+                    b.Property<string>("Command_String")
                         .HasColumnType("text");
 
-                    b.Property<string>("Command_value")
+                    b.Property<string>("Command_Value")
                         .HasColumnType("text");
 
-                    b.Property<int?>("Duplicate_flag")
+                    b.Property<int?>("Duplicate_Flag")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("Logid")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("LogsLog_id")
+                    b.Property<int?>("Log_Id")
                         .HasColumnType("integer");
 
                     b.HasKey("Command_Id");
 
                     b.HasIndex("AdminsUser_Id");
 
-                    b.HasIndex("LogsLog_id");
+                    b.HasIndex("Log_Id");
 
                     b.ToTable("Commands");
                 });
@@ -101,67 +98,67 @@ namespace MinimalAPIPostgresSqlCSS.Migrations
                     b.Property<float?>("Light")
                         .HasColumnType("real");
 
-                    b.Property<int?>("PicturesId")
+                    b.Property<int?>("Pictures_Id")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Reservoir_water_level")
+                    b.Property<string>("Reservoir_Water_Level")
                         .HasColumnType("text");
 
-                    b.Property<float?>("Soil_moisture")
+                    b.Property<float?>("Soil_Moisture_1")
                         .HasColumnType("real");
 
-                    b.Property<float?>("Soil_moisture_2")
+                    b.Property<float?>("Soil_Moisture_2")
                         .HasColumnType("real");
 
-                    b.Property<float?>("Soil_moisture_3")
+                    b.Property<float?>("Soil_Moisture_3")
                         .HasColumnType("real");
 
-                    b.Property<float?>("Soil_moisture_4")
+                    b.Property<float?>("Soil_Moisture_4")
                         .HasColumnType("real");
 
-                    b.Property<float?>("Soil_moisture_5")
+                    b.Property<float?>("Soil_Moisture_5")
                         .HasColumnType("real");
 
-                    b.Property<float?>("Soil_moisture_6")
+                    b.Property<float?>("Soil_Moisture_6")
                         .HasColumnType("real");
 
-                    b.Property<float?>("Soil_moisture_7")
+                    b.Property<float?>("Soil_Moisture_7")
                         .HasColumnType("real");
 
-                    b.Property<float?>("Soil_moisture_8")
+                    b.Property<float?>("Soil_Moisture_8")
                         .HasColumnType("real");
 
                     b.Property<float?>("Temperature")
                         .HasColumnType("real");
 
-                    b.Property<DateTime>("Times_tamps")
+                    b.Property<DateTime>("Timestamps")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<float?>("Water_level")
+                    b.Property<float?>("Water_Level")
                         .HasColumnType("real");
 
                     b.HasKey("Entry_Id");
 
-                    b.HasIndex("PicturesId");
+                    b.HasIndex("Pictures_Id");
 
                     b.ToTable("EnvironmentalData");
                 });
 
             modelBuilder.Entity("MinimalAPIPostgresSqlCSS.Models.Logs", b =>
                 {
-                    b.Property<int>("Log_id")
+                    b.Property<int>("Log_Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Log_id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Log_Id"));
 
-                    b.Property<string>("Log_text")
+                    b.Property<string>("Log_Text")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("Times_tamps")
+                    b.Property<DateTime>("Timestamps")
                         .HasColumnType("timestamp without time zone");
 
-                    b.HasKey("Log_id");
+                    b.HasKey("Log_Id");
 
                     b.ToTable("Logs");
                 });
@@ -186,31 +183,31 @@ namespace MinimalAPIPostgresSqlCSS.Migrations
                     b.Property<string>("Camera_Pic_Path_4")
                         .HasColumnType("text");
 
-                    b.Property<float?>("Classification_accurracy")
+                    b.Property<float?>("Classification_Accurracy_1")
                         .HasColumnType("real");
 
-                    b.Property<float?>("Classification_accurracy_2")
+                    b.Property<float?>("Classification_Accurracy_2")
                         .HasColumnType("real");
 
-                    b.Property<float?>("Classification_accurracy_3")
+                    b.Property<float?>("Classification_Accurracy_3")
                         .HasColumnType("real");
 
-                    b.Property<float?>("Classification_accurracy_4")
+                    b.Property<float?>("Classification_Accurracy_4")
                         .HasColumnType("real");
 
-                    b.Property<int?>("Classification_id")
+                    b.Property<int?>("Classification_Id_1")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("Classification_id_2")
+                    b.Property<int?>("Classification_Id_2")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("Classification_id_3")
+                    b.Property<int?>("Classification_Id_3")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("Classification_id_4")
+                    b.Property<int?>("Classification_Id_4")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Times_tamps")
+                    b.Property<DateTime>("Timestamps")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Pic_Id");
@@ -226,7 +223,7 @@ namespace MinimalAPIPostgresSqlCSS.Migrations
 
                     b.HasOne("MinimalAPIPostgresSqlCSS.Models.Logs", "Logs")
                         .WithMany()
-                        .HasForeignKey("LogsLog_id");
+                        .HasForeignKey("Log_Id");
 
                     b.Navigation("Admins");
 
@@ -237,7 +234,7 @@ namespace MinimalAPIPostgresSqlCSS.Migrations
                 {
                     b.HasOne("MinimalAPIPostgresSqlCSS.Models.Pictures", "Pictures")
                         .WithMany()
-                        .HasForeignKey("PicturesId");
+                        .HasForeignKey("Pictures_Id");
 
                     b.Navigation("Pictures");
                 });

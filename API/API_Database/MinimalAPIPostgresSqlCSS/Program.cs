@@ -107,7 +107,7 @@ app.MapGet("/Admins/Commands/{id:int}", async (int id, CSSDb db)  =>
                       {
                           AdminsUser_Id = (int?)Commands.AdminsUser_Id,
                           Command_Id = (int?)Commands.Command_Id,
-                          Command_string = (string?)Commands.Command_String
+                          Command_String = (string?)Commands.Command_String
                           
 
                       }); ;
@@ -316,7 +316,11 @@ app.MapGet("/EnvironmentalData/Classid", async (CSSDb db) =>
                           EnvironmentalData.Water_Level,
                           EnvironmentalData.Pictures_Id,
                           Pic_Id = (int?)Pictures.Pic_Id,
-                          Classification_id = (int?)Pictures.Classification_Id_1
+                          Classification_Id_1 = (int?)Pictures.Classification_Id_1,
+                          Classification_Id_2 = (int?)Pictures.Classification_Id_2,
+                          Classification_Id_3 = (int?)Pictures.Classification_Id_3,
+                          Classification_Id_4 = (int?)Pictures.Classification_Id_4
+
 
                       }).OrderByDescending(x =>x.Entry_Id);
 
@@ -458,15 +462,15 @@ app.MapGet("/Pictures/Desc", async (CSSDb db) =>
                           Camera_Pic_Path_2= Pictures.Camera_Pic_Path_2,    
                           Camera_Pic_Path_3= Pictures.Camera_Pic_Path_3,    
                           Camera_Pic_Path_4= Pictures.Camera_Pic_Path_4,
-                          Classification_accurracy=Pictures.Classification_Accurracy_1,
-                          Classification_accurracy_2=Pictures.Classification_Accurracy_2,
-                          Classification_accurracy_3= Pictures.Classification_Accurracy_3,
-                          Classification_accurracy_4= Pictures.Classification_Accurracy_4,
-                          Classification_id=Pictures.Classification_Id_1,
-                          Classification_id_2=Pictures.Classification_Id_2,
-                          Classification_id_3=Pictures.Classification_Id_3,
-                          Classification_id_4=Pictures.Classification_Id_4,
-                          Times_tamps=Pictures.Timestamps
+                          Classification_Accurracy_1 = Pictures.Classification_Accurracy_1,
+                          Classification_Accurracy_2 = Pictures.Classification_Accurracy_2,
+                          Classification_Accurracy_3 = Pictures.Classification_Accurracy_3,
+                          Classification_Accurracy_4 = Pictures.Classification_Accurracy_4,
+                          Classification_Id_1 = Pictures.Classification_Id_1,
+                          Classification_Id_2 = Pictures.Classification_Id_2,
+                          Classification_Id_3 = Pictures.Classification_Id_3,
+                          Classification_Id_4 = Pictures.Classification_Id_4,
+                          Timestamps = Pictures.Timestamps
 
 
                       }).OrderByDescending(x => x.Pic_Id);
