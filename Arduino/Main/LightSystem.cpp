@@ -6,7 +6,10 @@
 #include <DS3231.h>
 
 //Actuators Parameter;
-int dimLevel=255;
+int dimLevel1=255;
+int dimLevel2=255;
+int dimLevel3=255;
+int dimLevel4=255;
 int nextW = 0;
 int nextR = 0;
 int nextG = 0;
@@ -17,6 +20,7 @@ void fetchNextSchedule();
 
 void setupLightSystem(){
   pinMode(LedPin, OUTPUT);
+  //Add the other Led Pins for WRGB
 
   //Create Light Schedule CSV File 
   File scheduleFile = SD.open(getLightScheduleAddress(), FILE_WRITE);
@@ -55,13 +59,17 @@ void dimBlue(int pwm){
 
 //(Private) 
 void dimAllToLevel(){
-  dimBlue(dimLevel);
+  dimWhite(dimLevel1);
+  dimRed(dimLevel2);
+  dimGreen(dimLevel3);
+  dimBlue(dimLevel4);
 }
 
 //Check if next schedule is meet 
 void checkSchedule(){
   if(currentTime().hour() >= nextSchedule.hour() && currentTime().minute() >= nextSchedule.minute()){
-    dimBlue(dimLevel);
+    dimAllToLevel();
+    //dimBlue(dimLevel);
     Serial.println("Schedule meet: "+(String)nextSchedule.hour() + ":" + (String)nextSchedule.minute());
     fetchNextSchedule();
   }
@@ -98,7 +106,10 @@ void fetchNextSchedule(){
           nextR = schedule.substring(index2+1, index3).toInt();
           nextG = schedule.substring(index3+1, index4).toInt();
           nextB = schedule.substring(index4+1).toInt();
-          dimLevel = nextB;
+          dimLevel1 = nextW;
+          dimLevel2 = nextR;
+          dimLevel3 = nextG;
+          dimLevel4 = nextB;
 
           //Find the next schedule by comparing times
           if(hour >= currentTime().hour() && minute > currentTime().minute()){

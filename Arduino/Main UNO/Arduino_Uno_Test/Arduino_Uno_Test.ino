@@ -1,5 +1,6 @@
 #include <DHT.h>
 #include <DHT_U.h>
+#include <ArduinoJson.h>
 
 #define DHTPIN 2
 #define DHTTYPE    DHT22     // DHT 22
@@ -12,9 +13,10 @@ int delayMS; //delay for loop
 //#define SolenoidValve 6
 #define ReservoirFloatSensor1 5
 #define ReservoirFloatSensor2 6
-#define ReservoirFloatSensor3 7
-#define ReservoirFloatSensor4 8
+#define ReservoirFloatSensor3 9
+#define ReservoirFloatSensor4 10
 
+unsigned long startDataTime;
 
 int water;
 int dry1 = 550;
@@ -37,14 +39,20 @@ void setup() {
   pinMode(WaterPump, OUTPUT);
 
   //Set Reservoir Float Switch Sensors
-  pinMode(ReservoirFloatSensor1, INPUT);
+  pinMode(ReservoirFloatSensor1, INPUT_PULLUP);
+  pinMode(ReservoirFloatSensor2, INPUT_PULLUP);
+  pinMode(ReservoirFloatSensor3, INPUT_PULLUP);
+  pinMode(ReservoirFloatSensor4, INPUT_PULLUP);
+  /*pinMode(ReservoirFloatSensor1, INPUT);
   digitalWrite(ReservoirFloatSensor1, HIGH);
   pinMode(ReservoirFloatSensor2, INPUT);
-  digitalWrite(ReservoirFloatSensor2, HIGH);
-  pinMode(ReservoirFloatSensor3, INPUT);
+  digitalWrite(ReservoirFloatSensor2, HIGH);*/
+  /*pinMode(ReservoirFloatSensor3, INPUT);
   digitalWrite(ReservoirFloatSensor3, HIGH);
   pinMode(ReservoirFloatSensor4, INPUT);
-  digitalWrite(ReservoirFloatSensor4, HIGH);
+  digitalWrite(ReservoirFloatSensor4, HIGH);*/
+
+  startDataTime = millis();
 }
 
 void loop() {
@@ -54,12 +62,26 @@ void loop() {
     runCommand(data);
   }
 
+
+  if((millis()-startDataTime)>= 10000){
+  //Measure and send all data on Serial (JSON format)
+  StaticJsonDocument<500> doc;
+  doc["Temperature"] = measureTemperature();
+  doc["Humidity"] = measureHumidity();
+  doc["Soil_Moisture_1"] = measureMoisture(1);
+  doc["Container_Water_Level"] = measureContainerWaterLevel();
+  doc["Reservoir _Water_Level"] = getReservoirWaterLevel(); //String VERY HIGH, HIGH, MEDIUM, LOW, VERY LOW
+  serializeJson(doc, Serial); 
+  Serial.write("\n"); //This is to mark end of data (expected on GUI side)
+  startDataTime = millis();
+  }
+
   /*Temperature and Humidity*/
-  Serial.println("Temperature: "+(String)measureTemperature());
-  Serial.println("Humidity: "+(String)measureHumidity());
+ // Serial.println("Temperature: "+(String)measureTemperature());
+ // Serial.println("Humidity: "+(String)measureHumidity());
 
   /*Reservoir Water Level*/
-  getReservoirWaterLevel();
+  //getReservoirWaterLevel();
 
   /*Tests*/
   /*Serial.println(digitalRead(ReservoirWaterLevel1));
@@ -94,7 +116,7 @@ void loop() {
 
   /*Water Check*/
   float moisture = measureMoisture(1);
-  Serial.println(measureContainerWaterLevel());
+  //Serial.println(measureContainerWaterLevel());
   if(moisture < 50){
     //saveLog(20, "Watering Start", 0, "Moisture Level: "+(String)moisture);
     waterPlant();
@@ -219,12 +241,13 @@ void waterPlant(){
     //If some time has passed and container water level has not filled
     //container water level or water pump damaged
     long int currentTime = millis()-startWaterTime;
-    Serial.println("Time: " + (String)currentTime);
+    //Serial.println("Time: " + (String)currentTime);
     if(currentTime > (long int)10000){
         //Stop the Container Water System
         //digitalWrite(LED_BUILTIN, LOW);
         digitalWrite(WaterPump, LOW);
         Serial.println("Container Water System Fail");
+        delay(100);
         return;
     }
   }
@@ -232,7 +255,9 @@ void waterPlant(){
   //digitalWrite(LED_BUILTIN, LOW);
   digitalWrite(WaterPump, LOW);
   Serial.println("Container Water System has been successful");
+  delay(100);
 }
+
 
 /* Fill Reservoir */
 /*void fillReservoir(){
@@ -278,7 +303,7 @@ void waterPlant(){
 
 float measureContainerWaterLevel(){
   return (float)analogRead(ContainerWaterLevel);
-  delay(100);
+  //return (float)averagedAnalogRead(10,ContainerWaterLevel);
 }
 
 //Reservoir Float Switch Sensor
@@ -305,9 +330,22 @@ int measureReservoirFloatSensor(int sensor){
 /*Depends on the measurements obtained from the different reservoir float switch sensors*/
 String getReservoirWaterLevel(){
   int ReservoirFloatSensor_1 = measureReservoirFloatSensor(1);
+  delay(100);
   int ReservoirFloatSensor_2 = measureReservoirFloatSensor(2);
+  delay(100);
   int ReservoirFloatSensor_3 = measureReservoirFloatSensor(3);
+  delay(100);
   int ReservoirFloatSensor_4 = measureReservoirFloatSensor(4);
+  delay(100);
+
+  /*if(ReservoirFloatSensor_3 == HIGH && ReservoirFloatSensor_4 == HIGH){
+    //Serial.println("VERY HIGH");
+    return "VERY HIGH";
+  }
+  else if(ReservoirFloatSensor_3 == LOW && ReservoirFloatSensor_4 == HIGH){
+    //Serial.println("HIGH");
+    return "HIGH";
+  }*/
 
   if(ReservoirFloatSensor_1 == HIGH && ReservoirFloatSensor_2 == HIGH && ReservoirFloatSensor_3 == HIGH && ReservoirFloatSensor_4 == HIGH ){
     Serial.println("VERY HIGH");
@@ -331,11 +369,13 @@ String getReservoirWaterLevel(){
     return "VERY LOW";
   }
   else{ 
-    Serial.println("ERROR"); //add savelog that shows all measureReservoirWaterLevel() so they can spot the float switch that is giving problems.
+    //Serial.println("ERROR"); //add savelog that shows all measureReservoirWaterLevel() so they can spot the float switch that is giving problems.
     /*saveLog(28, "Reservoir Water Level Error", 4, (String)("Float sensors conflicting values: ") + "Reservoir Float Sensor 1: " + (String)ReservoirFloatSensor_1 + "Reservoir Float Sensor 2: " 
     + (String)ReservoirFloatSensor_2 + "Reservoir Float Sensor 3: " + (String)ReservoirFloatSensor_3 + "Reservoir Float Sensor 4: " + (String)ReservoirFloatSensor_4);*/
-    Serial.println((String)("Float sensors conflicting values: ") + "Reservoir Float Sensor 1: " + (String)ReservoirFloatSensor_1 + "Reservoir Float Sensor 2: " 
-    + (String)ReservoirFloatSensor_2 + "Reservoir Float Sensor 3: " + (String)ReservoirFloatSensor_3 + "Reservoir Float Sensor 4: " + (String)ReservoirFloatSensor_4);
+    Serial.println((String)("Float sensors conflicting values: ") + "Reservoir Float Sensor 1: " + (String)ReservoirFloatSensor_1 + ", Reservoir Float Sensor 2: " 
+    + (String)ReservoirFloatSensor_2 + ", Reservoir Float Sensor 3: " + (String)ReservoirFloatSensor_3 + ", Reservoir Float Sensor 4: " + (String)ReservoirFloatSensor_4);
+    /*Serial.println((String)("Float sensors conflicting values: ") + "Reservoir Float Sensor 3: " + (String)ReservoirFloatSensor_3 + ", Reservoir Float Sensor 4: " 
+    + (String)ReservoirFloatSensor_4);*/
     return "ERROR";
   }
 }
@@ -353,10 +393,11 @@ float measureMoisture(int sensor){
   }
   else return -1; //Invalid Sensor Option
   float val = (float)analogRead(sensorPin); //Sense analog read
-  Serial.println(val);
+  delay(100);
+  //Serial.println(val);
   val = 100 - map(val, cal_wet, cal_dry, 0, 100); //Calibration (250(dry)-583(wet))
   val = constrain(val, 0 , 100); //Contrain the values if needed
-  Serial.println(val);
+  //Serial.println(val);
   return val;
 }
 
@@ -371,4 +412,13 @@ void calibrateMoisture(int dry, int wet, int sensor){
    wet1 = wet;
   }
   
+}
+
+float averagedAnalogRead(int N, int pin){
+  float temp = 0;
+  for(int i=0; i<N; i++){
+      temp += analogRead(pin);
+      delay(50);
+  }
+  return temp/N;
 }

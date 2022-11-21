@@ -142,7 +142,7 @@ void calibrateMoisture(int dry, int wet, int sensor){
     return;
   }
   Serial.println("Soil Moisture Calibrated Successfully");
-  saveLog(30, "Soil Moisture Calibrated Successfully", 1, "Soil Moisture " + (String)sensor + " Calibrated dry: " + (String)dry + " wet: " + (String)wet);
+  saveLog(30, "Soil Moisture Calibrated Successfully", 1, "Soil Moisture " + (String)sensor + " Calibrated, dry: " + (String)dry + " wet: " + (String)wet);
 }
 
 //Measure Soil Moisture (0,1,2,3,4,5,6,7) returns -1 if not valid input
@@ -195,6 +195,7 @@ float measureMoisture(int sensor){
   else return -1;
 
   float val = (float)analogRead(sensorPin); //Sense analog read
+  delay(100);
   val = 100 - map(val, cal_wet, cal_dry, 0, 100); //Calibration (250(dry)-583(wet))
   val = constrain(val, 0 , 100); //Contrain the values if needed
   return val;
@@ -250,9 +251,13 @@ int measureReservoirFloatSensor(int sensor){
 /*Depends on the measurements obtained from the different reservoir float sensors*/
 String getReservoirWaterLevel(){
   int ReservoirFloatSensor_1 = measureReservoirFloatSensor(1);
+  delay(100);
   int ReservoirFloatSensor_2 = measureReservoirFloatSensor(2);
+  delay(100);
   int ReservoirFloatSensor_3 = measureReservoirFloatSensor(3);
+  delay(100);
   int ReservoirFloatSensor_4 = measureReservoirFloatSensor(4);
+  delay(100);
 
   if(ReservoirFloatSensor_1 == HIGH && ReservoirFloatSensor_2 == HIGH && ReservoirFloatSensor_3 == HIGH && ReservoirFloatSensor_4 == HIGH ){
     Serial.println("VERY HIGH");
@@ -278,8 +283,8 @@ String getReservoirWaterLevel(){
   else{ 
     Serial.println("ERROR"); 
     //add savelog that shows all measureReservoirWaterLevel() so they can spot the float switch that is giving problems.
-    saveLog(28, "Reservoir Water Level Error", 4, (String)("Float sensors conflicting values: ") + "Reservoir Float Sensor 1: " + (String)ReservoirFloatSensor_1 + " Reservoir Float Sensor 2: " 
-    + (String)ReservoirFloatSensor_2 + " Reservoir Float Sensor 3: " + (String)ReservoirFloatSensor_3 + " Reservoir Float Sensor 4: " + (String)ReservoirFloatSensor_4);
+    saveLog(28, "Reservoir Water Level Error", 4, (String)("Float sensors conflicting values: ") + "Reservoir Float Sensor 1: " + (String)ReservoirFloatSensor_1 + ", Reservoir Float Sensor 2: " 
+    + (String)ReservoirFloatSensor_2 + ", Reservoir Float Sensor 3: " + (String)ReservoirFloatSensor_3 + ", Reservoir Float Sensor 4: " + (String)ReservoirFloatSensor_4);
     return "ERROR";
   }
 }
@@ -287,7 +292,7 @@ String getReservoirWaterLevel(){
 //NOT TESTED To increase accuracy it would be good to average multiple values taken in short term
 float averagedAnalogRead(int N, int pin){
   float temp = 0;
-  for(int i=0; i=N; i++){
+  for(int i=0; i<N; i++){
       temp += analogRead(pin);
       delay(50);
   }
