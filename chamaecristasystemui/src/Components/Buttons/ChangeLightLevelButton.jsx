@@ -13,8 +13,8 @@ async function simulateNetworkRequest(WW, R, G, B) {
   };
 
   console.log(requestOptions)
-  // const response = await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)
-  // const data = await response.json();
+  const response = await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)
+  const data = await response.json();
   return new Promise((resolve) => {});
 }
 
