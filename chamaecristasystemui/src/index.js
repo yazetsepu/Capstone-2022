@@ -7,7 +7,7 @@ import App from './App';
 import ViewCapturesPage from "./Pages/ViewCapturesPage";
 
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root'), document.body.style.backgroundColor = "#D9D9D9");
 
 root.render(
   <React.StrictMode>

@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/DataTable.css';
 import Table from 'react-bootstrap/Table';
-//What Im planning to use to achieve teh scrolling through data
 import Pagination from 'react-bootstrap/Pagination';
 
 function BasicTable() {
     //to store everything returned from the fetch
     const [envData, setEnvData] = useState([])
     //to store the first 12-15 elements returned from fetch and stored in envData
-    //gets replaced with a call from a button by the next 12-15
-    const dataPerPage = 10;
-    const [limEnvData, setLimEnvData] = useState([])
-    const [currNum, setCurrNum] = useState(dataPerPage)
+    const dataPerPage = 12;
+    const [limEnvData, setLimEnvData] = useState([]);
+    const [currNum, setCurrNum] = useState(dataPerPage);
     const [isNextActive, setIsNextActive] = useState(false);
     const [isPrevActive, setIsPrevActive] = useState(true);
+    const [currPage, setCurrPage] = useState(1);
     
-    
+    //Call the API
     const fetchData = async () => {
         const response = await fetch("https://cssrumapi.azurewebsites.net/environmentaldata/classid")
         const data = await response.json()
@@ -43,51 +42,76 @@ function BasicTable() {
         fetchData()
       }, [])
 
+      //Handler Functions for buttons
       const showNextData = () => {
-        if(limEnvData.length <= dataPerPage-1 ){
-            setIsNextActive(true)
-            return null;
+        if(currNum / currPage === dataPerPage && currPage < envData.length/dataPerPage){
+            setCurrNum(currNum + limEnvData.length)
         }
-        setCurrNum(currNum + limEnvData.length)
 
         if(envData.slice(currNum, envData.length).length > dataPerPage){
             setLimEnvData(envData.slice(currNum, currNum+dataPerPage));
             setIsPrevActive(false);
+            setCurrPage(currPage+1)
         }
-        else if(envData.slice(currNum, envData.length).length <=dataPerPage && envData.slice(currNum, envData.length).length > 0){
+        else if(envData.slice(currNum, envData.length).length <= dataPerPage && envData.slice(currNum, envData.length).length > 0){
             setLimEnvData(envData.slice(currNum));
             setIsNextActive(true);
+            setCurrPage(currPage+1)
         }
         else{
             setIsNextActive(true);
+            setCurrNum(currNum-dataPerPage)
         }      
       }
 
       const showPrevData = () => {
-        if(currNum <= 0){
+        if(currPage <= 2){
             setIsPrevActive(true)
+            console.log("On Prev Stop: "+currNum)
+        }
+        
+        if(currNum / currPage === dataPerPage){
+            setCurrNum(currNum - limEnvData.length)
+        }
+
+        if(envData.slice(currNum-limEnvData.length, envData.length).length > dataPerPage){
+            setLimEnvData(envData.slice(currNum-(limEnvData.length*2), currNum-limEnvData.length));
+            setIsNextActive(false);
+            setCurrPage(currPage-1)
+        }
+        else if (currNum < dataPerPage){
+            setLimEnvData(envData.slice(currNum-limEnvData.length, currNum));
+            setIsPrevActive(true);
+            setCurrPage(currPage-1)
             return null;
         }
-        
-        setCurrNum(currNum - limEnvData.length)
-        
-        if(envData.slice(currNum-limEnvData.length, envData.length).length >= dataPerPage){
-            setLimEnvData(envData.slice(currNum-limEnvData.length, currNum));
+        else{
+            setLimEnvData(envData.slice(currNum-(limEnvData.length*2), currNum-limEnvData.length));
             setIsNextActive(false);
+            setCurrPage(currPage-1)
         }
-        else if (currNum <= dataPerPage){
-            setLimEnvData(envData.slice(currNum-limEnvData.length, currNum));
-            setIsPrevActive(true);
-            // setCurrNum(currNum + limEnvData.length)
-        }
-        else {
-            setIsPrevActive(true);
-        }
-                   
+      }
+
+      const showFirstPage = () => {
+        setCurrNum(12)
+        setLimEnvData(envData.slice(0, dataPerPage));
+        setIsNextActive(false);
+        setIsPrevActive(true)
+        setCurrPage(1)
+      }
+
+      const showLastPage = () => {
+        setCurrNum(envData.length)
+        setLimEnvData(envData.slice(envData.length-dataPerPage));
+        setIsNextActive(true);
+        setIsPrevActive(false)
+        setCurrPage(envData.length/dataPerPage)
       }
 
       const handleNextClick = () => showNextData();
       const handlePrevClick = () => showPrevData();
+      const handleFirstClick = () => showFirstPage();
+      const handleLastClick = () => showLastPage();
 
     return (
         <div>
@@ -133,11 +157,23 @@ function BasicTable() {
                     <Pagination.Prev 
                         onClick={handlePrevClick}
                         disabled={isPrevActive}/>
-                    <Pagination.Item>{1}</Pagination.Item>
+                    <Pagination.Item
+                    onClick={handleFirstClick}>
+                        {1}
+                    </Pagination.Item>
 
                     <Pagination.Ellipsis />
+                    <Pagination.Item
+                        active>
+                            Current Page: {Math.ceil(currPage)}
+                    </Pagination.Item>
+                    <Pagination.Ellipsis />
 
-                    <Pagination.Item>{envData.length/dataPerPage}</Pagination.Item>
+                    <Pagination.Item
+                        onClick={handleLastClick}
+                    >
+                        {envData.length/dataPerPage}
+                    </Pagination.Item>
                     <Pagination.Next 
                         onClick={handleNextClick}
                         disabled={isNextActive}
