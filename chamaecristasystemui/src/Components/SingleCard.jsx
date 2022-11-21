@@ -3,7 +3,7 @@ import Card from 'react-bootstrap/Card';
 
 function SingleCard(props) {
   return (
-      <Card>{}
+      <Card>
         <Card.Img variant="top" src={props.src}/>
         <Card.Body>
           <Card.Title>Camera Number: {props.camNum}</Card.Title>

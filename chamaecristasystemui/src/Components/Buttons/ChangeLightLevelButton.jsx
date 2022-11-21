@@ -5,16 +5,17 @@ import Form from 'react-bootstrap/Form';
 import RangeSlider from 'react-bootstrap-range-slider';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 
-async function simulateNetworkRequest() {
+async function simulateNetworkRequest(WW, R, G, B) {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ command_string: "Water Plant"})
+    body: JSON.stringify({ command_string: "Dim", command_value: {WW, R, G, B}})
   };
 
-  const response = await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)
-  const data = await response.json();
-  return new Promise((resolve) => setTimeout(resolve, 2000));
+  console.log(requestOptions)
+  // const response = await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)
+  // const data = await response.json();
+  return new Promise((resolve) => {});
 }
 
 function ChangeLightLevelButton(props) {
@@ -27,17 +28,20 @@ function ChangeLightLevelButton(props) {
   const [wWValue, setWWValue] = useState(0);
 
   useEffect(() => {
-    // if (isLoading) {
-    //   simulateNetworkRequest().then(() => {
-    //     setLoading(false);
-    //   });
-    // }
+    if (isLoading) {
+      simulateNetworkRequest().then(() => {
+        setLoading(false);
+      });
+    }
   }, [isLoading]);
 
   const handleClick = () => setLoading(true);
   const handleClose = () => setLoading(false)
 
-  const handleChange = (newVal) => setRValue(newVal)
+  const handleSubmit = () => {
+    simulateNetworkRequest(wWValue, rValue, gValue, bValue);
+    setLoading(false);
+  }
 
   return (
     <div>
@@ -92,7 +96,7 @@ function ChangeLightLevelButton(props) {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" onClick={handleSubmit}>
             Save Changes
           </Button>
         </Modal.Footer>

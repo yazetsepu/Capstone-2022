@@ -67,7 +67,6 @@ function BasicTable() {
       const showPrevData = () => {
         if(currPage <= 2){
             setIsPrevActive(true)
-            console.log("On Prev Stop: "+currNum)
         }
         
         if(currNum / currPage === dataPerPage){
@@ -121,6 +120,7 @@ function BasicTable() {
                         <th>#</th>
                         <th>Timestamp</th>
                         <th>Leaf Status</th>
+                        <th>Resv Water Level</th>
                         <th>Water Level</th>
                         <th>Temperature (C)</th>
                         <th colSpan={8}>Soil Moisture (%)</th>
@@ -136,6 +136,7 @@ function BasicTable() {
                             <td>{data.classification_id === 0? "Open" :
                                 data.classification_id === 1? "Closed" :
                                 "Empty"}</td>
+                            <td>{data.resevoir_water_level}</td>
                             <td>{data.water_level}</td>
                             <td>{data.temperature}</td>
                             <td>{"S1 - " + data.soil_moisture}</td>

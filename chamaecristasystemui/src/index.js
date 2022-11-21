@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import App from './App';
 import ViewCapturesPage from "./Pages/ViewCapturesPage";
+import ViewGraphsPage from "./Pages/ViewGraphsPage";
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'), document.body.style.backgroundColor = "#D9D9D9");
@@ -15,6 +16,7 @@ root.render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/c" element={<ViewCapturesPage />} />
+        <Route path="/g" element={<ViewGraphsPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
