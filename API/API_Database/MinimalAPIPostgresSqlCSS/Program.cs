@@ -46,13 +46,10 @@ app.UseCors(MyAllowSpecificOrigins);
 
 
 
-//HttpPost Admin table David Ortiz
 app.MapPost("/Admins/", async (Admins a, CSSDb db) =>
 {
-    
     db.Admins.Add(a);
     await db.SaveChangesAsync();
-
     return Results.Created($"/Admins/{a.User_Id}", a);
 });
 
@@ -70,12 +67,7 @@ app.MapGet("/AdminsAll", async (CSSDb db) =>await db.Admins.ToListAsync());
 app.MapPut("/Admins/{id:int}", async (int id, Admins a, CSSDb db) =>
 {
 
-   // if (a.User_Id != id) return Results.BadRequest();
-
-
-
     var admins = await db.Admins.FindAsync(id);
-
     if (admins is null) return Results.NotFound();  
     
     admins.User_Id = a.User_Id;
@@ -84,9 +76,6 @@ app.MapPut("/Admins/{id:int}", async (int id, Admins a, CSSDb db) =>
 
     await db.SaveChangesAsync();
     return Results.Ok(admins);
-
-
-
 });
 
 app.MapDelete("/Admins/{id:int}", async (int id, CSSDb db) =>
@@ -177,13 +166,10 @@ app.MapPut("/Commands/Command_Read/{id:int}", async (int id, Commands a, CSSDb d
 
     // if (a.User_Id != id) return Results.BadRequest();
 
-
-
     var Commands = await db.Commands.FindAsync(id);
 
     if (Commands is null) return Results.NotFound();
     
-
     Commands.Command_Read = a.Command_Read;
 
     await db.SaveChangesAsync();
@@ -200,10 +186,8 @@ app.MapPut("/Commands/Command_Performed/{id:int}", async (int id, Commands a, CS
 
 
     var Commands = await db.Commands.FindAsync(id);
-
     if (Commands is null) return Results.NotFound();
     
-
     Commands.Command_Performed = a.Command_Performed;
 
     await db.SaveChangesAsync();
@@ -241,57 +225,7 @@ app.MapGet("/EnvironmentalData/{id:int}", async (int id, CSSDb db) =>
     : Results.NotFound();
 
 });
-//new code
-/*
-app.MapGet("/EnvironmentalData/classidTest", async ( CSSDb db) =>
-{
-
-    var properties = db.EnvironmentalData
-    .Join(db.Pictures,
-      p => p.Pictures_Id,
-      d => d.Pic_Id,
-      (p, d) => new
-      {
-          p.Entry_Id,
-          p.Water_Level,
-          p.Temperature,
-          p.Soil_Moisture_1,
-          p.Humidity,
-          p.Timestamps,
-          d.Pic_Id,
-          d.Classification_Id_1
-
-      })
-   .Select(r => new
-   {
-       Entry_Id = r.Entry_Id,
-       Water_Level = r.Water_Level,
-       Temperature = r.Temperature,
-       Soil_Moisture_1 = r.Soil_Moisture_1,
-       Humidity = r.Humidity,
-       Timestamps = r.Timestamps,
-       Pic_Id = r.Pic_Id,
-       Classification_Id_1 =r.Classification_Id_1
-
-   });
     
-  return  Results.Ok(properties);
-   
-});*/
-/*
-app.MapGet("/EnvironmentalData/classidTest2", async (CSSDb db) =>
-{
-
-    var properties = from EnvironmentalData in db.EnvironmentalData
-                     join Pictures in db.Pictures
-                     on EnvironmentalData.Pictures_Id equals Pictures.Pic_Id into grouping
-                     from Pictures in grouping.DefaultIfEmpty()
-                     select new { Enviromental = EnvironmentalData, Picture= Pictures };
-
-
-    return Results.Ok(properties);
-
-});*/
 app.MapGet("/EnvironmentalData/Classid", async (CSSDb db) =>
 {
 
@@ -331,11 +265,6 @@ app.MapGet("/EnvironmentalDataAll", async (CSSDb db) => await db.EnvironmentalDa
 
 app.MapPut("/EnvironmentalData/{id:int}", async (int id, EnvironmentalData a, CSSDb db) =>
 {
-
-    // if (a.User_Id != id) return Results.BadRequest();
-
-
-
     var EnvironmentalData = await db.EnvironmentalData.FindAsync(id);
 
     if (EnvironmentalData is null) return Results.NotFound();
@@ -360,8 +289,6 @@ app.MapPut("/EnvironmentalData/{id:int}", async (int id, EnvironmentalData a, CS
 
     await db.SaveChangesAsync();
     return Results.Ok(EnvironmentalData);
-
-
 
 });
 
@@ -399,10 +326,6 @@ app.MapGet("/LogsAll", async (CSSDb db) => await db.Logs.ToListAsync());
 app.MapPut("/Logs/{id:int}", async (int id, Logs a, CSSDb db) =>
 {
 
-    // if (a.User_Id != id) return Results.BadRequest();
-
-
-
     var Logs = await db.Logs.FindAsync(id);
 
     if (Logs is null) return Results.NotFound();
@@ -414,9 +337,6 @@ app.MapPut("/Logs/{id:int}", async (int id, Logs a, CSSDb db) =>
 
     await db.SaveChangesAsync();
     return Results.Ok(Logs);
-
-
-
 });
 
 app.MapDelete("/Logs/{id:int}", async (int id, CSSDb db) =>
@@ -481,11 +401,6 @@ app.MapGet("/Pictures/Desc", async (CSSDb db) =>
 
 app.MapPut("/Pictures/{id:int}", async (int id, Pictures a, CSSDb db) =>
 {
-
-    // if (a.User_Id != id) return Results.BadRequest();
-
-
-
     var Pictures = await db.Pictures.FindAsync(id);
 
     if (Pictures is null) return Results.NotFound();
@@ -505,14 +420,8 @@ app.MapPut("/Pictures/{id:int}", async (int id, Pictures a, CSSDb db) =>
     Pictures.Camera_Pic_Path_4 = a.Camera_Pic_Path_4;
     Pictures.Timestamps = a.Timestamps;
     
-
-
-   
-
     await db.SaveChangesAsync();
     return Results.Ok(Pictures);
-
-
 
 });
 
