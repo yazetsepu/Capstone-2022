@@ -58,9 +58,24 @@ function PictureCard() {
     //useEffects is a React hook that triggers everytime the page is rendered (loads)
     useEffect(() => {
         fetchData()
+        //If there are no pictures, create some dummy data
+        if(picData.length/dataPerPage <= 0){
+            let data = []
+            data.push({
+                "pic_Id" : "N/A", "camera_Pic_Path_1" : "N/A", "camera_Pic_Path_2" : "N/A", 
+                "camera_Pic_Path_3" : "N/A", "camera_Pic_Path_4" : "N/A", "classification_Accuracy_1" : "N/A", 
+                "classification_Accuracy_2" : "N/A", "classification_Accuracy_3" : "N/A", "classification_Accuracy_4" : "N/A",
+                "classification_Id_1" : "N/A", "classification_Id_2" : "N/A", "classification_Id_3" : "N/A", "classification_Id_4" : "N/A", "timestamps" : "N/A"})
+                data.push({
+                    "pic_Id" : "N/A", "camera_Pic_Path_1" : "N/A", "camera_Pic_Path_2" : "N/A", 
+                    "camera_Pic_Path_3" : "N/A", "camera_Pic_Path_4" : "N/A", "classification_Accuracy_1" : "N/A", 
+                    "classification_Accuracy_2" : "N/A", "classification_Accuracy_3" : "N/A", "classification_Accuracy_4" : "N/A",
+                    "classification_Id_1" : "N/A", "classification_Id_2" : "N/A", "classification_Id_3" : "N/A", "classification_Id_4" : "N/A", "timestamps" : "N/A"})
+            setLimPicData(data)
+        }
     }, [])
 
-     //Handler Functions for the Pagination buttons
+    //Handler Functions for the Pagination buttons
 
     //Handles the pressing of the ">" Next arrow in the pagination
     const showNextData = () => {
@@ -88,7 +103,6 @@ function PictureCard() {
     const showPrevData = () => {
         if(currPage <= 2){
             setIsPrevActive(true)
-            console.log("On Prev Stop: "+currNum)
         }
         
         if(currNum / currPage === dataPerPage){

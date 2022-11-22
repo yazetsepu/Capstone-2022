@@ -42,7 +42,8 @@ function ExportAsCsvButton(props) {
   //Handles the conversion of data to csv with the appropriate headers and their mappings
   const handleClick = e =>{
     e.preventDefault()
-
+    setLoading(true);
+    
     // Headers for each column
     let headers = ['Entry Id,Timestamp,Temperature,Humidity,Light,Resevoir Water Level,Water Level,Soil Moisture S1,Soil Moisture S2,Soil Moisture S3,Soil Moisture S4,Soil Moisture S5,Soil Moisture S6,Soil Moisture S7,Soil Moisture S8']
 
