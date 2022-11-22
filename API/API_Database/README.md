@@ -70,23 +70,23 @@ As part of the necessary packages and installation of dependencies:
 #Table Schemas:
 Admins:
 
-![image](https://user-images.githubusercontent.com/31049645/202928286-cd3f7819-103d-4c2d-9410-4fe295148e94.png)
+![image](https://user-images.githubusercontent.com/31049645/203210890-8d8b1287-f3bf-43fc-ae25-9ae5bc42a505.png)
 
 Commands:
 
-![image](https://user-images.githubusercontent.com/31049645/202928394-79d808c4-6fcd-4102-8ad9-b1a6f58fc94a.png)
+![image](https://user-images.githubusercontent.com/31049645/203210934-a125bf7a-a698-4082-8954-c98b2f397f08.png)
 
 EnvironmentalData:
 
-![image](https://user-images.githubusercontent.com/31049645/202928353-bf87ac09-7e76-4c83-9665-3c5efeee1c53.png)
+![image](https://user-images.githubusercontent.com/31049645/203210981-bfad4ee4-6c49-46ad-a58f-8d4a274bfc17.png)
 
 Logs:
 
-![image](https://user-images.githubusercontent.com/31049645/202928370-6f1260a0-5193-4f3e-bc7a-e88e14d6b715.png)
+![image](https://user-images.githubusercontent.com/31049645/203211009-5141898e-b889-476e-b888-06cc78fa4494.png)
 
 Pictures:
 
-![image](https://user-images.githubusercontent.com/31049645/202928379-75557947-2232-4568-a2e9-f2b72c447d24.png)
+![image](https://user-images.githubusercontent.com/31049645/203211027-76a4165a-cab3-4765-9c22-84e11eafaeba.png)
 
 # Routes:
 ## Admins
