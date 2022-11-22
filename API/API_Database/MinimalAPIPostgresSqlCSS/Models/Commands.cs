@@ -3,6 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.Design;
 using MinimalAPIPostgresSqlCSS.Models;
 
+/*
+ * Commands models interface, getters y setters, for columns on database. 
+ * The virtual logs instance and admins instance, also the creation of foreignkey.
+ * Because the relation one to many with the admins and logs with a relation one to one. 
+ * 
+ * @author David G. Ortiz Velez
+ */
 
 namespace MinimalAPIPostgresSqlCSS.Models
 {

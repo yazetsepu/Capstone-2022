@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using MinimalAPIPostgresSqlCSS.Data;
 using MinimalAPIPostgresSqlCSS.Models;
@@ -6,9 +7,23 @@ using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 using System.Web.Http.Results;
 
+
+/*
+ * This class is the app builder of the app,
+ * where is created the host of the api, 
+ * and all the routes for http/https request.
+ * 
+ * @author David G. Ortiz Velez
+ * 
+ */
+
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
+ /* This Cross-Origin Resource Sharing services 
+ * allows any origin with any header or method
+ * to request from outside of the domain.
+ */
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
@@ -26,7 +41,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //Initializando conexion
 var connectionString = builder.Configuration.GetConnectionString("PostgreSQLConnection");
-//Agregando un contenedor de dependencias usando postgres
+//Agregates a postgresql server with the dependencies
 builder.Services.AddDbContext<CSSDb>(options =>
 options.UseNpgsql(connectionString));
 
@@ -40,12 +55,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
-
+//app.UseHttpsRedirection()
 app.UseCors(MyAllowSpecificOrigins);
 
-
-
+// Admin post request that send a new admins object to the data base.
 app.MapPost("/Admins/", async (Admins a, CSSDb db) =>
 {
     db.Admins.Add(a);
@@ -53,6 +66,7 @@ app.MapPost("/Admins/", async (Admins a, CSSDb db) =>
     return Results.Created($"/Admins/{a.User_Id}", a);
 });
 
+//Admin get request that will get an admin by id.
 app.MapGet("/Admins/{id:int}", async (int id, CSSDb db) =>
 {
     return await db.Admins.FindAsync(id)
@@ -62,14 +76,19 @@ app.MapGet("/Admins/{id:int}", async (int id, CSSDb db) =>
 
 });
 
+//Admin get all, will get all admins into a list.
 app.MapGet("/AdminsAll", async (CSSDb db) =>await db.Admins.ToListAsync());
 
+
+//Admin put will update an existing value by id. 
 app.MapPut("/Admins/{id:int}", async (int id, Admins a, CSSDb db) =>
 {
+    if (a.User_Id != id) return Results.BadRequest();
 
     var admins = await db.Admins.FindAsync(id);
+
     if (admins is null) return Results.NotFound();  
-    
+ 
     admins.User_Id = a.User_Id;
     admins.Admin_Email = a.Admin_Email;
     admins.Admin_Password = a.Admin_Password;
@@ -78,17 +97,19 @@ app.MapPut("/Admins/{id:int}", async (int id, Admins a, CSSDb db) =>
     return Results.Ok(admins);
 });
 
+//Delete an existing admin by id.
 app.MapDelete("/Admins/{id:int}", async (int id, CSSDb db) =>
 {
     var admins = await db.Admins.FindAsync(id);
     if (admins is null) return Results.NotFound();
     
-        db.Admins.Remove(admins);
-        await db.SaveChangesAsync();
+    db.Admins.Remove(admins);
+    await db.SaveChangesAsync();
     
     return Results.NoContent();
 });
 
+//Get command by admin id.
 app.MapGet("/Admins/Commands/{id:int}", async (int id, CSSDb db)  =>
 {
     var properties = (from Commands in db.Commands.Where(st => st.AdminsUser_Id == id).DefaultIfEmpty()
@@ -113,7 +134,7 @@ app.MapGet("/Admins/Commands/{id:int}", async (int id, CSSDb db)  =>
     
 });
 
-//HttpPost Commands table David Ortiz
+//Post Commands send new commands object to database.
 app.MapPost("/Commands/", async (Commands a, CSSDb db) =>
 {
     db.Commands.Add(a);
@@ -122,6 +143,7 @@ app.MapPost("/Commands/", async (Commands a, CSSDb db) =>
     return Results.Created($"/admins/{a.Command_Id}", a);
 });
 
+//Get command by id if not reply not found.
 app.MapGet("/Commands/{id:int}", async (int id, CSSDb db) =>
 {
     return await db.Commands.FindAsync(id)
@@ -131,14 +153,14 @@ app.MapGet("/Commands/{id:int}", async (int id, CSSDb db) =>
 
 });
 
+//Get all commands from database
 app.MapGet("/CommandsAll", async (CSSDb db) => await db.Commands.ToListAsync());
 
+//Update a command if the command exist.
 app.MapPut("/Commands/{id:int}", async (int id, Commands a, CSSDb db) =>
 {
 
-    // if (a.User_Id != id) return Results.BadRequest();
-
-
+    if (a.Command_Id != id) return Results.BadRequest();
 
     var Commands = await db.Commands.FindAsync(id);
 
@@ -161,10 +183,11 @@ app.MapPut("/Commands/{id:int}", async (int id, Commands a, CSSDb db) =>
 
 });
 
+//Update a command if the commands_read column by id exist if not reply not found.
 app.MapPut("/Commands/Command_Read/{id:int}", async (int id, Commands a, CSSDb db) =>
 {
 
-    // if (a.User_Id != id) return Results.BadRequest();
+    if (a.Command_Id != id) return Results.BadRequest();
 
     var Commands = await db.Commands.FindAsync(id);
 
@@ -178,16 +201,15 @@ app.MapPut("/Commands/Command_Read/{id:int}", async (int id, Commands a, CSSDb d
 
 
 });
+
+//Update a command if the commands_performed column by id exist if not reply not found.
 app.MapPut("/Commands/Command_Performed/{id:int}", async (int id, Commands a, CSSDb db) =>
 {
 
-    // if (a.User_Id != id) return Results.BadRequest();
-
-
-
+    if (a.Command_Id != id) return Results.BadRequest();
     var Commands = await db.Commands.FindAsync(id);
     if (Commands is null) return Results.NotFound();
-    
+
     Commands.Command_Performed = a.Command_Performed;
 
     await db.SaveChangesAsync();
@@ -196,6 +218,8 @@ app.MapPut("/Commands/Command_Performed/{id:int}", async (int id, Commands a, CS
 
 
 });
+
+//Delete a command by id.
 app.MapDelete("/Commands/{id:int}", async (int id, CSSDb db) =>
 {
     var Commands = await db.Commands.FindAsync(id);
@@ -208,7 +232,7 @@ app.MapDelete("/Commands/{id:int}", async (int id, CSSDb db) =>
 });
 
 
-//HttpPost EnvironmentalData table David Ortiz
+//Post an environmentaldata to the database
 app.MapPost("/EnvironmentalData/", async (EnvironmentalData a, CSSDb db) =>
 {
     db.EnvironmentalData.Add(a);
@@ -217,6 +241,7 @@ app.MapPost("/EnvironmentalData/", async (EnvironmentalData a, CSSDb db) =>
     return Results.Created($"/EnvironmentalData/{a.Entry_Id}", a);
 });
 
+//Get environmentaldata by id.
 app.MapGet("/EnvironmentalData/{id:int}", async (int id, CSSDb db) =>
 {
     return await db.EnvironmentalData.FindAsync(id)
@@ -225,7 +250,8 @@ app.MapGet("/EnvironmentalData/{id:int}", async (int id, CSSDb db) =>
     : Results.NotFound();
 
 });
-    
+
+//get all environmentaldata including picture id and classification id in a descending form.
 app.MapGet("/EnvironmentalData/Classid", async (CSSDb db) =>
 {
 
@@ -261,8 +287,11 @@ app.MapGet("/EnvironmentalData/Classid", async (CSSDb db) =>
     return Results.Ok(properties);
 
 });
+
+//Get all environmentaldata 
 app.MapGet("/EnvironmentalDataAll", async (CSSDb db) => await db.EnvironmentalData.ToListAsync());
 
+//Update environmentaldata from an existing id.
 app.MapPut("/EnvironmentalData/{id:int}", async (int id, EnvironmentalData a, CSSDb db) =>
 {
     var EnvironmentalData = await db.EnvironmentalData.FindAsync(id);
@@ -292,6 +321,7 @@ app.MapPut("/EnvironmentalData/{id:int}", async (int id, EnvironmentalData a, CS
 
 });
 
+//Delete an existing envrionmentaldata by id.
 app.MapDelete("/EnvironmentalData/{id:int}", async (int id, CSSDb db) =>
 {
     var EnvironmentalData = await db.EnvironmentalData.FindAsync(id);
@@ -303,7 +333,7 @@ app.MapDelete("/EnvironmentalData/{id:int}", async (int id, CSSDb db) =>
     return Results.NoContent();
 });
 
-//HttpPost Logs table David Ortiz
+//Post a log to the database. 
 app.MapPost("/Logs/", async (Logs a, CSSDb db) =>
 {
     db.Logs.Add(a);
@@ -312,6 +342,7 @@ app.MapPost("/Logs/", async (Logs a, CSSDb db) =>
     return Results.Created($"/Logs/{a.Log_Id}", a);
 });
 
+//Get log by id.
 app.MapGet("/Logs/{id:int}", async (int id, CSSDb db) =>
 {
     return await db.Logs.FindAsync(id)
@@ -321,8 +352,10 @@ app.MapGet("/Logs/{id:int}", async (int id, CSSDb db) =>
 
 });
 
+//Get all logs.
 app.MapGet("/LogsAll", async (CSSDb db) => await db.Logs.ToListAsync());
 
+//Update an existing log by id.
 app.MapPut("/Logs/{id:int}", async (int id, Logs a, CSSDb db) =>
 {
 
@@ -339,6 +372,7 @@ app.MapPut("/Logs/{id:int}", async (int id, Logs a, CSSDb db) =>
     return Results.Ok(Logs);
 });
 
+//Delete log by id.
 app.MapDelete("/Logs/{id:int}", async (int id, CSSDb db) =>
 {
     var Logs = await db.Logs.FindAsync(id);
@@ -350,7 +384,7 @@ app.MapDelete("/Logs/{id:int}", async (int id, CSSDb db) =>
     return Results.NoContent();
 });
 
-//HttpPost Picture table David Ortiz
+//Post a pictures.
 app.MapPost("/Pictures/", async (Pictures a, CSSDb db) =>
 {  
     db.Pictures.Add(a);
@@ -359,6 +393,7 @@ app.MapPost("/Pictures/", async (Pictures a, CSSDb db) =>
     return Results.Created($"/admins/{a.Pic_Id}", a);
 });
 
+//Get pictures by id.
 app.MapGet("/Pictures/{id:int}", async (int id, CSSDb db) =>
 {
     return await db.Pictures.FindAsync(id)
@@ -367,9 +402,10 @@ app.MapGet("/Pictures/{id:int}", async (int id, CSSDb db) =>
     : Results.NotFound();
 
 });
-
+//Get all pictures.
 app.MapGet("/PicturesAll", async (CSSDb db) => await db.Pictures.ToListAsync());
 
+//Get all pictures descending.
 app.MapGet("/Pictures/Desc", async (CSSDb db) =>
 {
 
@@ -399,6 +435,7 @@ app.MapGet("/Pictures/Desc", async (CSSDb db) =>
 
 });
 
+//Uodate pictures data from an existind id.
 app.MapPut("/Pictures/{id:int}", async (int id, Pictures a, CSSDb db) =>
 {
     var Pictures = await db.Pictures.FindAsync(id);
@@ -425,6 +462,7 @@ app.MapPut("/Pictures/{id:int}", async (int id, Pictures a, CSSDb db) =>
 
 });
 
+//Delete picture by id.
 app.MapDelete("/Pictures/{id:int}", async (int id, CSSDb db) =>
 {
     var Pictures = await db.Pictures.FindAsync(id);

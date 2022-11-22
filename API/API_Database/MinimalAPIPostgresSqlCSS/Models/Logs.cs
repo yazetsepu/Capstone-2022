@@ -1,4 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MinimalAPIPostgresSqlCSS.Models;
+using System.ComponentModel.DataAnnotations;
+
+/*
+ * Logs models interface, getters y setters, for columns on database.  
+ * 
+ * @author David G. Ortiz Velez
+ * 
+ */
 
 namespace MinimalAPIPostgresSqlCSS.Models
 {

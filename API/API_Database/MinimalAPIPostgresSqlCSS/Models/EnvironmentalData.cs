@@ -5,6 +5,13 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Authentication;
 using System.Diagnostics.Metrics;
 
+/*
+ * Environmentaldata models interface, getters y setters, for columns on database. 
+ * The foreingkey of picture instance and the object instance of pictures relation is one to one. 
+ * 
+ * @author David G. Ortiz Velez
+ */
+
 namespace MinimalAPIPostgresSqlCSS.Models
 {
     public class EnvironmentalData

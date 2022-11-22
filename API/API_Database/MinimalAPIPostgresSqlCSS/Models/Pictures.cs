@@ -1,8 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using MinimalAPIPostgresSqlCSS.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
+
+/*
+ * Pictures models interface, getters y setters, for columns on database.  
+ * 
+ * @author David G. Ortiz Velez
+ */
 
 namespace MinimalAPIPostgresSqlCSS.Models
 {
