@@ -13,6 +13,7 @@ function ViewGraphsPage() {
                 <DarkNavbar />
                 <div className="graph-selector">
                     <div>
+                        {/* Dropdown selector for what the user wishes to graph */}
                         <Form.Control 
                             size="lg"
                             as="select"
@@ -37,6 +38,7 @@ function ViewGraphsPage() {
                         </Form.Control>
                     </div>
                     <hr></hr>
+                    {/* Renders the Graph of what the user picks on the selector */}
                     <DataGraph yVal={graphValue}/>
                 </div>
             </div>

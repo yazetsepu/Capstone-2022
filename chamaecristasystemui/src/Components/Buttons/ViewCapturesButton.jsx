@@ -7,6 +7,7 @@ function simulateNetworkRequest() {
 }
 
 function ViewCapturesButton() {
+  //Creates the navigation objectthat will handle page switching
   const navigate = useNavigate();
   const [isLoading, setLoading] = useState(false);
 
@@ -26,7 +27,8 @@ function ViewCapturesButton() {
       variant="primary"
       size="lg"
       disabled={isLoading}
-      onClick={() => navigate("/c")}
+      // Switches pages to the designated route
+      onClick={() => navigate("/pictures")}
     >
       {isLoading ? 'Loading…' : 'View Captures'}
     </Button>

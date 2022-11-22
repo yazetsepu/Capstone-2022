@@ -7,6 +7,7 @@ function simulateNetworkRequest() {
 }
 
 function ViewAsGraphButton(props) {
+  //Creates the navigation objectthat will handle page switching
   const navigate = useNavigate();
   const [isLoading, setLoading] = useState(false);
   
@@ -25,7 +26,8 @@ function ViewAsGraphButton(props) {
       variant="primary"
       size="lg"
       disabled={isLoading}
-      onClick={() => navigate("/g")}
+      // Switches pages to the designated route
+      onClick={() => navigate("/graph")}
     >
       {isLoading ? 'Loading…' : 'View as Graph'}
     </Button>

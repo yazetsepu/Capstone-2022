@@ -3,8 +3,10 @@ import Button from 'react-bootstrap/Button';
 
 function ExportAsCsvButton(props) {
   const [isLoading, setLoading] = useState(false);
+  //Stores the environmental data from the DB in ascending order
   const [envData, setEnvData] = useState([])
 
+  //Performs the GET request
   const fetchData = async () => {
     const response = await fetch("https://cssrumapi.azurewebsites.net/EnvironmentalDataAll")
     const data = await response.json()
@@ -12,6 +14,7 @@ function ExportAsCsvButton(props) {
     return new Promise((resolve) => setTimeout(resolve, 2000));
   }
 
+  //Sets the background code and necessary event triggers for a download
   const downloadFile = ({data, fileName, fileType}) => {
     setLoading(true)
     const blob = new Blob([data], { type: fileType })
@@ -27,15 +30,16 @@ function ExportAsCsvButton(props) {
     a.remove()
   }
 
+  //Triggers button press and applies time limit to button press to avoid abuse
   useEffect(() => {
     if (isLoading) {
       fetchData().then(() => {
         setLoading(false);
-
       });
     }
   }, [isLoading]);
 
+  //Handles the conversion of data to csv with the appropriate headers and their mappings
   const handleClick = e =>{
     e.preventDefault()
 

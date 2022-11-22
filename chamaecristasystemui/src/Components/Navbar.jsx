@@ -8,11 +8,13 @@ function DarkNavbar() {
             <Navbar bg="dark" variant="dark">
                 <div className='nav-container'>
                 <Container>
+                    {/* Returns the user to teh Home Page and refreshes it */}
                     <Navbar.Brand href="/">Home</Navbar.Brand>
                     <Navbar.Toggle />
                     <Navbar.Collapse className="justify-content-end">
+                        {/* Will return user to the login page once */}
                         <Navbar.Text>
-                        Signed in as: <a href="#login">Admin</a>
+                            Signed in as: <a href="#login">Admin</a>
                         </Navbar.Text>
                     </Navbar.Collapse>
                 </Container>

@@ -6,7 +6,7 @@ async function simulateNetworkRequest() {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ command_string: "Water Plant"})
+    body: JSON.stringify({ command_String: "Water Plant"})
   };
 
   const response = await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)
@@ -37,6 +37,7 @@ function WaterPlantButton(props) {
       >
         {isLoading ? 'Loading…' : 'Water Plant'}
       </Button>
+      {/* Show a small modal to notify the user the request went through successfuly */}
       <Modal
         size="sm"
         centered

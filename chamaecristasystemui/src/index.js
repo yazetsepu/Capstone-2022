@@ -15,8 +15,8 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="/c" element={<ViewCapturesPage />} />
-        <Route path="/g" element={<ViewGraphsPage />} />
+        <Route path="/pictures" element={<ViewCapturesPage />} />
+        <Route path="/graph" element={<ViewGraphsPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

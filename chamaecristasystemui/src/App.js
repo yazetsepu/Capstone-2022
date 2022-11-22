@@ -14,11 +14,7 @@ import CalibrateMoistureButton from './Components/Buttons/CalibrateMoistureButto
 
 export default class App extends Component {
     static displayName = App.name;
-
-    // componentDidMount(){
-    //     document.body.style.backgroundColor = "#D9D9D9"
-    // }
-
+    
     render() {
         return (
             <div>
