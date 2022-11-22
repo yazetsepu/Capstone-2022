@@ -94,28 +94,28 @@ admins:Post/
 https://cssrumapi.azurewebsites.net/admins
 ```json
 {
-  "command_Id": 0,
-  "duplicate_flag": 0,
-  "command_string": "string",
-  "command_value": "string",
-  "adminsUser_Id": 0,
-  "admins": {
-    "user_Id": 0,
-    "admin_Email": "string",
-    "admin_Password": "string",
-    "commands": [
-      "string"
-    ]
-  },
-  "logid": 0,
-  "logs": {
-    "log_id": 0,
-    "log_text": "string",
-    "times_tamps": "2022-11-20T21:33:26.009Z"
-  },
-  "command_received": "2022-11-20T21:33:26.009Z",
-  "command_read": "2022-11-20T21:33:26.009Z",
-  "command_performed": "2022-11-20T21:33:26.009Z"
+  "user_Id": 0,
+  "admin_Email": "string",
+  "admin_Password": "string",
+  "commands": [
+    {
+      "command_Id": 0,
+      "log_Id": 0,
+      "adminsUser_Id": 0,
+      "duplicate_Flag": 0,
+      "command_String": "string",
+      "command_Value": "string",
+      "admins": "string",
+      "logs": {
+        "log_Id": 0,
+        "log_Text": "string",
+        "timestamps": "2022-11-22T03:04:15.226Z"
+      },
+      "command_Received": "2022-11-22T03:04:15.226Z",
+      "command_Read": "2022-11-22T03:04:15.226Z",
+      "command_Performed": "2022-11-22T03:04:15.226Z"
+    }
+  ]
 }
 ```
 
@@ -126,28 +126,28 @@ admins: put by id
 https://cssrumapi.azurewebsites.net/admins/1
 ```json
 {
-  "command_Id": 0,
-  "duplicate_flag": 0,
-  "command_string": "string",
-  "command_value": "string",
-  "adminsUser_Id": 0,
-  "admins": {
-    "user_Id": 0,
-    "admin_Email": "string",
-    "admin_Password": "string",
-    "commands": [
-      "string"
-    ]
-  },
-  "logid": 0,
-  "logs": {
-    "log_id": 0,
-    "log_text": "string",
-    "times_tamps": "2022-11-20T21:33:26.009Z"
-  },
-  "command_received": "2022-11-20T21:33:26.009Z",
-  "command_read": "2022-11-20T21:33:26.009Z",
-  "command_performed": "2022-11-20T21:33:26.009Z"
+  "user_Id": 0,
+  "admin_Email": "string",
+  "admin_Password": "string",
+  "commands": [
+    {
+      "command_Id": 0,
+      "log_Id": 0,
+      "adminsUser_Id": 0,
+      "duplicate_Flag": 0,
+      "command_String": "string",
+      "command_Value": "string",
+      "admins": "string",
+      "logs": {
+        "log_Id": 0,
+        "log_Text": "string",
+        "timestamps": "2022-11-22T03:04:15.226Z"
+      },
+      "command_Received": "2022-11-22T03:04:15.226Z",
+      "command_Read": "2022-11-22T03:04:15.226Z",
+      "command_Performed": "2022-11-22T03:04:15.226Z"
+    }
+  ]
 }
 ```
 admins: delete by id
@@ -165,10 +165,11 @@ https://cssrumapi.azurewebsites.net/commands/
 ```json
 {
   "command_Id": 0,
-  "duplicate_flag": 0,
-  "command_string": "string",
-  "command_value": "string",
+  "log_Id": 0,
   "adminsUser_Id": 0,
+  "duplicate_Flag": 0,
+  "command_String": "string",
+  "command_Value": "string",
   "admins": {
     "user_Id": 0,
     "admin_Email": "string",
@@ -177,15 +178,14 @@ https://cssrumapi.azurewebsites.net/commands/
       "string"
     ]
   },
-  "logid": 0,
   "logs": {
-    "log_id": 0,
-    "log_text": "string",
-    "times_tamps": "2022-11-20T21:33:26.009Z"
+    "log_Id": 0,
+    "log_Text": "string",
+    "timestamps": "2022-11-22T03:05:03.580Z"
   },
-  "command_received": "2022-11-20T21:33:26.009Z",
-  "command_read": "2022-11-20T21:33:26.009Z",
-  "command_performed": "2022-11-20T21:33:26.009Z"
+  "command_Received": "2022-11-22T03:05:03.580Z",
+  "command_Read": "2022-11-22T03:05:03.580Z",
+  "command_Performed": "2022-11-22T03:05:03.580Z"
 }
 ```
 commands: get by id
@@ -196,10 +196,11 @@ https://cssrumapi.azurewebsites.net/commands/1
 ```json
 {
   "command_Id": 0,
-  "duplicate_flag": 0,
-  "command_string": "string",
-  "command_value": "string",
+  "log_Id": 0,
   "adminsUser_Id": 0,
+  "duplicate_Flag": 0,
+  "command_String": "string",
+  "command_Value": "string",
   "admins": {
     "user_Id": 0,
     "admin_Email": "string",
@@ -208,15 +209,14 @@ https://cssrumapi.azurewebsites.net/commands/1
       "string"
     ]
   },
-  "logid": 0,
   "logs": {
-    "log_id": 0,
-    "log_text": "string",
-    "times_tamps": "2022-11-20T21:33:26.009Z"
+    "log_Id": 0,
+    "log_Text": "string",
+    "timestamps": "2022-11-22T03:05:03.580Z"
   },
-  "command_received": "2022-11-20T21:33:26.009Z",
-  "command_read": "2022-11-20T21:33:26.009Z",
-  "command_performed": "2022-11-20T21:33:26.009Z"
+  "command_Received": "2022-11-22T03:05:03.580Z",
+  "command_Read": "2022-11-22T03:05:03.580Z",
+  "command_Performed": "2022-11-22T03:05:03.580Z"
 }
 ```
 commands: delete by id 
@@ -247,37 +247,37 @@ https://cssrumapi.azurewebsites.net/Environmentaldata
 ```json
 {
   "entry_Id": 0,
-  "water_level": 0,
+  "pictures_Id": 0,
+  "water_Level": 0,
   "temperature": 0,
-  "soil_moisture": 0,
-  "soil_moisture_2": 0,
-  "soil_moisture_3": 0,
-  "soil_moisture_4": 0,
-  "soil_moisture_5": 0,
-  "soil_moisture_6": 0,
-  "soil_moisture_7": 0,
-  "soil_moisture_8": 0,
+  "soil_Moisture_1": 0,
+  "soil_Moisture_2": 0,
+  "soil_Moisture_3": 0,
+  "soil_Moisture_4": 0,
+  "soil_Moisture_5": 0,
+  "soil_Moisture_6": 0,
+  "soil_Moisture_7": 0,
+  "soil_Moisture_8": 0,
   "humidity": 0,
   "light": 0,
-  "reservoir_water_level": "string",
-  "picturesId": 0,
+  "reservoir_Water_Level": "string",
   "pictures": {
     "pic_Id": 0,
-    "classification_id": 0,
-    "classification_id_2": 0,
-    "classification_id_3": 0,
-    "classification_id_4": 0,
-    "classification_accurracy": 0,
-    "classification_accurracy_2": 0,
-    "classification_accurracy_3": 0,
-    "classification_accurracy_4": 0,
+    "classification_Id_1": 0,
+    "classification_Id_2": 0,
+    "classification_Id_3": 0,
+    "classification_Id_4": 0,
+    "classification_Accurracy_1": 0,
+    "classification_Accurracy_2": 0,
+    "classification_Accurracy_3": 0,
+    "classification_Accurracy_4": 0,
     "camera_Pic_Path_1": "string",
     "camera_Pic_Path_2": "string",
     "camera_Pic_Path_3": "string",
     "camera_Pic_Path_4": "string",
-    "times_tamps": "2022-11-20T21:43:24.301Z"
+    "timestamps": "2022-11-22T03:05:22.703Z"
   },
-  "times_tamps": "2022-11-20T21:43:24.301Z"
+  "timestamps": "2022-11-22T03:05:22.703Z"
 }
 
 ```
@@ -290,37 +290,37 @@ https://cssrumapi.azurewebsites.net/environmentaldata/1
 ```json
 {
   "entry_Id": 0,
-  "water_level": 0,
+  "pictures_Id": 0,
+  "water_Level": 0,
   "temperature": 0,
-  "soil_moisture": 0,
-  "soil_moisture_2": 0,
-  "soil_moisture_3": 0,
-  "soil_moisture_4": 0,
-  "soil_moisture_5": 0,
-  "soil_moisture_6": 0,
-  "soil_moisture_7": 0,
-  "soil_moisture_8": 0,
+  "soil_Moisture_1": 0,
+  "soil_Moisture_2": 0,
+  "soil_Moisture_3": 0,
+  "soil_Moisture_4": 0,
+  "soil_Moisture_5": 0,
+  "soil_Moisture_6": 0,
+  "soil_Moisture_7": 0,
+  "soil_Moisture_8": 0,
   "humidity": 0,
   "light": 0,
-  "reservoir_water_level": "string",
-  "picturesId": 0,
+  "reservoir_Water_Level": "string",
   "pictures": {
     "pic_Id": 0,
-    "classification_id": 0,
-    "classification_id_2": 0,
-    "classification_id_3": 0,
-    "classification_id_4": 0,
-    "classification_accurracy": 0,
-    "classification_accurracy_2": 0,
-    "classification_accurracy_3": 0,
-    "classification_accurracy_4": 0,
+    "classification_Id_1": 0,
+    "classification_Id_2": 0,
+    "classification_Id_3": 0,
+    "classification_Id_4": 0,
+    "classification_Accurracy_1": 0,
+    "classification_Accurracy_2": 0,
+    "classification_Accurracy_3": 0,
+    "classification_Accurracy_4": 0,
     "camera_Pic_Path_1": "string",
     "camera_Pic_Path_2": "string",
     "camera_Pic_Path_3": "string",
     "camera_Pic_Path_4": "string",
-    "times_tamps": "2022-11-20T21:43:24.301Z"
+    "timestamps": "2022-11-22T03:05:22.703Z"
   },
-  "times_tamps": "2022-11-20T21:43:24.301Z"
+  "timestamps": "2022-11-22T03:05:22.703Z"
 }
 
 ```
@@ -339,9 +339,9 @@ logs:post
 https://cssrumapi.azurewebsites.net/Logs
 ```json
 {
-  "log_id": 0,
-  "log_text": "string",
-  "times_tamps": "2022-11-20T21:44:42.807Z"
+  "log_Id": 0,
+  "log_Text": "string",
+  "timestamps": "2022-11-22T03:05:42.531Z"
 }
 ```
 logs: get  by id
@@ -351,9 +351,9 @@ logs: put  by id
 https://cssrumapi.azurewebsites.net/logs/1
 ```json
 {
-  "log_id": 0,
-  "log_text": "string",
-  "times_tamps": "2022-11-20T21:44:42.807Z"
+  "log_Id": 0,
+  "log_Text": "string",
+  "timestamps": "2022-11-22T03:05:42.531Z"
 }
 ```
 logs: delete  by id
@@ -368,19 +368,19 @@ https://cssrumapi.azurewebsites.net/Pictures/1
 ```json
 {
   "pic_Id": 0,
-  "classification_id": 0,
-  "classification_id_2": 0,
-  "classification_id_3": 0,
-  "classification_id_4": 0,
-  "classification_accurracy": 0,
-  "classification_accurracy_2": 0,
-  "classification_accurracy_3": 0,
-  "classification_accurracy_4": 0,
+  "classification_Id_1": 0,
+  "classification_Id_2": 0,
+  "classification_Id_3": 0,
+  "classification_Id_4": 0,
+  "classification_Accurracy_1": 0,
+  "classification_Accurracy_2": 0,
+  "classification_Accurracy_3": 0,
+  "classification_Accurracy_4": 0,
   "camera_Pic_Path_1": "string",
   "camera_Pic_Path_2": "string",
   "camera_Pic_Path_3": "string",
   "camera_Pic_Path_4": "string",
-  "times_tamps": "2022-11-20T21:44:56.590Z"
+  "timestamps": "2022-11-22T03:05:55.097Z"
 }
 ```
 Pictures: get  by id
@@ -391,19 +391,19 @@ https://cssrumapi.azurewebsites.net/Pictures/1
 ```json
 {
   "pic_Id": 0,
-  "classification_id": 0,
-  "classification_id_2": 0,
-  "classification_id_3": 0,
-  "classification_id_4": 0,
-  "classification_accurracy": 0,
-  "classification_accurracy_2": 0,
-  "classification_accurracy_3": 0,
-  "classification_accurracy_4": 0,
+  "classification_Id_1": 0,
+  "classification_Id_2": 0,
+  "classification_Id_3": 0,
+  "classification_Id_4": 0,
+  "classification_Accurracy_1": 0,
+  "classification_Accurracy_2": 0,
+  "classification_Accurracy_3": 0,
+  "classification_Accurracy_4": 0,
   "camera_Pic_Path_1": "string",
   "camera_Pic_Path_2": "string",
   "camera_Pic_Path_3": "string",
   "camera_Pic_Path_4": "string",
-  "times_tamps": "2022-11-20T21:44:56.590Z"
+  "timestamps": "2022-11-22T03:05:55.097Z"
 }
 ```
 Pictures: delete  by id
