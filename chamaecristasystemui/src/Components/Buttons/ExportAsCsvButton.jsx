@@ -1,22 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Button from 'react-bootstrap/Button';
 
-function ExportAsCsvButton(props) {
-  const [isLoading, setLoading] = useState(false);
-  //Stores the environmental data from the DB in ascending order
-  const [envData, setEnvData] = useState([])
+function ExportAsCsvButton() {
 
   //Performs the GET request
   const fetchData = async () => {
     const response = await fetch("https://cssrumapi.azurewebsites.net/EnvironmentalDataAll")
     const data = await response.json()
-    setEnvData(data)
-    return new Promise((resolve) => setTimeout(resolve, 2000));
+    return data;
   }
 
   //Sets the background code and necessary event triggers for a download
   const downloadFile = ({data, fileName, fileType}) => {
-    setLoading(true)
     const blob = new Blob([data], { type: fileType })
     const a = document.createElement('a')
     a.download = fileName
@@ -30,27 +25,20 @@ function ExportAsCsvButton(props) {
     a.remove()
   }
 
-  //Triggers button press and applies time limit to button press to avoid abuse
-  useEffect(() => {
-    if (isLoading) {
-      fetchData().then(() => {
-        setLoading(false);
-      });
-    }
-  }, [isLoading]);
-
   //Handles the conversion of data to csv with the appropriate headers and their mappings
-  const handleClick = e =>{
-    e.preventDefault()
-    setLoading(true);
-    
+  const handleClick = async e =>{
+    let envData = await fetchData()
+    console.log(envData)
+
     // Headers for each column
     let headers = ['Entry Id,Timestamp,Temperature,Humidity,Light,Resevoir Water Level,Water Level,Soil Moisture S1,Soil Moisture S2,Soil Moisture S3,Soil Moisture S4,Soil Moisture S5,Soil Moisture S6,Soil Moisture S7,Soil Moisture S8']
 
     //Convert data to csv
     let envCsv = envData.reduce((data, key) => {
-      const { entry_Id,times_tamps,temperature,humidity,light,resevoir_water_level,water_level,soil_moisture,soil_moisture_2,soil_moisture_3,soil_moisture_4,soil_moisture_5,soil_moisture_6,soil_moisture_7,soil_moisture_8 } = key
-      data.push([entry_Id,times_tamps,temperature,humidity,light,resevoir_water_level,water_level,soil_moisture,soil_moisture_2,soil_moisture_3,soil_moisture_4,soil_moisture_5,soil_moisture_6,soil_moisture_7,soil_moisture_8].join(','))
+      const { entry_Id,timestamps,temperature,humidity,light,resevoir_Water_Level,water_Level,soil_Moisture_1,soil_Moisture_2,
+              soil_Moisture_3,soil_Moisture_4,soil_Moisture_5,soil_Moisture_6,soil_Moisture_7,soil_Moisture_8 } = key
+      data.push([entry_Id,timestamps,temperature,humidity,light,resevoir_Water_Level,water_Level,soil_Moisture_1,soil_Moisture_2,
+                soil_Moisture_3,soil_Moisture_4,soil_Moisture_5,soil_Moisture_6,soil_Moisture_7,soil_Moisture_8].join(','))
       return data
     }, [])
 
@@ -67,10 +55,9 @@ function ExportAsCsvButton(props) {
     <Button
       variant="primary"
       size="lg"
-      disabled={isLoading}
-      onClick={!isLoading ? handleClick : null}
+      onClick={handleClick}
     >
-      {isLoading ? 'Loading…' : 'Export as CSV'}
+      Export as CSV
     </Button>
   );
 }

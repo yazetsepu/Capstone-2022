@@ -23,7 +23,7 @@ function SingleCard(props) {
           <Card.Text>
             PictureId: {props.id} - Classified as: {props.classif_id === 0? "Open" :
                             props.classif_id === 1? "Closed" :
-                            "Not Available"} with {props.classif_acc * 100}% accuracy.
+                            "Not Available"} with {Math.round(((props.classif_acc * 100) + Number.EPSILON) * 100) / 100}% accuracy.
           </Card.Text>
         </Card.Body>
         <Card.Footer>
