@@ -17,9 +17,9 @@ import Card from 'react-bootstrap/Card';
 function SingleCard(props) {
   return (
       <Card>
-        <Card.Img variant="top" src={props.src}/>
+        <Card.Img variant="top" src={props.src? props.src : "https://cdn.shopify.com/s/files/1/0082/7339/5794/products/dahua-analog-dome-5-mp-2-8-to-12mm-lens-dh-hac-hdbw1500-rp-z-2712-s2-dh-hac-hdbw1500rp-z-2712-s2-29173595832402_1024x1024.jpg?v=1660641051"}/>
         <Card.Body>
-          <Card.Title>Camera Number: {props.camNum}</Card.Title>
+          <Card.Title>Camera Number: {props.src? props.camNum : props.camNum + " - No Image Available" }</Card.Title>
           <Card.Text>
             PictureId: {props.id} - Classified as: {props.classif_id === 0? "Open" :
                             props.classif_id === 1? "Closed" :

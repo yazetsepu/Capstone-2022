@@ -22,9 +22,13 @@ function ViewGraphsPage() {
                                 setGraphValue(e.target.value);
                             }}>
                             <option value="temperature">Temperature</option>
-                            <option value="leaf">Leaf Status</option>
+                            <option value="leaf1">Leaf Status - Camara 1</option>
+                            <option value="leaf2">Leaf Status - Camara 2</option>
+                            <option value="leaf3">Leaf Status - Camara 3</option>
+                            <option value="leaf4">Leaf Status - Camara 4</option>
                             <option value="humidity">Humidity</option>
                             <option value="water">Water Level</option>
+                            <option value="resevoir">Resevoir Water Level</option>
                             <option value="light">Light Level</option>
                             <option value="soil1">Soil Moisture Sensor 1</option>
                             <option value="soil2">Soil Moisture Sensor 2</option>
@@ -39,7 +43,7 @@ function ViewGraphsPage() {
                     </div>
                     <hr></hr>
                     {/* Renders the Graph of what the user picks on the selector */}
-                    <DataGraph yVal={graphValue}/>
+                        <DataGraph yVal={graphValue}/>
                 </div>
             </div>
         );
