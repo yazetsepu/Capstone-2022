@@ -187,7 +187,6 @@ app.MapPut("/Commands/{id:int}", async (int id, Commands a, CSSDb db) =>
 app.MapPut("/Commands/Command_Read/{id:int}", async (int id, Commands a, CSSDb db) =>
 {
 
-    if (a.Command_Id != id) return Results.BadRequest();
 
     var Commands = await db.Commands.FindAsync(id);
 
@@ -198,15 +197,12 @@ app.MapPut("/Commands/Command_Read/{id:int}", async (int id, Commands a, CSSDb d
     await db.SaveChangesAsync();
     return Results.Ok(Commands);
 
-
-
 });
 
 //Update a command if the commands_performed column by id exist if not reply not found.
 app.MapPut("/Commands/Command_Performed/{id:int}", async (int id, Commands a, CSSDb db) =>
 {
 
-    if (a.Command_Id != id) return Results.BadRequest();
     var Commands = await db.Commands.FindAsync(id);
     if (Commands is null) return Results.NotFound();
 
@@ -214,8 +210,6 @@ app.MapPut("/Commands/Command_Performed/{id:int}", async (int id, Commands a, CS
 
     await db.SaveChangesAsync();
     return Results.Ok(Commands);
-
-
 
 });
 
