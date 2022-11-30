@@ -29,8 +29,8 @@ namespace MinimalAPIPostgresSqlCSS.Models
         public string? Camera_Pic_Path_2 { get; set; }
         public string? Camera_Pic_Path_3 { get; set; }
         public string? Camera_Pic_Path_4 { get; set; }
-    
-        public DateTime Timestamps { get; set; } = DateTime.UtcNow;
+
+        public DateTime Timestamps { get; set; } = DateTime.Now;
 
 
     }

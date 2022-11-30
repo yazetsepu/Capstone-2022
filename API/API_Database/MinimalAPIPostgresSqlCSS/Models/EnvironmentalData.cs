@@ -38,6 +38,6 @@ namespace MinimalAPIPostgresSqlCSS.Models
   
 
         public virtual Pictures? Pictures { get; set; }
-        public DateTime Timestamps { get; set; } = DateTime.UtcNow;
+        public DateTime Timestamps { get; set; } = DateTime.Now;
     }
 }

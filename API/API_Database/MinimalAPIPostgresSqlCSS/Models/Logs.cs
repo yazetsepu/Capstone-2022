@@ -15,7 +15,7 @@ namespace MinimalAPIPostgresSqlCSS.Models
         [Key]
         public int Log_Id { get; set; }
         public string? Log_Text { get; set; }
-        public DateTime Timestamps { get; set; } = DateTime.UtcNow;
+        public DateTime Timestamps { get; set; } = DateTime.Now;
     }
 }
  

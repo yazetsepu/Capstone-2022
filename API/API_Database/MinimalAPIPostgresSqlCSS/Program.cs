@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using MinimalAPIPostgresSqlCSS.Data;
 using MinimalAPIPostgresSqlCSS.Models;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 using System.Web.Http.Results;
@@ -184,31 +185,69 @@ app.MapPut("/Commands/{id:int}", async (int id, Commands a, CSSDb db) =>
 });
 
 //Update a command if the commands_read column by id exist if not reply not found.
-app.MapPut("/Commands/Command_Read/{id:int}", async (int id, Commands a, CSSDb db) =>
+app.MapPut("/Commands/Command_Read", async ( Commands a, CSSDb db) =>
 {
 
+   var  properties = (
+                         from Commands1 in db.Commands.DefaultIfEmpty()
+                         select new
+                         {
+                             Command_Id = (int?)Commands1.Command_Id,
+                             Command_Read = Commands1.Command_Read,
+                             Command_Performed = Commands1.Command_Performed,
+                             Command_String = Commands1.Command_String,
+                             Command_Value = Commands1.Command_Value,
+                             Command_Received = Commands1.Command_Received,
+                             Duplicate_Flag = Commands1.Duplicate_Flag,
+                             Log_Id = Commands1.Log_Id,
+                             AdminsUser_Id = Commands1.AdminsUser_Id
 
-    var Commands = await db.Commands.FindAsync(id);
+                         }).Where(b => b.Command_Performed == null).OrderBy(x => x.Command_Id).First();
+
+
+
+    var Commands = await db.Commands.FindAsync(properties.Command_Id);
 
     if (Commands is null) return Results.NotFound();
     
     Commands.Command_Read = a.Command_Read;
 
-    await db.SaveChangesAsync();
+   await  db.SaveChangesAsync();
+
     return Results.Ok(Commands);
 
 });
 
 //Update a command if the commands_performed column by id exist if not reply not found.
-app.MapPut("/Commands/Command_Performed/{id:int}", async (int id, Commands a, CSSDb db) =>
+app.MapPut("/Commands/Command_Performed", async ( Commands a, CSSDb db) =>
 {
 
-    var Commands = await db.Commands.FindAsync(id);
+    var properties = (
+                           from Commands1 in db.Commands.DefaultIfEmpty()
+                           select new
+                           {
+                               Command_Id = (int?)Commands1.Command_Id,
+                               Command_Read = Commands1.Command_Read,
+                               Command_Performed = Commands1.Command_Performed,
+                               Command_String = Commands1.Command_String,
+                               Command_Value = Commands1.Command_Value,
+                               Command_Received = Commands1.Command_Received,
+                               Duplicate_Flag = Commands1.Duplicate_Flag,
+                               Log_Id = Commands1.Log_Id,
+                               AdminsUser_Id = Commands1.AdminsUser_Id
+
+                           }).Where(b => b.Command_Performed == null).OrderBy(x => x.Command_Id).First();
+
+
+
+    var Commands = await db.Commands.FindAsync(properties.Command_Id);
+
     if (Commands is null) return Results.NotFound();
 
     Commands.Command_Performed = a.Command_Performed;
 
     await db.SaveChangesAsync();
+
     return Results.Ok(Commands);
 
 });
@@ -221,10 +260,44 @@ app.MapDelete("/Commands/{id:int}", async (int id, CSSDb db) =>
 
     db.Commands.Remove(Commands);
     await db.SaveChangesAsync();
-
+  
     return Results.NoContent();
 });
+app.MapGet("/Commands/LastCommand",  ( CSSDb db) =>
+{
+    HttpClient httpClient = new HttpClient();
+    
 
+    var properties = (
+                       from Commands in db.Commands.DefaultIfEmpty()
+                       select new
+                       {
+                           Command_Id = (int?)Commands.Command_Id,
+                           Command_Read= Commands.Command_Read,
+                           Command_Performed=Commands.Command_Performed,
+                           Command_String=Commands.Command_String,
+                           Command_Value=Commands.Command_Value,
+                           Command_Received=Commands.Command_Received,
+                           Duplicate_Flag=Commands.Duplicate_Flag,
+                           Log_Id=Commands.Log_Id,
+                           AdminsUser_Id = Commands.AdminsUser_Id
+
+                       }).Where(b => b.Command_Performed == null).OrderBy(x =>x.Command_Id).First();
+    /*
+    var httpWebRequest = (HttpWebRequest) WebRequest.Create($"https://cssrumapi.azurewebsites.net/Commands/Command_Read/{properties.Command_Id}", properties);
+    httpWebRequest.Method = "PUT";
+    httpWebRequest.ContentType = "application/json";
+    
+    using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+    {
+        streamWriter.WriteLine("");
+    }
+    var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+    httpResponse.Close();
+    */
+    return Results.Ok(properties);
+
+});
 
 //Post an environmentaldata to the database
 app.MapPost("/EnvironmentalData/", async (EnvironmentalData a, CSSDb db) =>
