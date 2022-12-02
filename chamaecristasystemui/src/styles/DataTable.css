@@ -7,3 +7,7 @@
     display: flex;
     justify-content: center;
 }
+
+.table-head{
+    color: #FFC107;
+}

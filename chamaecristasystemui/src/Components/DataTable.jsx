@@ -151,7 +151,7 @@ function BasicTable() {
         //Test id for handling tests on this component
         <div data-testid="datatable-1">
             <Table responsive="sm" striped bordered hover variant="dark" className='table'>
-                <thead>
+                <thead className='table-head'>
                     {/* Containes the headers for the table */}
                     <tr>
                         <th>#</th>
@@ -184,18 +184,18 @@ function BasicTable() {
                                 data.classification_Id_4 === 1? "Closed" :
                                 "Empty"}</td>
                             <td>{data.resevoir_Water_Level}</td>
-                            <td>{data.water_Level}</td>
+                            <td>{data.water_Level <= 100? "Low" : "High"}</td>
                             <td>{data.temperature}</td>
-                            <td>{"S1 - " + data.soil_Moisture_1}</td>
-                            <td>{"S2 - " + data.soil_Moisture_2}</td>
-                            <td>{"S3 - " + data.soil_Moisture_3}</td>
-                            <td>{"S4 - " + data.soil_Moisture_4}</td>
-                            <td>{"S5 - " + data.soil_Moisture_5}</td>
-                            <td>{"S6 - " + data.soil_Moisture_6}</td>
-                            <td>{"S7 - " + data.soil_Moisture_7}</td>
-                            <td>{"S8 - " + data.soil_Moisture_8}</td>
+                            <td>{"S1 - " + Math.round(((data.soil_Moisture_1) + Number.EPSILON) * 100) / 100}</td>
+                            <td>{"S2 - " + Math.round(((data.soil_Moisture_2) + Number.EPSILON) * 100) / 100}</td>
+                            <td>{"S3 - " + Math.round(((data.soil_Moisture_3) + Number.EPSILON) * 100) / 100}</td>
+                            <td>{"S4 - " + Math.round(((data.soil_Moisture_4) + Number.EPSILON) * 100) / 100}</td>
+                            <td>{"S5 - " + Math.round(((data.soil_Moisture_5) + Number.EPSILON) * 100) / 100}</td>
+                            <td>{"S6 - " + Math.round(((data.soil_Moisture_6) + Number.EPSILON) * 100) / 100}</td>
+                            <td>{"S7 - " + Math.round(((data.soil_Moisture_7) + Number.EPSILON) * 100) / 100}</td>
+                            <td>{"S8 - " + Math.round(((data.soil_Moisture_8) + Number.EPSILON) * 100) / 100}</td>
                             <td>{data.humidity}</td>
-                            <td>{data.light}</td>
+                            <td>{Math.round(((data.light) + Number.EPSILON) * 100) / 100}</td>
                         </tr>
                     ))}
                 </tbody>

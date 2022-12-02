@@ -62,7 +62,7 @@ function DataGraph (props) {
                         data={
                             {   
                                 // Denotes our X (Independent Variable )
-                                labels: envData.map((data) => data.entry_Id),
+                                labels: envData.map((data) => data.timestamps.split('.')[0]),
                                 datasets: [
                                     {
                                         label: "Amount per Data Entry",
@@ -86,6 +86,7 @@ function DataGraph (props) {
                                             props.yVal === "soil7"? data.soil_Moisture_7 :
                                             data.temperature
                                         ),
+                                        cubicInterpolationMode: 'monotone',
                                         // Color for points on the graph
                                         backgroundColor: [
                                             "rgba(75,192,192,1)",
@@ -105,10 +106,15 @@ function DataGraph (props) {
                                 title: {
                                 display: true,
                                 text: "Amount per Data Entry"
-                                },
-                                legend: {
+                            },
+                            legend: {
                                 display: false
+                            },
+                            scales: {
+                                x: {
+                                    stacked: false
                                 }
+                            }
                             }
                         }}
                         />

@@ -8,7 +8,8 @@ import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 //Handles sending the POST request to the Commands table in the DB
 async function simulateNetworkRequest(WW, R, G, B) {
   //Formats received value sinto a string
-  let colorString="WW:"+WW+","+"R:"+R+","+"G:"+G+","+"B:"+B;
+  let colorString="{WW:"+WW+","+"R:"+R+","+"G:"+G+","+"B:"+B+"}";
+  //WW:x,R:x,...
 
   // Contains the necessary headers and body information that make up a POST request
   const requestOptions = {

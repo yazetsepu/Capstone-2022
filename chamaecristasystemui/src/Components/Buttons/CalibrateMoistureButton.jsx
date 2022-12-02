@@ -78,6 +78,7 @@ function CalibrateMoistureButton(props) {
         </Modal.Header>
         <Modal.Body>
           <div>
+            V.Low:0-250<b>|</b>Low:251-499<b>|</b>Med:500<b>|</b>High:501-750<b>|</b>V.High:751-1023
             <div>
               <Form>
                 <Form.Label>Soil Sensor 1 - Wet</Form.Label>
