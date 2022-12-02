@@ -197,10 +197,6 @@ app.MapPut("/Commands/Command_Read", async ( Commands a, CSSDb db) =>
                              Command_Performed = Commands1.Command_Performed,
                              Command_String = Commands1.Command_String,
                              Command_Value = Commands1.Command_Value,
-                             Command_Received = Commands1.Command_Received,
-                             Duplicate_Flag = Commands1.Duplicate_Flag,
-                             Log_Id = Commands1.Log_Id,
-                             AdminsUser_Id = Commands1.AdminsUser_Id
 
                          }).Where(b => b.Command_Performed == null).OrderBy(x => x.Command_Id).First();
 
@@ -214,7 +210,6 @@ app.MapPut("/Commands/Command_Read", async ( Commands a, CSSDb db) =>
 
    await  db.SaveChangesAsync();
 
-    return Results.Ok(Commands);
 
 });
 
@@ -227,7 +222,6 @@ app.MapPut("/Commands/Command_Performed", async ( Commands a, CSSDb db) =>
                            select new
                            {
                                Command_Id = (int?)Commands1.Command_Id,
-                               Command_Read = Commands1.Command_Read,
                                Command_Performed = Commands1.Command_Performed,
                                Command_String = Commands1.Command_String,
                                Command_Value = Commands1.Command_Value,

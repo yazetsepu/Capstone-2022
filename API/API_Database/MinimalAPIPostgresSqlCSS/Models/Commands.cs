@@ -28,7 +28,6 @@ namespace MinimalAPIPostgresSqlCSS.Models
         public int? Duplicate_Flag { get; set; } 
         public string? Command_String { get; set; }
         public string? Command_Value  { get; set; }
-
         public virtual Admins? Admins { get; set; }  
         public virtual Logs? Logs { get; set; } 
         public DateTime Command_Received { get; set; } = DateTime.Now; 
