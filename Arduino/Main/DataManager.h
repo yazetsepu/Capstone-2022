@@ -11,11 +11,16 @@
 
 //Setup 
 bool setupSD();
-//Server
-void connectToServer();
-void loopData();
+void initializeEthernet();
+//TCP Server
+void sendImageTCP(String imagePath, int cam);
+void JSONSend();
+int EndCapture();
+//Web Server (Back-End)
+void JSONSendHttp(int pic_Id);
+int CommandGetHttp(String *command, String *value);
+void CommandPerformedHttp(String log);
 //Serial
-void sendImage();
 void sendDataFile();
 void sendLastPicture();
 bool sendFile(String path);

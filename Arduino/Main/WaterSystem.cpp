@@ -5,50 +5,68 @@
 void setupWaterSystem(){
   //Set Water Pump
   pinMode(WaterPump, OUTPUT);
-  digitalWrite(WaterPump, LOW);
+  digitalWrite(WaterPump, HIGH);
 }
 
-//Watering Check (TODO Check Water is flowing)
-void waterPlant(){
+float average(float list[], int size){
+  float average = 0;
+  for(int i = 0; i < size; i++){
+    average += list[i];
+  }
+  return average/size;
+}
+
+//Watering Process (Return the Status of the proccess)
+String waterPlant(){
   //Safety Check Variables
-  long int startWaterTime = millis();
-  float startWaterLevel = measureWaterLevel();
+  int waterLevelThreshold = 400;
+  long int startWaterTime = millis();               //Start Timer
+  float startWaterLevel = measureWaterLevel();      //Start Water Level
+  int waterSamples = 7;                             //Samples to Average
+  float waterLevels[waterSamples] = {0,0,0,0,0};    //Average of Water Levels
+  int i = 0;                                        //Index of Water Levels 
   //Check Initial Water Level
-  if(startWaterLevel >= 100){
+  if(startWaterLevel >= waterLevelThreshold){
     Serial.println("Water Level already Full");  
     saveLog(24, "Watering Full Level", 3, "Water Level is already full");
-    return;
+    return "FAIL, Water Level is already full";
   }
   //Check if water Level have been reached
   float waterLevel = measureWaterLevel();
   //Log initialize Watering Proccess
   saveLog(20, "Watering Start", 0, "");
   //Check Water Levels
-  while (waterLevel < 100){
-    //Water Pump On
-    //Turn Water Pump On
+  while (waterLevel < waterLevelThreshold){
     digitalWrite(LED_BUILTIN, HIGH);
-    digitalWrite(WaterPump, HIGH);
-    waterLevel = measureWaterLevel();
-    Serial.println(waterLevel);
+    digitalWrite(WaterPump, LOW);     //Turn Water Pump On
+    //waterLevel = measureWaterLevel(); //Measure Value
     //Safety Check
     delay(100);
+    long int currentTime = millis()-startWaterTime;   //timer
+    waterLevels[i] = measureWaterLevel();             //Get Current Water Level
+    i++;                                              //Increase Water Level Array Counter
+    if(i >= waterSamples){
+      waterLevel = average(waterLevels, waterSamples); //Take Average
+      //waterLevels = 0;  //Reset Average
+      Serial.println(waterLevel);
+      i = 0;                                            //Reset Index
+      Serial.println("Time: " + (String)currentTime);   //Debug Print
+    }
+
     //If some time has passed and water level has not filled
-    long int currentTime = millis()-startWaterTime;
-    Serial.println("Time: " + (String)currentTime);
-    if(currentTime > (long int)1000){
-        //Stop the Water System
-        digitalWrite(LED_BUILTIN, LOW);
-        digitalWrite(WaterPump, LOW);
+    if(currentTime > (long int)25000){
+        digitalWrite(LED_BUILTIN, LOW);         
+        digitalWrite(WaterPump, HIGH);  //Stop the Water System
         Serial.println("Water System Fail");
         saveLog(23, "Watering Error", 4, "Water level not rising " + (String)waterLevel);
-        return;
+        return "FAIL, Water level not rising " + (String)waterLevel;
     }
   }
   //Water level reached turn off water pump
   digitalWrite(LED_BUILTIN, LOW);
-  digitalWrite(WaterPump, LOW);
+  digitalWrite(WaterPump, HIGH);
   saveLog(22, "Watering Successful", 1, "");
   Serial.println("Water System has been successful");
+  return "Successful";
 }
 

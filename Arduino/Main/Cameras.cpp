@@ -16,6 +16,7 @@
 
 #include "Cameras.h"
 #include "DataManager.h"
+#include "Sensors.h"
 #include <Wire.h>
 #include <ArduCAM.h>
 #include <SPI.h>
@@ -33,17 +34,12 @@ bool CAM2_EXIST = false;
 bool CAM3_EXIST = false;
 bool CAM4_EXIST = false;
 
-#if defined (OV5640_MINI_5MP_PLUS)
-  ArduCAM myCAM1(OV5640, CS1);
-  ArduCAM myCAM2(OV5640, CS2);
-  ArduCAM myCAM3(OV5640, CS3);
-  ArduCAM myCAM4(OV5640, CS4);
-#else
-  ArduCAM myCAM1(OV5642, Cam_1_CS);
-  ArduCAM myCAM2(OV5642, Cam_2_CS);
-  ArduCAM myCAM3(OV5642, Cam_3_CS);
-  ArduCAM myCAM4(OV5642, Cam_4_CS);
-#endif
+
+ArduCAM myCAM1(OV5642, Cam_1_CS);
+ArduCAM myCAM2(OV5642, Cam_2_CS);
+ArduCAM myCAM3(OV5642, Cam_3_CS);
+ArduCAM myCAM4(OV5642, Cam_4_CS);
+
 
 void setupCameras() {
   // put your setup code here, to run once:
@@ -119,36 +115,26 @@ void setupCameras() {
       Serial.println(F("SPI4 interface OK."));
     }
     if(!(CAM1_EXIST||CAM2_EXIST||CAM3_EXIST||CAM4_EXIST)){
-    delay(1000);continue;
+      Serial.println("No cam");
+      break;
+    //delay(1000);continue;
     }else
     break;
   }
 
-  #if defined (OV5640_MINI_5MP_PLUS)
-    while(1){
-      //Check if the camera module type is OV5640
-      myCAM1.rdSensorReg16_8(OV5640_CHIPID_HIGH, &vid);
-      myCAM1.rdSensorReg16_8(OV5640_CHIPID_LOW, &pid);
-      if ((vid != 0x56) || (pid != 0x40)){
-        Serial.println(F("Can't find OV5640 module!"));
-        delay(1000);continue;
-      }else{
-        Serial.println(F("OV5640 detected."));break;
-      }   
-    }
-  #else
-    while(1){
-      //Check if the camera module type is OV5642
-      myCAM1.rdSensorReg16_8(OV5642_CHIPID_HIGH, &vid);
-      myCAM1.rdSensorReg16_8(OV5642_CHIPID_LOW, &pid);
-      if ((vid != 0x56) || (pid != 0x42)){
-        Serial.println(F("Can't find OV5642 module!"));
-        delay(1000);continue;
-      }else{
-        Serial.println(F("OV5642 detected."));break;
-      }  
-    }
-  #endif
+  while(1){
+    //Check if the camera module type is OV5642
+    myCAM1.rdSensorReg16_8(OV5642_CHIPID_HIGH, &vid);
+    myCAM1.rdSensorReg16_8(OV5642_CHIPID_LOW, &pid);
+    if ((vid != 0x56) || (pid != 0x42)){
+      Serial.println(F("Can't find OV5642 module!"));
+      break;
+      //delay(1000);continue;
+    }else{
+      Serial.println(F("OV5642 detected."));break;
+    }  
+  }
+
   //Change to JPEG capture mode and initialize the OV5642 module
   myCAM1.set_format(JPEG);
   myCAM1.InitCAM();
@@ -171,21 +157,23 @@ void setupCameras() {
   myCAM4.clear_fifo_flag();
 }
 
-String myCAMSaveToSDFile(ArduCAM myCAM);
+String myCAMSaveToSDFile(ArduCAM myCAM, int cam);
 
 String captureImageToSD(int cam) {
   if(CAM1_EXIST && cam == 1)
-    return myCAMSaveToSDFile(myCAM1);
-  if(CAM2_EXIST && cam == 2)
-    return myCAMSaveToSDFile(myCAM2);
-  if(CAM3_EXIST && cam == 3)
-    return myCAMSaveToSDFile(myCAM3);
-  if(CAM4_EXIST && cam == 4)
-    return myCAMSaveToSDFile(myCAM4);
+    return myCAMSaveToSDFile(myCAM1, 1);
+  else if(CAM2_EXIST && cam == 2)
+    return myCAMSaveToSDFile(myCAM2, 2);
+  else if(CAM3_EXIST && cam == 3)
+    return myCAMSaveToSDFile(myCAM3, 3);
+  else if(CAM4_EXIST && cam == 4)
+    return myCAMSaveToSDFile(myCAM4, 4);
+  return "";
   //delay(5000);
 }
-
-String myCAMSaveToSDFile(ArduCAM myCAM){
+int lightMode = 0;
+String myCAMSaveToSDFile(ArduCAM myCAM, int cam){
+  Serial.println("RAM available: "+(String)FreeRam());
   String address;
   char str[8];
   byte buf[256];
@@ -195,6 +183,7 @@ String myCAMSaveToSDFile(ArduCAM myCAM){
   uint32_t length = 0;
   bool is_header = false;
   File outFile;
+
   //Flush the FIFO
   myCAM.flush_fifo();
   //Clear the capture done flag
@@ -219,10 +208,10 @@ String myCAMSaveToSDFile(ArduCAM myCAM){
   }
   //Construct a file name
   k = k + 1;
-  itoa(k, str, 10);
-  strcat(str, ".jpg");
-  address = getImageFolder() +"/"+(String)k + ".jpg";
-
+  address = getImageFolder() + (String)k + ".jpg";
+  //Get Camera For Path
+  //address = getImageFolder() + timeNowStringDashed() +"("+cam+")"+ ".jpg";
+  Serial.println(address);
   //Open the new file
   outFile = SD.open(address, O_WRITE | O_CREAT | O_TRUNC);
   if(!outFile){
@@ -246,8 +235,10 @@ String myCAMSaveToSDFile(ArduCAM myCAM){
       outFile.close();
       Serial.println(F("Image save OK."));
       flagImage((String)address); //Flag image to send to server
+     
       is_header = false;
       i = 0;
+      return address;
     }  
     if (is_header == true)
     { 
@@ -272,5 +263,6 @@ String myCAMSaveToSDFile(ArduCAM myCAM){
       buf[i++] = temp;   
     } 
   } 
-return address;
+myCAM.CS_HIGH();    //Make sure to disable Camera 
+return "";
 }

@@ -6,7 +6,7 @@
 #define WaterPump 31
 
 void setupWaterSystem();
-void waterPlant();
+String waterPlant();
 float measureWaterLevel();
 
 #endif

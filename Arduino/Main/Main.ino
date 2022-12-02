@@ -11,7 +11,7 @@
  * 
  * PINOUT: 
  * Digital Pins:
- *  Pin D2: DHT22
+ *  Pin 2: DHT22
  *  Pin 3: LED TEST
  *  Pin 5: Blue LED
  *  Pin 6: Green LED
@@ -71,8 +71,8 @@ void setup() {
   setupRTC();
 
   //Setup SD
-  while(!setupSD()){
-    Serial.println("No SD. Cannot boot");
+  if(!setupSD()){
+    Serial.println("No SD");
   }
 
   //Setup Sensors
@@ -80,9 +80,9 @@ void setup() {
 
   //Setup Camera
   setupCameras();
-  
+
   //Setup server
-  connectToServer();
+  initializeEthernet();
 
   //Setup Water System
   setupWaterSystem();
@@ -105,11 +105,12 @@ void loop() {
     //Perform Commands sent by PC connection
     if(Serial.available()){
       String data = Serial.readString();
-      runCommand(data);
+      String value = Serial.readString();
+      runCommand(data, value, true);
     }
     
     //Measure and send all data on Serial (JSON format)
-    StaticJsonDocument<1000> doc;
+    StaticJsonDocument<100> doc;
     doc["Light"] = measureLight();
     doc["Temperature"] = measureTemperature();
     doc["Humidity"] = measureHumidity();
@@ -122,36 +123,36 @@ void loop() {
     Serial.write("\n"); //This is to mark end of data (expected on GUI side)
   }
 
-  //Save data if timer pass value (10s)
-  if((millis()-startDataTime)>= 10000){
-    Serial.println("Data Collection Started:");
-    digitalWrite(LED_BUILTIN, HIGH); //LED for Visual TEST
-    int ColumnNumber = 13; //Number of parameter
-    //Measure All data and save it in array as String
-    String data[ColumnNumber] = {timeNowString(), (String)measureLight(), (String)measureTemperature(), (String)measureHumidity(), (String)measureMoisture(0), (String)measureMoisture(1),
-      (String)measureMoisture(2), (String)measureMoisture(3), (String)measureMoisture(4), (String)measureMoisture(5), (String)measureMoisture(6), (String)measureMoisture(7),
-      (String)measureWaterLevel()};
-    //Save Data in CSV File
-    saveDataToSD(data, ColumnNumber);
-    //Flag Data to send to Server
-    flagData();
-    //Reset Timer
-    startDataTime = millis();
-    digitalWrite(LED_BUILTIN, LOW); //LED for Visual TEST
-    //Log the Success of Capture Data
-    saveLog(10, "Capture Data", 0, "");
-    Serial.println("Data Collection Done");
-  }
-
-  //Take picture if picture timer
-  if(millis()-startPictureTime>=10000){ //50000
+  fetchCommand();
+  //saveDataTimer();
+  //Capture Timer
+  if(millis()-startPictureTime>=30000){ //50000
         Serial.println("Image Collection Started:");
         digitalWrite(LED_BUILTIN, HIGH);
-        Serial.println("Image Location: "+ captureImageToSD(1)); //Take Picture
-        Serial.println("Image Location: "+ captureImageToSD(2)); //Take Picture
-        connectToServer();
-        startPictureTime = millis();
-        saveLog(10, "Capture Image", 0, "");
+        delay(300);
+        String path1 = captureImageToSD(1);                      //Take Picture
+        if(path1 != ""){                                         //Image sucessful
+          Serial.println("Image Location: "+ path1);               //Write Path
+          sendImageTCP(path1, 0);                                  //Send Picture to Server
+          delay(2000);                                             //Wait for server to be ready
+        }else Serial.println("Error Camera 1 capture");          //Error Capture
+        
+        String path2 = captureImageToSD(2);                      //Take Picture
+        if(path2 != ""){                                         //Image sucessful
+          Serial.println("Image Location: "+ path2);               //Write Path
+          sendImageTCP(path2, 1);                                  //Send Picture to Server
+        }else Serial.println("Error Camera 2 capture");          //Error Capture
+
+        int pic_Id = -1;
+        if(path1 != "" || path2 != "") {
+          pic_Id = EndCapture();             //End of Capture if any picture was taken
+        }
+        saveLog(10, "Capture Image", 0, "");                     //Log the Success of Capture Image
+
+        //JSONSend();
+        JSONSendHttp(pic_Id);
+
+        startPictureTime = millis();                             //Reset Capture Timer
         digitalWrite(LED_BUILTIN, LOW);
         Serial.println("Image Collection Done");
   }
@@ -163,75 +164,144 @@ void loop() {
       //waterPlant();
   }
   
-  checkSchedule();
+  checkSchedule(); //Check Light Schedule
 
   delay(delayMS); //Loop delay
 }
 
+void saveDataTimer(){
+  //Save data if timer pass value (10s)
+  if((millis()-startDataTime)>= 10000){
+    Serial.println("Data Collection Started:");
+    digitalWrite(LED_BUILTIN, HIGH);        //LED for Visual TEST
+
+    int ColumnNumber = 13;                  //Number of parameter
+    //Measure All data and save it in array as String
+    String data[ColumnNumber] = {timeNowString(), (String)measureLight(), (String)measureTemperature(), (String)measureHumidity(), (String)measureMoisture(0), (String)measureMoisture(1),
+      (String)measureMoisture(2), (String)measureMoisture(3), (String)measureMoisture(4), (String)measureMoisture(5), (String)measureMoisture(6), (String)measureMoisture(7),
+      (String)measureWaterLevel()};
+    saveDataToSD(data, ColumnNumber);       //Save Data in CSV File
+    flagData();                             //Flag Data to send to Server
+    
+    startDataTime = millis();               //Reset Timer
+    digitalWrite(LED_BUILTIN, LOW);         //LED for Visual TEST
+    saveLog(10, "Capture Data", 0, "");     //Log the Success of Capture Data
+    Serial.println("Data Collection Done");
+  }
+}
+
+//Fetch from Server any commands
+void fetchCommand(){
+  //Get Commands by Server
+  String command = "", value = "";
+  int response = CommandGetHttp(&command, &value);
+  if(response == 200){
+    Serial.println("Response: "+ (String)response);
+    Serial.println("Command: "+(String)command);
+    Serial.println("Value: "+(String)value);
+    runCommand(command, value, false);
+  }
+}
 
 //Run commands according to string received
-void runCommand(String command){
+void runCommand(String command, String value, bool serial){
   //Log Command
   Serial.println("Command received: " + command+"\n");
   saveLog(16, "Command Received", 0, command);
   //Find Command
+  /* Light System Commands */
   if (command == "LED ON"){
-      dimBlue(250);
-      Serial.write("On");
+    dimBlue(250);
+    dimGreen(250);
+    dimRed(250);
+    dimWhite(250);
+    if(!serial){CommandPerformedHttp("Successful");}
+  }
+  else if (command == "LED OFF"){
+    dimBlue(0);
+    dimGreen(0);
+    dimRed(0);
+    dimWhite(0);
+    CommandPerformedHttp("Successful");
+  }
+  else if(command.indexOf("Dim") >= 0){
+    StaticJsonDocument<200> doc;
+    DeserializationError error = deserializeJson(doc, value); //12 is "Schedule Dim" size
+    if (error) {
+      Serial.print(F("deserializeJson() failed: ")); Serial.println(error.f_str()); 
+      CommandPerformedHttp("Invalid Value");
+      return;
     }
-    else if (command == "LED OFF"){
-      dimBlue(0);
-      Serial.write("Off");
+    dimRed((int)doc["R"]);
+    dimGreen((int)doc["G"]);
+    dimBlue((int)doc["B"]);
+    dimWhite((int)doc["WW"]);
+    if(!serial){CommandPerformedHttp("Successful");}
+  }
+  else if(command.indexOf("Schedule Dim") >= 0){
+    StaticJsonDocument<200> doc;
+    DeserializationError error = deserializeJson(doc, value); //12 is "Schedule Dim" size
+    if (error) {
+      Serial.print(F("deserializeJson() failed: ")); Serial.println(error.f_str()); 
+      CommandPerformedHttp("Invalid Value");
+      return;
     }
-    else if (command == "Humidity"){
-      Serial.print(measureHumidity());
-    }
-    else if (command == "Light"){
-      Serial.print(measureLight());
-    }
-    else if (command == "Temperature"){
-      Serial.print(measureTemperature());
-    }
-    else if(command.indexOf("DIM") >= 0){
-      String dimValue = command.substring(command.indexOf("(")+1, command.indexOf(")"));
-      dimBlue(dimValue.toInt());
-    }
-    else if(command == "Water Plant"){
-      waterPlant();
-    }
-    else if(command == "Get Data File"){
-      sendDataFile();
-    }
-    else if(command == "SD info"){
-      infoSD();
-    }
-    else if(command == "Last Picture"){
-      sendLastPicture();
-    }
-    else if(command.indexOf("Add time Schedule") >= 0){
-      addSchedule(17, 19, 0, 0, 100, 250);
-    }
-    else if(command.indexOf("Schedule Dim") >= 0){
-      StaticJsonDocument<200> doc;
-      DeserializationError error = deserializeJson(doc, command.substring(12)); //12 is "Schedule Dim" size
-      if (error) {
-        Serial.print(F("deserializeJson() failed: "));
-        Serial.println(error.f_str());
-        return;
-      }
-      addSchedule((int)doc["hour"], (int)doc["minute"], (int)doc["W"], (int)doc["R"], (int)doc["G"], (int)doc["B"]);
-    }
-    else if(command == "Light Schedule"){
-      getScheduleSerial();
-    }
-    else if (command.indexOf("Get File") >= 0){
-      if(sendFile(command.substring(8))) saveLog(17, "Command Succesful", 1, command);
-      else saveLog(18, "Command Unsuccesful", 3, command);
-    }
-    else {//INVALID Command
-      Serial.println("Invalid Command");
-      saveLog(19, "Invalid Command", 2, command);
-    } 
+    addSchedule((int)doc["hour"], (int)doc["minute"], (int)doc["W"], (int)doc["R"], (int)doc["G"], (int)doc["B"]);
+    if(!serial){CommandPerformedHttp("Successful");}
+  }
+  /* Water System Commands */
+  else if(command == "Water Plant"){
+    String status = waterPlant(); //Water Plant Process
+    if(!serial){CommandPerformedHttp(status);}
+  }
+  /* Sensor Calibration */
+  else if (command.indexOf("RTC Set") >= 0){
+    setRTC(value); //the order YYMMDDwHHMMSS, with an 'x' at the end.
+    if(!serial){CommandPerformedHttp("DONE");}
+  }
+
+  /* DEBUG Commands */
+  else if (command == "Http Send"){
+    //JSONSendHttp();
+  }
+  else if(command == "Light Schedule"){
+    getScheduleSerial();
+  }
+    /* File Manage */
+  else if (command.indexOf("Get File") >= 0){
+    if(sendFile(command.substring(8))) saveLog(17, "Command Succesful", 1, command);
+    else saveLog(18, "Command Unsuccesful", 3, command);
+  }
+  else if(command.indexOf("Add time Schedule") >= 0){
+    addSchedule(17, 19, 0, 0, 100, 250);
+  }
+   else if (command == "Humidity"){
+    Serial.print(measureHumidity());
+  }
+  else if (command == "Light"){
+    Serial.print(measureLight());
+  }
+  else if (command == "Temperature"){
+    Serial.print(measureTemperature());
+  }
+  else if(command == "Get Data File"){
+    sendDataFile();
+  }
+  else if(command.indexOf("DIM") >= 0){
+    String dimValue = command.substring(command.indexOf("(")+1, command.indexOf(")"));
+    dimBlue(dimValue.toInt());
+  }
+  else if(command == "Last Picture"){
+    sendLastPicture();
+  }
+  else if(command == "SD info"){
+    infoSD();
+  }
+  else {//INVALID Command
+    Serial.println("Invalid Command");
+    saveLog(19, "Invalid Command", 2, command);
+    if(!serial){CommandPerformedHttp("Invalid Command");}
+  } 
 }
 
 

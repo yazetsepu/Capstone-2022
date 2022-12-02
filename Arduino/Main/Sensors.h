@@ -26,7 +26,10 @@ float measureTemperature();
 float measureHumidity();
 //RTC
 String timeNowString();
+String timeNowStringDashed();
+String dateNowStringDashed();
 DateTime currentTime();
+void setRTC(String timeString);
 //Analog Soil Moisture
 float measureMoisture();
 float measureMoisture(int sensor);

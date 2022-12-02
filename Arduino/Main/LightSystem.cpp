@@ -26,9 +26,11 @@ void setupLightSystem(){
     int hour = currentTime().hour(); //Test 
     int minute = currentTime().minute(); //Test 
     scheduleFile.println((String)hour+","+(String)(minute+1)+","+"250,0,100,100"); //(H,M,W,R,G,B) Sample Test
-    scheduleFile.println((String)hour+","+(String)(minute+2)+","+"0,200,50,50"); //(H,M,W,R,G,B) Sample Test
-    scheduleFile.println((String)hour+","+(String)(minute+3)+","+"100,50,200,250"); //(H,M,W,R,G,B) Sample Test
-    scheduleFile.println((String)hour+","+(String)(minute+4)+","+"0,0,0,0"); //(H,M,W,R,G,B) Sample Test
+    scheduleFile.println((String)hour+","+(String)(minute+2)+","+"100,200,50,50"); //(H,M,W,R,G,B) Sample Test
+    scheduleFile.println((String)hour+","+(String)(minute+3)+","+"50,50,200,250"); //(H,M,W,R,G,B) Sample Test
+    scheduleFile.println((String)hour+","+(String)(minute+4)+","+"30,50,200,250"); //(H,M,W,R,G,B) Sample Test
+    scheduleFile.println((String)hour+","+(String)(minute+5)+","+"20,50,200,250"); //(H,M,W,R,G,B) Sample Test
+    scheduleFile.println((String)hour+","+(String)(minute+6)+","+"0,0,0,0"); //(H,M,W,R,G,B) Sample Test
 
     //scheduleFile.println("17,20,0,0,100,255"); //(H,M,W,R,G,B) Sample Test
     scheduleFile.close();   // close the file:
@@ -79,7 +81,7 @@ void dimAllToLevel(int level){
 void checkSchedule(){
   if(currentTime().hour() >= nextSchedule.hour() && currentTime().minute() >= nextSchedule.minute()){
     dimAllToLevel();
-    Serial.println("Schedule meet: "+(String)nextSchedule.hour() + ":" + (String)nextSchedule.minute());
+    Serial.println("Schedule meet: "+(String)nextSchedule.hour() + ":" + (String)nextSchedule.minute()+ " W:"+(String)nextW);
     fetchNextSchedule();
   }
 }
