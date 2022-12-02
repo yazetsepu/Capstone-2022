@@ -185,6 +185,7 @@ app.MapPut("/Commands/{id:int}", async (int id, Commands a, CSSDb db) =>
 });
 
 //Update a command if the commands_read column by id exist if not reply not found.
+
 app.MapPut("/Commands/Command_Read", async ( Commands a, CSSDb db) =>
 {
 
@@ -196,7 +197,9 @@ app.MapPut("/Commands/Command_Read", async ( Commands a, CSSDb db) =>
                              Command_Read = Commands1.Command_Read,
                              Command_Performed = Commands1.Command_Performed,
                              Command_String = Commands1.Command_String,
-                             Command_Value = Commands1.Command_Value,
+                             Command_Value = Commands1.Command_Value
+                           
+                         
 
                          }).Where(b => b.Command_Performed == null).OrderBy(x => x.Command_Id).First();
 
@@ -205,11 +208,26 @@ app.MapPut("/Commands/Command_Read", async ( Commands a, CSSDb db) =>
     var Commands = await db.Commands.FindAsync(properties.Command_Id);
 
     if (Commands is null) return Results.NotFound();
-    
+
     Commands.Command_Read = a.Command_Read;
 
-   await  db.SaveChangesAsync();
+ 
+    await  db.SaveChangesAsync();
+    properties = (
+                         from Commands1 in db.Commands.DefaultIfEmpty()
+                         select new
+                         {
+                             Command_Id = (int?)Commands1.Command_Id,
+                             Command_Read = Commands1.Command_Read,
+                             Command_Performed = Commands1.Command_Performed,
+                             Command_String = Commands1.Command_String,
+                             Command_Value = Commands1.Command_Value
 
+
+
+                         }).Where(b => b.Command_Performed == null).OrderBy(x => x.Command_Id).First();
+
+    return Results.Ok(properties);
 
 });
 
@@ -223,26 +241,35 @@ app.MapPut("/Commands/Command_Performed", async ( Commands a, CSSDb db) =>
                            {
                                Command_Id = (int?)Commands1.Command_Id,
                                Command_Performed = Commands1.Command_Performed,
-                               Command_String = Commands1.Command_String,
-                               Command_Value = Commands1.Command_Value,
-                               Command_Received = Commands1.Command_Received,
-                               Duplicate_Flag = Commands1.Duplicate_Flag,
-                               Log_Id = Commands1.Log_Id,
-                               AdminsUser_Id = Commands1.AdminsUser_Id
+                               Log_Id=Commands1.Log_Id,
+                               Log_Text= Commands1.Logs.Log_Text
 
                            }).Where(b => b.Command_Performed == null).OrderBy(x => x.Command_Id).First();
 
 
 
     var Commands = await db.Commands.FindAsync(properties.Command_Id);
+    var Logs = await db.Logs.FindAsync(properties.Log_Id);
 
     if (Commands is null) return Results.NotFound();
+    if (Logs is null) return Results.NotFound();
 
+  //  
+    Logs.Log_Text =(string?)a.Logs.Log_Text;
     Commands.Command_Performed = a.Command_Performed;
-
     await db.SaveChangesAsync();
+    properties = (
+                           from Commands1 in db.Commands.DefaultIfEmpty()
+                           select new
+                           {
+                               Command_Id = (int?)Commands1.Command_Id,
+                               Command_Performed = Commands1.Command_Performed,
+                               Log_Id = Commands1.Log_Id,
+                               Log_Text = Commands1.Logs.Log_Text
 
-    return Results.Ok(Commands);
+                           }).Where(b => b.Command_Id == Commands.Command_Id).OrderBy(x => x.Command_Id).First();
+
+    return Results.Ok(properties);
 
 });
 
@@ -375,7 +402,7 @@ app.MapPut("/EnvironmentalData/{id:int}", async (int id, EnvironmentalData a, CS
     EnvironmentalData.Soil_Moisture_8=a.Soil_Moisture_8;
     EnvironmentalData.Reservoir_Water_Level=a.Reservoir_Water_Level;
     EnvironmentalData.Timestamps = a.Timestamps;
-   
+ 
 
     await db.SaveChangesAsync();
     return Results.Ok(EnvironmentalData);

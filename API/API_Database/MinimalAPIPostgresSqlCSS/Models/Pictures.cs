@@ -30,7 +30,7 @@ namespace MinimalAPIPostgresSqlCSS.Models
         public string? Camera_Pic_Path_3 { get; set; }
         public string? Camera_Pic_Path_4 { get; set; }
 
-        public DateTime Timestamps { get; set; } = DateTime.Now;
+        public DateTime Timestamps { get; set; } = DateTime.Now.ToLocalTime();
 
 
     }
