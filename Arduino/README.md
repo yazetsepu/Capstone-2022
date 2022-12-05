@@ -117,7 +117,7 @@ Each boot the system will create a session file. In this session file it will co
 | Get Current Measurements | "Get Data File" | | JSON (data) |
 | Capture Image | "Capture Image Cam {0}" | int (0-3) | bytes[] (JPG) |
 | Timed Dim | "Schedule Dim {0}" | JSON (Timestamp, W,R,G,B) | bytes[] (JPG) |
-| Calibrate Moisture | "Calibrate Moisture {dry},{wet},{sensor}" | For dry, wet: int(0-1023) For sensor: int(0 - 7) | JSON (Status) |
+| Calibrate Moisture | "ChangeMoisture{S1D:550,S2D:500,...,S1W:200,S2W:150,...}" | For dry, wet: int(0-1023) For sensor: int(1 - 8) | JSON (Status) |
 
 
     Schedule Dim {"hour":19,"minute":45,"W":0,"R":0,"G":0,"B":200}
@@ -171,12 +171,13 @@ All action performed by the CSS system will the log for further improvements and
 | 22 | Water System | Watering Successful | 1 |  |
 | 23 | Water System | Watering Error | 4 | Water level not rising when watering |
 | 24 | Water System | Watering Full Level | 3 | Water level in plant container is already full |
-| 25 | Water System | Very Low Reservoir Water Level | 4 | Very Low water level in reservoir |
+| 25 | Water System | Very Low Reservoir Water Level | 4 | Insufficient water to fill container |
 | 26 | Water System | Watering Check | 2 | Water Level above {Threshold+%}| 
 | 27 | Water System | Watering Critical Check | 3 | Water Level above {critical}| 
-| 28 | Water System | Reservoir Water Level Error | 4 | Float sensors conflicting values | 
+| 28 | Water System | Reservoir Water Level Error | 4 | Float sensors conflicting values: {all individual values}| 
 | 29 | Water System | Invalid Sensor Calibration | 1 | |
-| 30 | Water System | Soil Moisture Calibrated Successfully | 1 | Soil Moisture{sensor} Calibrated {dry} {wet} |
+| 30 | Water System | Soil Moisture Dry Calibrated Successfully | 1 | Soil Moisture{sensor} new dry value {dry}  |
+| 31 | Water System | Soil Moisture Wet Calibrated Successfully | 1 | Soil Moisture{sensor} new wet value {wet}  |
 
 Threshold is a value where contact with water is true. 
 
@@ -184,8 +185,8 @@ Threshold is a value where contact with water is true.
 #### Light System 
 | Code |Source | Name | Severity | Message
 |--|--|--|--|--|
-| 31 |  Light System | Schedule Set | 1 | {next_schedule} |
-| 32 |  Light System | Schedule Added | 1 | {schedule_values} |
+| 32 |  Light System | Schedule Set | 1 | {next_schedule} |
+| 33 |  Light System | Schedule Added | 1 | {schedule_values} |
 
 
 
