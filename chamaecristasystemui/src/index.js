@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import App from './App';
 import ViewCapturesPage from "./Pages/ViewCapturesPage";
 import ViewGraphsPage from "./Pages/ViewGraphsPage";
+import AdminLoginPage from './Pages/AdminLoginPage';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'), document.body.style.backgroundColor = "#D9D9D9");
@@ -17,6 +18,7 @@ root.render(
         <Route path="/" element={<App />} />
         <Route path="/pictures" element={<ViewCapturesPage />} />
         <Route path="/graph" element={<ViewGraphsPage />} />
+        <Route path="/login" element={<AdminLoginPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

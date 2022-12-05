@@ -11,11 +11,13 @@ import ChangeLightLevelButton from './Components/Buttons/ChangeLightLevelButton'
 import ExportAsCsvButton from './Components/Buttons/ExportAsCsvButton';
 import ViewAsGraphButton from './Components/Buttons/ViewAsGraphButton';
 import CalibrateMoistureButton from './Components/Buttons/CalibrateMoistureButton';
+import { UserContext } from './Util/CreateContext';
 
-export default class App extends Component {
-    static displayName = App.name;
+function App (){
+
     
-    render() {
+        
+        
         return (
             <div>
                 <DarkNavbar />
@@ -24,7 +26,11 @@ export default class App extends Component {
                     <FilterSearch />
                     <div className='top-container-btns'>
                         <ViewCapturesButton/>
-                        <RetrainModelButton/>
+                        
+                            <RetrainModelButton/>
+                            
+                            
+                        
                     </div>
                 </div>
                 <div className='middle-container'>
@@ -53,5 +59,6 @@ export default class App extends Component {
                 </div>
             </div>
         );
-    }
+    
 }
+export default App

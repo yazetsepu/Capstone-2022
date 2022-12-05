@@ -26,7 +26,7 @@ function DarkNavbar() {
                     <Navbar.Collapse className="justify-content-end">
                         {/* Will return user to the login page once */}
                         <Navbar.Text>
-                            Signed in as: <a href="#login">Admin</a>
+                            Signed in as: <a href="/login">Admin</a>
                         </Navbar.Text>
                     </Navbar.Collapse>
                 </Container>

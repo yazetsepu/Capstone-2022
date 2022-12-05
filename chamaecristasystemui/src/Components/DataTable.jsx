@@ -170,7 +170,7 @@ function BasicTable() {
                     {limEnvData.map((data, key) => (
                         <tr key = {key}>
                             <td>{data.entry_Id}</td>
-                            <td>{data.timestamps}</td>
+                            <td>{new Date(data.timestamps.replace("-", "/").replace("-", "/").split('T').join(' ').split('.')[0] + " +0000").toLocaleString("en-US", {timeZone: 'America/Grenada'})}</td>
                             <td>{data.classification_Id_1 === 0? "Open" :
                                 data.classification_Id_1 === 1? "Closed" :
                                 "Empty"}</td>

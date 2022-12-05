@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 
-function ViewCapturesButton() {
+function ContinueAsGuestButton() {
   //Creates the navigation objectthat will handle page switching
   const navigate = useNavigate();
 
@@ -12,11 +12,11 @@ function ViewCapturesButton() {
       variant="primary"
       size="lg"
       // Switches pages to the designated route
-      onClick={() => navigate("/pictures")}
+      onClick={() => navigate("/")}
     >
-      View Captures
+      Continue as Guest
     </Button>
   );
 }
 
-export default ViewCapturesButton
+export default ContinueAsGuestButton

@@ -6,7 +6,18 @@ async function simulateNetworkRequest() {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ command_String: "Water Plant"})
+    body: JSON.stringify
+    (
+      // JSON Body to be sent to the API
+      { command_String: "Water Plant",
+        command_Value: null,
+        command_Read: null,
+        command_Performed: null,
+        logs: {
+          logs_Text: null
+        }
+      }
+    )
   };
 
   const response = await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)

@@ -1,23 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 import RangeSlider from 'react-bootstrap-range-slider';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 
-//Handles sending the POST request to the Commands table in the DB
-async function simulateNetworkRequest(WW, R, G, B) {
+//Handles sending the POST request to the Commands table in the DB to schedule a light dimming
+async function scheduleDimPlantLight(hour, min, WW, R, G, B, isScheduled) {
   //Formats received value sinto a string
-  let colorString="{WW:"+WW+","+"R:"+R+","+"G:"+G+","+"B:"+B+"}";
-  //WW:x,R:x,...
+  let changeString = !isScheduled? "Schedule Dim" : "Dim"
+  let changeValue = !isScheduled? "{hour: "+hour+", minute:"+min+" W:"+WW+", "+"R:"+R+", "+"G:"+G+", "+"B:"+B+"}" :
+                                  "{W:"+WW+", "+"R:"+R+", "+"G:"+G+", "+"B:"+B+"}"
 
   // Contains the necessary headers and body information that make up a POST request
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ command_String: "Dim", command_Value: colorString})
+    body: JSON.stringify(
+      { 
+        command_String: changeString,
+        command_Value: changeValue,
+        command_Read: null,
+        command_Performed: null,
+        logs: {
+          logs_Text: null
+        }
+      }
+    )
   };
-  console.log(requestOptions)
   const response = await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)
   const data = await response.json();
   return new Promise((resolve) => {});
@@ -34,16 +45,11 @@ function ChangeLightLevelButton(props) {
   const [bValue, setBValue] = useState(0);
   const [nWValue, setNWValue] = useState(0);
   const [wWValue, setWWValue] = useState(0);
+  //Stores time for scheduling dimming
+  const [timeOfDay, setTimeOfDay] = useState("00:00");
+  const [enableSched, setEnableSched] = useState(true);
 
-  //Triggers when the state of isLoading changes to allow for the button press to g through
-  useEffect(() => {
-    if (isLoading) {
-      simulateNetworkRequest().then(() => {
-        setLoading(false);
-      });
-    }
-  }, [isLoading]);
-
+  //handles Showing and closing the modal
   const handleClick = () => setShowing(true);
   const handleClose = () => {
     setLoading(false)
@@ -52,10 +58,22 @@ function ChangeLightLevelButton(props) {
 
   //Triggers when the internal modal submit button is pressed to execute the 
   const handleSubmit = () => {
-    simulateNetworkRequest(wWValue, rValue, gValue, bValue);
+    scheduleDimPlantLight(timeOfDay.split(':')[0], timeOfDay.split(':')[1], wWValue, rValue, gValue, bValue, enableSched)
     setLoading(false);
-    setShowing(false)
+    setShowing(false);
+    setEnableSched(true);
   }
+
+  //Uses RegEx to validate that whatever is entered is done so in 24 hour format correctly like so: XX:XX
+  const validationBool = (/[a-zA-Z]/.test(timeOfDay)) || timeOfDay.length !== 5 || 
+                        !(/[\u003A]/.test(timeOfDay[2])) || !(/[0-2]/.test(timeOfDay[0])) || 
+                        (/[2]/.test(timeOfDay[0]) && !(/[0-3]/.test(timeOfDay[1]))) || 
+                        !(/[0-5]/.test(timeOfDay[3])) || !(/[0-9]/.test(timeOfDay[4]));
+
+  const handleEnable = () => {
+    setEnableSched(!enableSched);
+  }
+
 
   return (
     <div>
@@ -73,6 +91,7 @@ function ChangeLightLevelButton(props) {
           <Modal.Title>Change Light Output Colors</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <h4>Modify the current light output colors</h4>
           <Form>
             <Form.Label>Red</Form.Label>
             <RangeSlider
@@ -104,7 +123,36 @@ function ChangeLightLevelButton(props) {
               value={wWValue}
               onChange={changeEvent => setWWValue(changeEvent.target.value)}
             />
+          {/* Schedule a light change */}
           </Form>
+          <hr></hr>
+          <h4>Schedule a change for light output color</h4>
+          <Form.Group md="4" controlId="validationTime">
+            <Form.Label>Schedule a time to dim the lights (24 hr format - Ex: <b>23:45</b>)</Form.Label>
+            <InputGroup hasValidation >
+                <Button 
+                  variant="primary" 
+                  id="button-addon2"
+                  onClick={handleEnable}
+                  >
+                  {enableSched? "Disabled" : "Enabled"}
+                </Button>
+              <Form.Control
+                as='input'
+                type="text"
+                placeholder="Leave empty to change now"
+                aria-describedby="inputGroupPrepend"
+                required
+                onChange={changeEvent => {setTimeOfDay(changeEvent.target.value)}}
+                isInvalid={validationBool}
+                disabled={enableSched}
+              />
+              <Form.Control.Feedback type="invalid">
+                Enter the time you wish the lights to change color. Example - 22:05
+              </Form.Control.Feedback>
+            </InputGroup>
+            <Form.Label>When disabled, will dim the light at the current time</Form.Label>
+          </Form.Group>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

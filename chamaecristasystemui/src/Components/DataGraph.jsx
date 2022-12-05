@@ -24,7 +24,6 @@ function DataGraph (props) {
         const response = await fetch("https://cssrumapi.azurewebsites.net/environmentaldata/classid")
         const Data = await response.json()
         setEnvData(Data)
-        console.log(Data)
     }
         
     //useEffects is a React hook that triggers everytime the page is rendered (loads)
@@ -39,10 +38,10 @@ function DataGraph (props) {
                     // yVal is a prop or property variable that is handed over from a parent component
                     props.yVal === "soil8"? "Soil Moisture Sensor 8" :
                     props.yVal === "humidity"? "Humidity" :
-                    props.yVal === "leaf1"? "Camera 1 Leaf Status - 0 for Open : 1 for Closed" :
-                    props.yVal === "leaf2"? "Camera 2 Leaf Status - 0 for Open : 1 for Closed" :
-                    props.yVal === "leaf3"? "Camera 3 Leaf Status - 0 for Open : 1 for Closed" :
-                    props.yVal === "leaf4"? "Camera 4 Leaf Status - 0 for Open : 1 for Closed" :
+                    props.yVal === "leaf1"? "Camera 1 Leaf Status - 0 for Open : 1 for Closed : -1 for Manually Changed" :
+                    props.yVal === "leaf2"? "Camera 2 Leaf Status - 0 for Open : 1 for Closed : -1 for Manually Changed" :
+                    props.yVal === "leaf3"? "Camera 3 Leaf Status - 0 for Open : 1 for Closed : -1 for Manually Changed" :
+                    props.yVal === "leaf4"? "Camera 4 Leaf Status - 0 for Open : 1 for Closed : -1 for Manually Changed" :
                     props.yVal === "resevoir"? "Resevoir Water Level" :
                     props.yVal === "water"? "Water Level" : 
                     props.yVal === "light"? "Light Level" :
@@ -62,7 +61,7 @@ function DataGraph (props) {
                         data={
                             {   
                                 // Denotes our X (Independent Variable )
-                                labels: envData.map((data) => data.timestamps.split('.')[0]),
+                                labels: envData.map((data) => new Date(data.timestamps.replace("-", "/").replace("-", "/").split('T').join(' ').split('.')[0] + " +0000").toLocaleString("en-US", {timeZone: 'America/Grenada'})),
                                 datasets: [
                                     {
                                         label: "Amount per Data Entry",
