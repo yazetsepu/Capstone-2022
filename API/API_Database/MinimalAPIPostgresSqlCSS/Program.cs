@@ -94,7 +94,7 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
     }
 
 
-    return Results.Unauthorized();
+    return Results.NotFound();
    
 
 });
@@ -348,7 +348,7 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
                                Log_Id = Commands.Log_Id,
                                AdminsUser_Id = Commands.AdminsUser_Id
 
-                           }).Where(b => b.Command_Performed == null).OrderBy(x => x.Command_Id).First();
+                           }).Where(b => b.Command_Performed == null && b.Command_Performed != null ).OrderBy(x => x.Command_Id).First();
         /*
         var httpWebRequest = (HttpWebRequest) WebRequest.Create($"https://cssrumapi.azurewebsites.net/Commands/Command_Read/{properties.Command_Id}", properties);
         httpWebRequest.Method = "PUT";
@@ -383,9 +383,49 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
         : Results.NotFound();
 
     });
+    app.MapGet("/EnvironmentalData/Filter", async (string start,string end, CSSDb db) =>
+    {
+    var str = DateTimeOffset.Parse(start);
+    var en = DateTimeOffset.Parse(end).AddDays(1);
 
-    //get all environmentaldata including picture id and classification id in a descending form.
-    app.MapGet("/EnvironmentalData/Classid", async (CSSDb db) =>
+        var properties = (from EnvironmentalData in db.EnvironmentalData.Where(x => x.Timestamps >= str && x.Timestamps <= en)
+                          from Pictures in db.Pictures.Where(st => st.Pic_Id == EnvironmentalData.Pictures_Id).DefaultIfEmpty()
+                          select new
+                          {
+                              EnvironmentalData.Entry_Id,
+                              EnvironmentalData.Temperature,
+                              EnvironmentalData.Humidity,
+                              EnvironmentalData.Soil_Moisture_1,
+                              EnvironmentalData.Soil_Moisture_2,
+                              EnvironmentalData.Soil_Moisture_3,
+                              EnvironmentalData.Soil_Moisture_4,
+                              EnvironmentalData.Soil_Moisture_5,
+                              EnvironmentalData.Soil_Moisture_6,
+                              EnvironmentalData.Soil_Moisture_7,
+                              EnvironmentalData.Soil_Moisture_8,
+                              EnvironmentalData.Light,
+                              EnvironmentalData.Reservoir_Water_Level,
+                              EnvironmentalData.Timestamps,
+                              EnvironmentalData.Water_Level,
+                              EnvironmentalData.Pictures_Id,
+                              Pic_Id = (int?)Pictures.Pic_Id,
+                              Classification_Id_1 = (int?)Pictures.Classification_Id_1,
+                              Classification_Id_2 = (int?)Pictures.Classification_Id_2,
+                              Classification_Id_3 = (int?)Pictures.Classification_Id_3,
+                              Classification_Id_4 = (int?)Pictures.Classification_Id_4
+
+
+                          }).OrderBy(x => x.Entry_Id);
+
+        return Results.Ok(properties);
+
+
+
+
+    });
+
+//get all environmentaldata including picture id and classification id in a descending form.
+app.MapGet("/EnvironmentalData/Classid", async (CSSDb db) =>
     {
 
         var properties = (from EnvironmentalData in db.EnvironmentalData
@@ -488,7 +528,7 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
     });
 
     //Get all logs.
-    app.MapGet("/LogsAll", async (CSSDb db) => await db.Logs.ToListAsync());
+    app.MapGet("/LogsAll", async (CSSDb db) => await db.Logs.OrderByDescending(x=>x.Log_Id).ToListAsync());
 
     //Update an existing log by id.
     app.MapPut("/Logs/{id:int}", async (int id, Logs a, CSSDb db) =>
