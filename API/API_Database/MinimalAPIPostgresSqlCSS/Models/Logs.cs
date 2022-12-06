@@ -17,7 +17,7 @@ namespace MinimalAPIPostgresSqlCSS.Models
         public string? Log_Text { get; set; }
 
         //Cambiaste esto.
-        public DateTime Timestamps { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset Timestamps { get; set; } = DateTimeOffset.Now.ToLocalTime();
     }
 }
  

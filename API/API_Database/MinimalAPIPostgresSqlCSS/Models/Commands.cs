@@ -29,9 +29,9 @@ namespace MinimalAPIPostgresSqlCSS.Models
         public string? Command_String { get; set; }
         public string? Command_Value  { get; set; }
         public virtual Admins? Admins { get; set; }  
-        public virtual Logs? Logs { get; set; } 
-        public DateTime Command_Received { get; set; } = DateTime.Now.ToLocalTime();
-        public DateTime? Command_Read { get; set; } =DateTime.Now.ToLocalTime();
-        public DateTime? Command_Performed { get; set; }= DateTime.Now.ToLocalTime();
+        public virtual Logs? Logs { get; set; }
+        public DateTimeOffset Command_Received { get; set; } = DateTimeOffset.Now;
+        public DateTimeOffset? Command_Read { get; set; } = DateTimeOffset.Now;
+        public DateTimeOffset? Command_Performed { get; set; } = DateTimeOffset.Now;
     }
 }

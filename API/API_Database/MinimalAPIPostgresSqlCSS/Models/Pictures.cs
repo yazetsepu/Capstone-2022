@@ -17,7 +17,7 @@ namespace MinimalAPIPostgresSqlCSS.Models
     {
         [Key]
         public int Pic_Id { get; set; } 
-        public int? Classification_Id_1 { get; set; }
+        public int? Classification_Id_1 { get; set; } 
         public int? Classification_Id_2 { get; set; }
         public int? Classification_Id_3 { get; set; }
         public int? Classification_Id_4 { get; set; }
@@ -30,7 +30,7 @@ namespace MinimalAPIPostgresSqlCSS.Models
         public string? Camera_Pic_Path_3 { get; set; }
         public string? Camera_Pic_Path_4 { get; set; }
 
-        public DateTime Timestamps { get; set; } = DateTime.Now.ToLocalTime();
+        public DateTimeOffset Timestamps { get; set; } = DateTimeOffset.Now;
 
 
     }
