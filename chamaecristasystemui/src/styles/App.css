@@ -4,17 +4,26 @@
 
 .top-container{
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-top: 1rem;
-  margin-left: 1rem;
+    align-items: flex-end;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+    flex-direction: column;
 }
-.top-container-btns{
+
+.top-container-btns-admin{
   display: flex;
   margin-right: 1rem;
   width: 21rem;
   justify-content: space-between;
 }
+
+.top-container-btns-guest{
+  display: flex;
+  margin-right: 1rem;
+  justify-content: space-between;
+}
+
 .middle-container{
   margin-right: 1rem;
   margin-left: 1rem;
@@ -60,7 +69,7 @@
 }
 
 @media only screen and (max-width: 1100px) {
-  .top-container-btns{
+  .top-container-btns-admin{
     display: flex;
     flex-direction: column;
     height: 7rem;
@@ -127,7 +136,7 @@
     margin-right: 1rem;
   }
 
-  .top-container-btns{
+  .top-container-btns-admin{
     display: flex;
     flex-direction: column;
     height: 7rem;

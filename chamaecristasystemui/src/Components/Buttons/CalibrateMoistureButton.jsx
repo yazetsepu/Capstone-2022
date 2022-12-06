@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
-import CalibrateSensorModal from './CalibrateSensorModal';
+import CalibrateSensorModal from '../Modals/CalibrateSensorModal';
 import RangeSlider from 'react-bootstrap-range-slider';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 import './button-styles/calibratemoisturebutton.css'
@@ -35,8 +35,6 @@ async function calibrateMoistureSensors(S1D, S2D, S3D, S4D, S5D, S6D, S7D, S8D,
     }
     )
   };
-
-  console.log(requestOptions)
   const response = await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)
   const data = await response.json();
   return new Promise((resolve) => {});

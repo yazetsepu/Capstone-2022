@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
+import './button-styles/retrainmodel.css'
 
 async function retrainModel(){
 
@@ -22,7 +22,6 @@ const requestOptions = {
   )
 };
 
-console.log(requestOptions)
 // TODO Put correct route here
 const response = await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)
 const data = await response.json();
@@ -49,14 +48,16 @@ function RetrainModelButton(props) {
 
   return (
     <div>
-      <Button
-        variant="primary"
-        size="lg"
-        disabled={isLoading}
-        onClick={!isLoading ? handleClick : null}
-      >
-        {isLoading ? 'Loading…' : 'Retrain Model'}
-      </Button>
+      <div className='retrain-btn'>
+        <Button
+          variant="primary"
+          size="lg"
+          disabled={isLoading}
+          onClick={!isLoading ? handleClick : null}
+        >
+          {isLoading ? 'Loading…' : 'Retrain Model'}
+        </Button>
+      </div>
       {/* Pops up a notification to ask the user if  tehy're sure they want to retrain the model */}
       <Modal show={isShowing} onHide={handleClose} size="lg">
         <Modal.Header closeButton>

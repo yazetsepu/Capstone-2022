@@ -6,13 +6,22 @@ function ContinueAsGuestButton() {
   //Creates the navigation objectthat will handle page switching
   const navigate = useNavigate();
 
+  const handleClick = () => {
+    navigate('/home',
+    {
+      state: {
+        userKey: 0,
+      }
+    });
+  };
+
   return (
     <Button
       className='but'
       variant="primary"
       size="lg"
       // Switches pages to the designated route
-      onClick={() => navigate("/")}
+      onClick={handleClick}
     >
       Continue as Guest
     </Button>

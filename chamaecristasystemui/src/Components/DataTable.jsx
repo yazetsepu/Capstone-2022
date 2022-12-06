@@ -3,24 +3,25 @@ import '../styles/DataTable.css';
 //Imports from react-bootstrap that will help beautify the page
 import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
+import FilterSearchModal from '../Components/Modals/FilterSearchModal';
+import TablePaginator from '../Components/TablePaginator';
 
 //The DataTable or BasicTable function is invoked by the App.js page, the main landing page.
 //It does not, however, inherit anything from it.
 function BasicTable() {
-     //Stores the complete data set fetched from the API in descending order
-    const [envData, setEnvData] = useState([])
     //Designates how many elements of EnvData (Environmental Data) a single page will hold
     const dataPerPage = 12;
+    //Stores the complete data set fetched from the API in descending order
+    const [envData, setEnvData] = useState([])
     //Temporarely stores the amount of elements to be rendered on the page at any given moment
     const [limEnvData, setLimEnvData] = useState([]);
-    //Keeps track of what index of the EnvData Array is being used to display the next few elements
-    const [currNum, setCurrNum] = useState(dataPerPage);
     //Whether or not the Next arrow button is clickable in the Pagination section
     const [isNextActive, setIsNextActive] = useState(false);
-    //Whether or not the Previous arrow button is clickable in the Pagination section
-    const [isPrevActive, setIsPrevActive] = useState(true);
-    //Keeps track of what page the user is at out of the total allowed pages as per the amount of data
-    const [currPage, setCurrPage] = useState(1);
+
+    const [isShowing, setShowing] = useState(false)
+
+    const [startValue, setStartValue] = React.useState(0);
+    const [endValue, setEndValue] = React.useState(0);
     
    //Performs a GET Request that will return the data present in the EnvironmentalData table in the DB
     const fetchData = async () => {
@@ -38,7 +39,7 @@ function BasicTable() {
                 data.push({
                     "soil_Moisture_1" : "N/A", "soil_Moisture_2" : "N/A", "soil_Moisture_3" : "N/A", "soil_Moisture_4" : "N/A", 
                     "soil_Moisture_5" : "N/A", "soil_Moisture_6" : "N/A", "soil_Moisture_7" : "N/A",
-                    "soil_Moisture_8" : "N/A"})
+                    "soil_Moisture_8" : "N/A", "timestamps" : "0000-00-00T00:00:00.000000+00:00"})
             }
         }
         setEnvData(data)
@@ -58,98 +59,10 @@ function BasicTable() {
         fetchData()
       }, [])
 
-      //Handler Functions for the Pagination buttons
-
-      //Handles the pressing of the ">" Next arrow in the pagination
-      const showNextData = () => {
-        //Checks whether the elements on a page are the correct amount and if user is not on the final page
-        if(currNum / currPage === dataPerPage && currPage < envData.length/dataPerPage){
-            setCurrNum(currNum + limEnvData.length)
-        }
-
-        //Sets the elements to be rendered when clicking the next button by taking the current 
-        //tracked number and shifting it the correct amount of elements forward.  
-        if(envData.slice(currNum, envData.length).length > dataPerPage){
-            setLimEnvData(envData.slice(currNum, currNum+dataPerPage));
-            setIsPrevActive(false);
-            setCurrPage(currPage+1)
-        }
-        //Sets the elements to be rendered when clicking the next button, but right before the last page.
-        //Disables the next button to prevent bugs.
-        else if(envData.slice(currNum, envData.length).length <= dataPerPage && envData.slice(currNum, envData.length).length > 0){
-            setLimEnvData(envData.slice(currNum));
-            setIsNextActive(true);
-            setIsPrevActive(false);
-            setCurrPage(currPage+1)
-        }
-        //Catches any other errors with the pagination by disabling the ability to move forward
-        else{
-            setIsNextActive(true);
-            setIsPrevActive(false);
-            setCurrNum(currNum-dataPerPage)
-        }      
-      }
-
-      //Handles the pressing of the "<" Previous arrow in the pagination
-      const showPrevData = () => {
-        //Disables the ability to go backwards in pages if there are 2 or less remaining pages
-        if(currPage <= 2){
-            setIsPrevActive(true)
-        }
-        
-        //If the amount of elements rendered are correct, move backwards in pagination
-        if(currNum / currPage === dataPerPage){
-            setCurrNum(currNum - limEnvData.length)
-        }
-
-        //Sets the elements to be rendered by shifting the current number tracked by the corret amount
-        if(envData.slice(currNum-limEnvData.length, envData.length).length > dataPerPage){
-            setLimEnvData(envData.slice(currNum-(limEnvData.length*2), currNum-limEnvData.length));
-            setIsNextActive(false);
-            setCurrPage(currPage-1)
-        }
-        //Sets the elements to be rendered but when on the last page
-        else if (currNum < dataPerPage){
-            setLimEnvData(envData.slice(currNum-limEnvData.length, currNum));
-            setIsPrevActive(true);
-            setCurrPage(currPage-1)
-            return null;
-        }
-        //Catches any other errors with the pagination by adjisting the shifted number and the page
-        else{
-            setLimEnvData(envData.slice(currNum-(limEnvData.length*2), currNum-limEnvData.length));
-            setIsNextActive(false);
-            setCurrPage(currPage-1)
-        }
-      }
-
-      //Handles pressing the "1" and takes the user back to the first page
-      const showFirstPage = () => {
-        setCurrNum(12)
-        setLimEnvData(envData.slice(0, dataPerPage));
-        setIsNextActive(false);
-        setIsPrevActive(true)
-        setCurrPage(1)
-      }
-
-      //Handles pressing the Last Page and takes the user back to the last page
-      const showLastPage = () => {
-        setCurrNum(envData.length)
-        setLimEnvData(envData.slice(envData.length-dataPerPage));
-        setIsNextActive(true);
-        setIsPrevActive(false)
-        setCurrPage(envData.length/dataPerPage)
-      }
-
-      //Handler Pointers
-      const handleNextClick = () => showNextData();
-      const handlePrevClick = () => showPrevData();
-      const handleFirstClick = () => showFirstPage();
-      const handleLastClick = () => showLastPage();
-
     return (
         //Test id for handling tests on this component
         <div data-testid="datatable-1">
+            
             <Table responsive="sm" striped bordered hover variant="dark" className='table'>
                 <thead className='table-head'>
                     {/* Containes the headers for the table */}
@@ -201,33 +114,21 @@ function BasicTable() {
                 </tbody>
             </Table>
             {/* Controls Pagination: the movement between pages with data */}
-            <div className='paginator'>
+            <div className='filter-btn'>
                 <Pagination>
-                    <Pagination.Prev 
-                        onClick={handlePrevClick}
-                        disabled={isPrevActive}/>
-                    <Pagination.Item
-                    onClick={handleFirstClick}>
-                        {1}
-                    </Pagination.Item>
-
-                    <Pagination.Ellipsis />
-                    <Pagination.Item
-                        active>
-                            Current Page: {Math.ceil(currPage)}
-                    </Pagination.Item>
-                    <Pagination.Ellipsis />
-
-                    <Pagination.Item
-                        onClick={handleLastClick}
-                    >
-                        {envData.length/dataPerPage}
-                    </Pagination.Item>
-                    <Pagination.Next 
-                        onClick={handleNextClick}
-                        disabled={isNextActive}
-                    />
+                        <Pagination.Item
+                            onClick={() => {setShowing(true)}}
+                        >
+                            Filter Table
+                        </Pagination.Item>
                 </Pagination>
+            </div>
+            <div className='paginator'>
+                <TablePaginator envData={envData} isNextActive={isNextActive} 
+                                limEnvData={limEnvData} setLimEnvData={setLimEnvData} 
+                                dataPerPage={dataPerPage}
+                />
+                <FilterSearchModal isShowing={isShowing} setShowing={setShowing} setStartValue={setStartValue}/>
             </div>
         </div>
     );

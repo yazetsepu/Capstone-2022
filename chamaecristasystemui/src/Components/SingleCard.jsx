@@ -72,16 +72,26 @@ const handleClick = () => {
             </b> 
           </Card.Text>
           {/* Renders the button */}
-          <Button
-              variant="danger"
-              size="med"
-              onClick={handleClick}
-          >
-            Change Classification
-          </Button>
-          <Card.Text>
-            <i>If you wish to change the classification again, please refresh and click once more.</i>
-          </Card.Text>
+          { props.encKey !==0?
+            <Button
+                variant="danger"
+                size="med"
+                onClick={handleClick}
+            >
+              Change Classification
+            </Button>
+            :
+            <></>
+            }
+            { props.encKey !==0?
+            <Card.Text>
+              <i>If you wish to change the classification again, please refresh and click once more.</i>
+            </Card.Text>
+            :
+            <></>
+            }
+            
+          
         </Card.Body>
         <Card.Footer>
           {/* Formats the timestamp string into a readable format for the user */}
