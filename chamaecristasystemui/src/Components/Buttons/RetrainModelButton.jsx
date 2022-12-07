@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import './button-styles/RetrainModelButton.css'
@@ -23,8 +23,7 @@ const requestOptions = {
 };
 
 // TODO Put correct route here
-const response = await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)
-const data = await response.json();
+await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)
 return new Promise((resolve) => {});
 }
 
