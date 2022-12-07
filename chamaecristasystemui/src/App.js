@@ -35,8 +35,9 @@ function App (){
         return (
             <div>
                 <DarkNavbar />
-                <h1 id="tabelLabel" >Chamaecrista Sustainability System</h1>
-                <div className='top-container'>
+                
+                <div className='top-container-btns'>
+                    <h1 id="tabelLabel" >Chamaecrista Sustainability System</h1>
                     <div className={decryptedString === 'Admin'? 'top-container-btns-admin': 'top-container-btns-guest'}>
                         <ViewCapturesButton encKey={key}/>
                         {decryptedString === 'Admin'?

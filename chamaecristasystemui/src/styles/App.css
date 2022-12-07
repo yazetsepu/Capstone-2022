@@ -2,13 +2,14 @@
   text-align: center;
 }
 
-.top-container{
+.top-container-btns{
   display: flex;
-    align-items: flex-end;
-    margin-top: 1rem;
-    margin-left: 1rem;
-    margin-bottom: 1rem;
-    flex-direction: column;
+  align-items: flex-end;
+  margin-top: 1rem;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .top-container-btns-admin{
@@ -122,7 +123,7 @@
     text-align: center;
   }
 
-  .top-container{
+  .top-container-btns{
     display: flex;
     flex-direction: column;
     align-items: center;

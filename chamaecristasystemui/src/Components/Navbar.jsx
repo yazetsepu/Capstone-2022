@@ -48,7 +48,7 @@ function DarkNavbar() {
                                     size='sm'
                                     onClick={handleClick}
                                 >
-                                    <h1>&nbsp;Home</h1>
+                                    <h1>Home</h1>
                                 </Button>
                                 Signed in as:&nbsp; <a href="/">{key !== 0? 'Admin' : 'Guest'}</a>
                             </div>

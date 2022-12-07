@@ -1,4 +1,8 @@
-.filter{
-    width: 50% ;
-    margin-right: 0.5rem;
+.filter-date{
+    display:flex;
+    margin-bottom: 1rem;
+}
+
+.filter-btn{
+    margin-left: 0.5rem;
 }

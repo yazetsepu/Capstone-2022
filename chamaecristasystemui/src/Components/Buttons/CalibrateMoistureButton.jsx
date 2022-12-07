@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
-import CalibrateSensorModal from '../Modals/CalibrateSensorModal';
-import RangeSlider from 'react-bootstrap-range-slider';
-import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
-import './button-styles/calibratemoisturebutton.css'
+import CalibrateSensorModalContainer from '../Modals/CalibrateSensorModalContainer';
+import './button-styles/CalibrateMoistureButton.css'
 
 //TODO
 
@@ -14,8 +10,8 @@ async function calibrateMoistureSensors(S1D, S2D, S3D, S4D, S5D, S6D, S7D, S8D,
                                       S1W, S2W, S3W, S4W, S5W, S6W, S7W, S8W) 
 {
 
-  let sensorValues="{S1D:"+S1D+","+"S2D:"+S2D+","+"S3D:"+S3D+","+"S4D:"+S4D+","+ 
-                    "S5D:"+S6D+","+"S6D:"+S6D+","+"S7D:"+S7D+","+"S8D:"+S8D+","+
+  let sensorValues="{S1D:"+S1D+","+"S2D:"+S2D+","+"S3D:"+S3D+","+"S4D:"+S4D+","+
+                    "S5D:"+S5D+","+"S6D:"+S6D+","+"S7D:"+S7D+","+"S8D:"+S8D+","+
                     "S1W:"+S1W+","+"S2W:"+S2W+","+"S3W:"+S3W+","+"S4W:"+S4W+","+
                     "S5W:"+S5W+","+"S6W:"+S6W+","+"S7W:"+S7W+","+"S8W:"+S8W+"}";
 
@@ -37,6 +33,7 @@ async function calibrateMoistureSensors(S1D, S2D, S3D, S4D, S5D, S6D, S7D, S8D,
   };
   const response = await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)
   const data = await response.json();
+  console.log(data)
   return new Promise((resolve) => {});
 }
 
@@ -106,6 +103,7 @@ function CalibrateMoistureButton(props) {
   }
 
   const handleSubmit = () => {
+    console.log("Arriving")
     calibrateMoistureSensors(soilSensorOneD, soilSensorTwoD, soilSensorThreeD, soilSensorFourD,
                            soilSensorFiveD, soilSensorSixD, soilSensorSevenD, soilSensorEightD,
                            soilSensorOneW, soilSensorTwoW, soilSensorThreeW, soilSensorFourW,
@@ -122,39 +120,12 @@ function CalibrateMoistureButton(props) {
         disabled={isLoading}
         onClick={!isLoading ? handleClick : null}
       >
-        {isLoading ? 'Loading…' : 'Calibrate Moisture Levels'}
+        {isLoading ? 'Calibrating...' : 'Calibrate Moisture Levels'}
       </Button>
       
-      {/* A Modal is a mini screen that pops up when an event happens and that contains elements inside */}
-      <Modal show={isLoading} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Calibrate Moisture Levels</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className='dropdowns'>
-            <div>
-              <CalibrateSensorModal number={1} handleModal={handleModal}/>
-              <CalibrateSensorModal number={2} handleModal={handleModal}/>
-              <CalibrateSensorModal number={3} handleModal={handleModal}/>
-              <CalibrateSensorModal number={4} handleModal={handleModal}/>
-            </div>
-            <div>
-              <CalibrateSensorModal number={5} handleModal={handleModal}/>
-              <CalibrateSensorModal number={6} handleModal={handleModal}/>
-              <CalibrateSensorModal number={7} handleModal={handleModal}/>
-              <CalibrateSensorModal number={8} handleModal={handleModal}/>
-            </div>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleSubmit}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <CalibrateSensorModalContainer isLoading={isLoading} onHide={handleClose} 
+                                     handleModal={handleModal} handleClose={handleClose}
+                                     handleSubmit={handleSubmit} />
     </div>
   );
 }

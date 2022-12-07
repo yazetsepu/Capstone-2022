@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import './button-styles/retrainmodel.css'
+import './button-styles/RetrainModelButton.css'
 
 async function retrainModel(){
 

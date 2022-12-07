@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import RangeSlider from 'react-bootstrap-range-slider';
 import Modal from 'react-bootstrap/Modal';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
-import './modal-styles/calibratesensormodal.css'
+import './modal-styles/CalibrateSensorModal.css'
 
 //Handles each sesnor button and the sliders that pop up, as well as sends the data of sliders to parent
-function CalibrateSensorModal(props) {
+function CalibrateSensorModalRange(props) {
 
   //Stores and sets each individual soil sensor values
   const maxSliderVal = 1023;
@@ -75,4 +75,4 @@ function CalibrateSensorModal(props) {
   );
 }
 
-export default CalibrateSensorModal
+export default CalibrateSensorModalRange

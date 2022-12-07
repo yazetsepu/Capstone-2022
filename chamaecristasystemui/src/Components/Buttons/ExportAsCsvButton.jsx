@@ -5,7 +5,7 @@ function ExportAsCsvButton() {
 
   //Performs the GET request
   const fetchData = async () => {
-    const response = await fetch("https://cssrumapi.azurewebsites.net/EnvironmentalDataAll")
+    const response = await fetch('https://cssrumapi.azurewebsites.net/EnvironmentalDataAll')
     const data = await response.json()
     return data;
   }

@@ -1,3 +1,8 @@
 .individual-dropdown{
     margin-bottom: 1rem;
 }
+
+.dropdowns{
+    display: flex;
+    justify-content: space-between;
+}

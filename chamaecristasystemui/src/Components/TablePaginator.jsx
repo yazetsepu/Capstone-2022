@@ -17,7 +17,11 @@ function TablePaginator(props) {
         if(props.isNextActive){
             setIsNextActive(true)
         }
-      }, [])
+        if(!isPrevActive){setCurrPage(1)}
+        setIsNextActive(false)
+        setIsPrevActive(true)
+        setCurrNum(dataPerPage)
+      }, [props.envData.length/dataPerPage])
 
      //Handler Functions for the Pagination buttons
 
@@ -128,7 +132,7 @@ function TablePaginator(props) {
             <Pagination.Item
                 onClick={handleLastClick}
             >
-                {props.envData.length/dataPerPage}
+                {Math.ceil(props.envData.length/dataPerPage)}
             </Pagination.Item>
             <Pagination.Next 
                 onClick={handleNextClick}

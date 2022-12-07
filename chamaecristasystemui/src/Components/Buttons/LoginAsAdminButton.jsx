@@ -15,9 +15,8 @@ function LoginAsAdminButton() {
 
   const fetchData = async () => {
     let key="DD2CCB091346B250C927F3FD5BB1AD1872078CFE8F572A7324DA2A0981FE2E6B&"
-    
     const response = await fetch("https://cssrumapi.azurewebsites.net/Admins/Auth?pk="+key+"password="+enteredPass)
-    return response.status === 200? true : false;
+    return response.status === 200? true : window.location.reload();
     
   }
 
