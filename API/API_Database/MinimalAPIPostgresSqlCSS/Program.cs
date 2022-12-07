@@ -385,8 +385,8 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
     });
     app.MapGet("/EnvironmentalData/Filter", async (string start,string end, CSSDb db) =>
     {
-    var str = DateTimeOffset.Parse(start);
-    var en = DateTimeOffset.Parse(end).AddDays(1);
+    var str = DateTimeOffset.Parse(start).AddHours(4);
+    var en = DateTimeOffset.Parse(end).AddDays(1).AddHours(4);
 
         var properties = (from EnvironmentalData in db.EnvironmentalData.Where(x => x.Timestamps >= str && x.Timestamps <= en)
                           from Pictures in db.Pictures.Where(st => st.Pic_Id == EnvironmentalData.Pictures_Id).DefaultIfEmpty()
