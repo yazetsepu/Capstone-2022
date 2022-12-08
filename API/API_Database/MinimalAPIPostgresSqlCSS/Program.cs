@@ -331,9 +331,6 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
     });
     app.MapGet("/Commands/LastCommand", (CSSDb db) =>
     {
-        HttpClient httpClient = new HttpClient();
-
-
         var properties = (
                            from Commands in db.Commands.DefaultIfEmpty()
                            select new
