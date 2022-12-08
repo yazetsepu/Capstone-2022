@@ -6,12 +6,15 @@ import { GenerateKey } from '../../Util/GenerateKey';
 import LoginModal from '../Modals/LoginModal';
 
 
+
 function LoginAsAdminButton() {
   //Creates the navigation objectthat will handle page switching
   const navigate = useNavigate();
   const [isShowing, setShowing] = useState(false)
   const [enteredPass, setEnteredPass] = useState(null)
   const [isInvalid, setIsInvalid] = useState(false)
+
+  const [isLogging, setIsLogging] = useState(false)
 
   const fetchData = async () => {
     let key="DD2CCB091346B250C927F3FD5BB1AD1872078CFE8F572A7324DA2A0981FE2E6B&"
@@ -55,7 +58,7 @@ function LoginAsAdminButton() {
 
       <LoginModal isShowing={isShowing} setShowing={setShowing} 
                   enteredPass={enteredPass} setEnteredPass={setEnteredPass}
-                  handleClick={handleClick} isInvalid={isInvalid}/>
+                  handleClick={handleClick} isInvalid={isInvalid} isLogging={isLogging}/>
     </div>
   );
 }

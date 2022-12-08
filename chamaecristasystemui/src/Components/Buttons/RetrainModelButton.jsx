@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
 import './button-styles/RetrainModelButton.css'
+import RetrainModelModal from '../Modals/RetrainModelModal';
 
 async function retrainModel(){
 
@@ -57,21 +57,8 @@ function RetrainModelButton(props) {
           {isLoading ? 'Loading…' : 'Retrain Model'}
         </Button>
       </div>
-      {/* Pops up a notification to ask the user if  tehy're sure they want to retrain the model */}
-      <Modal show={isShowing} onHide={handleClose} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Are you sure you want to retrain the Model with the pictures currently available in <b>ViewCaptures</b></Modal.Title>
-        </Modal.Header>
-        <Modal.Body><b> Please make sure to make any relevant changes to the pictures in the View Captures Page before moving on</b></Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={handleClose}>
-            No, dont retrain the model. Close this popup
-          </Button>
-          <Button variant="danger" onClick={handleSubmit}>
-            Yes I am very sure! Retrain the model.
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {/* Pops up a notification to ask the user if  they're sure they want to retrain the model */}
+      <RetrainModelModal isShowing={isShowing} handleClose={handleClose} handleSubmit={handleSubmit} />
     </div>
   );
 }

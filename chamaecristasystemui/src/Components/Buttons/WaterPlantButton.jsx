@@ -20,8 +20,7 @@ async function simulateNetworkRequest() {
     )
   };
 
-  const response = await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)
-  const data = await response.json();
+  await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)
   return new Promise((resolve) => setTimeout(resolve, 2000));
 }
 

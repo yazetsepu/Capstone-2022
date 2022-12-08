@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import DarkNavbar from '../Components/Navbar';
 import PictureCard from '../Components/PictureCard'
 import { useLocation } from "react-router-dom";

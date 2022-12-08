@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../styles/PictureCard.css';
 import CardGroup from 'react-bootstrap/CardGroup';
 import SingleCard from './SingleCard';
-import Pagination from 'react-bootstrap/Pagination';
+import PicturePaginator from './PicturePaginator';
 
 
 function PictureCard(props) {
@@ -13,14 +13,9 @@ function PictureCard(props) {
     const [picData, setPicData] = useState([])
     //Temporarely stores the amount of pictures to be rendered on the page at any given moment
     const [limPicData, setLimPicData] = useState([])
-    //Keeps track of what index of the PicData Array is being used to display the next few pictures
-    const [currNum, setCurrNum] = useState(dataPerPage)
     //Whether or not the Next arrow button is clickable in the Pagination section
     const [isNextActive, setIsNextActive] = useState(false);
-     //Whether or not the Previous arrow button is clickable in the Pagination section
-    const [isPrevActive, setIsPrevActive] = useState(true);
-    //Keeps track of what page the user is at out of the total allowed pages as per the amount of data
-    const [currPage, setCurrPage] = useState(1);
+
 
     //Performs a GET Request that will return the data present in the Pictures table in the DB
     const fetchData = async () => {
@@ -75,113 +70,13 @@ function PictureCard(props) {
         }
     }, [])
 
-    //Handler Functions for the Pagination buttons
-
-    //Handles the pressing of the ">" Next arrow in the pagination
-    const showNextData = () => {
-        if(currNum / currPage === dataPerPage && currPage < picData.length/dataPerPage){
-            setCurrNum(currNum + limPicData.length)
-        }
-
-        if(picData.slice(currNum, picData.length).length > dataPerPage || currNum / currPage >= picData.length/dataPerPage){
-            setLimPicData(picData.slice(currNum, currNum+dataPerPage));
-            setIsPrevActive(false);
-            setCurrPage(currPage+1)
-        }
-        else if(picData.slice(currNum, picData.length).length <= dataPerPage && picData.slice(currNum, picData.length).length > 0){
-            setLimPicData(picData.slice(currNum));
-            setIsNextActive(true);
-            setCurrPage(currPage+1)
-        }
-        else{
-            setIsNextActive(true);
-            setCurrNum(currNum-dataPerPage)
-        }      
-    }
-
-    //Handles the pressing of the "<" Previous arrow in the pagination
-    const showPrevData = () => {
-        if(currPage <= 2){
-            setIsPrevActive(true)
-        }
-        
-        if(currNum / currPage === dataPerPage){
-            setCurrNum(currNum - limPicData.length)
-        }
-
-        if(picData.slice(currNum-limPicData.length, picData.length).length > dataPerPage){
-            setLimPicData(picData.slice(currNum-(limPicData.length*2), currNum-limPicData.length));
-            setIsNextActive(false);
-            setCurrPage(currPage-1)
-        }
-        else if (currNum < dataPerPage){
-            setLimPicData(picData.slice(currNum-limPicData.length, currNum));
-            setIsPrevActive(true);
-            setCurrPage(currPage-1)
-            return null;
-        }
-        else{
-            setLimPicData(picData.slice(currNum-(limPicData.length*2), currNum-limPicData.length));
-            setIsNextActive(false);
-            setCurrPage(currPage-1)
-        }
-    }
-
-    //Handles pressing the "1" and takes the user back to the first page
-    const showFirstPage = () => {
-        setCurrNum(dataPerPage)
-        setLimPicData(picData.slice(0, dataPerPage));
-        setIsNextActive(false);
-        setIsPrevActive(true)
-        setCurrPage(1)
-    }
-
-    //Handles pressing the Last Page and takes the user back to the last page
-    const showLastPage = () => {
-        setCurrNum(picData.length)
-        setLimPicData(picData.slice(picData.length-dataPerPage));
-        setIsNextActive(true);
-        setIsPrevActive(false)
-        setCurrPage(picData.length/dataPerPage)
-    }
-
-    const handleNextClick = () => showNextData();
-    const handlePrevClick = () => showPrevData();
-    const handleFirstClick = () => showFirstPage();
-    const handleLastClick = () => showLastPage();
-
-
     return (
         <div>
             {/* Features Pagination both on top and on the bottom to allow for easier traversal of pages */}
-            <div className='paginator'>
-                <Pagination>
-                    <Pagination.Prev 
-                    onClick={handlePrevClick}
-                    disabled={isPrevActive}/>
-                    <Pagination.Item
-                    onClick={handleFirstClick}>
-                        {1}
-                    </Pagination.Item>
-
-                    <Pagination.Ellipsis />
-                    <Pagination.Item
-                        active>
-                            Current Page: {Math.ceil(currPage)}
-                    </Pagination.Item>
-                    <Pagination.Ellipsis />
-
-                    <Pagination.Item
-                        onClick={handleLastClick}
-                    >
-                        {Math.ceil(picData.length/dataPerPage)}
-                    </Pagination.Item>
-                    <Pagination.Next 
-                        onClick={handleNextClick}
-                        disabled={isNextActive}
-                    />
-                </Pagination>
-            </div>
+            <PicturePaginator dataPerPage={dataPerPage} picData={picData} 
+                              setLimPicData={setLimPicData} limPicData={limPicData}
+                              isNextActive={isNextActive}/>
+                
             {/* Renders a child component that represent a single picture each */}
             {limPicData.map((data, key) => (
                 <div>
@@ -195,34 +90,9 @@ function PictureCard(props) {
                     </div>
                 </div>
             ))}
-            <div className='paginator'>
-                <Pagination>
-                    <Pagination.Prev 
-                    onClick={handlePrevClick}
-                    disabled={isPrevActive}/>
-                    <Pagination.Item
-                    onClick={handleFirstClick}>
-                        {1}
-                    </Pagination.Item>
-
-                    <Pagination.Ellipsis />
-                    <Pagination.Item
-                        active>
-                            Current Page: {Math.ceil(currPage)}
-                    </Pagination.Item>
-                    <Pagination.Ellipsis />
-
-                    <Pagination.Item
-                        onClick={handleLastClick}
-                    >
-                        {Math.ceil(picData.length/dataPerPage)}
-                    </Pagination.Item>
-                    <Pagination.Next 
-                        onClick={handleNextClick}
-                        disabled={isNextActive}
-                    />
-                </Pagination>
-            </div>
+            <PicturePaginator dataPerPage={dataPerPage} picData={picData} 
+                              setLimPicData={setLimPicData} limPicData={limPicData}
+                              isNextActive={isNextActive}/>
     </div>
     );
 }

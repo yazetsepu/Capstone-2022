@@ -3,11 +3,15 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
+import Spinner from 'react-bootstrap/Spinner';
+
 
 function LoginModal(props) {
 
     //handles Showing and closing the modal
     const handleClose = () => props.setShowing(false)
+    
+    const [isLogging, setIsLogging] = useState(false)
   
     return (
       <div>
@@ -30,10 +34,15 @@ function LoginModal(props) {
                         <Button 
                             variant="primary" 
                             id="button-addon2"
-                            onClick={props.handleClick}
+                            onClick={async () => {
+                              props.handleClick()
+                              setIsLogging(true)
+                            }}
                             >
-                            Login
+                              {isLogging?  <Spinner animation="border" variant="secondary" size='sm'/> : 'Login'}
                         </Button>
+
+                        
               </InputGroup>
             </Form.Group>
           </Modal.Body>

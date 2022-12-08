@@ -1,8 +1,7 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './styles/App.css';
 import BasicTable from "./Components/DataTable"
 import DarkNavbar from "./Components/Navbar"
-import FilterSearch from './Components/FilterSearch';
 // Buttons
 import ViewCapturesButton from './Components/Buttons/ViewCapturesButton';
 import RetrainModelButton from './Components/Buttons/RetrainModelButton';

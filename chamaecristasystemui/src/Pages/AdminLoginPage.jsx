@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Button from '../Components/Buttons/Button';
 import ContinueAsGuestButton from '../Components/Buttons/ContinueAsGuestButton';
 import LoginAsAdminButton from '../Components/Buttons/LoginAsAdminButton';
 import '../styles/AdminLoginPage.css';
