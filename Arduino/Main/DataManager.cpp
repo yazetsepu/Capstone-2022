@@ -161,7 +161,7 @@ void saveLog(int code, String name, int severity, String message){
     myFile.println(dataEntry); //Add row
     // close the file:
     myFile.close();
-    Serial.println("Log saved to SD");
+    Serial.println("Log saved to SD: " + name);
   } else {
     // if the file didn't open, print an error:
     Serial.println("error saving log to SD");
@@ -562,7 +562,7 @@ int CommandGetHttp(String *command, String *value){
   Serial.println("Size of: " + (String)jsonResponse.length());
 
   //Initialize JSON Document
-  DynamicJsonDocument doc(200);
+  DynamicJsonDocument doc(350);
 
   // Parse JSON object
   Serial.println("RAM available: "+(String)FreeRam());
@@ -682,6 +682,7 @@ void TCPSendImage(int cam){
   }
 }
 
+//Read/Write Image to TCP Server
 String TCPImageTransfer(int cam){
   // if you get a connection, report back via serial:
   if (client.connect(server, 54010)) {

@@ -17,6 +17,10 @@ void fetchNextSchedule();
 void dimAllToLevel(int level);
 void setupLightSystem(){
   pinMode(LedPin, OUTPUT);
+  pinMode(WhiteLedPin, OUTPUT);
+  pinMode(RedLedPin, OUTPUT);
+  pinMode(GreenLedPin, OUTPUT);
+  pinMode(BlueLedPin, OUTPUT);
 
   //Create Light Schedule CSV File 
   File scheduleFile = SD.open(getLightScheduleAddress(), FILE_WRITE);
@@ -26,9 +30,9 @@ void setupLightSystem(){
     int hour = currentTime().hour(); //Test 
     int minute = currentTime().minute(); //Test 
     scheduleFile.println((String)hour+","+(String)(minute+1)+","+"250,0,100,100"); //(H,M,W,R,G,B) Sample Test
-    scheduleFile.println((String)hour+","+(String)(minute+2)+","+"100,200,50,50"); //(H,M,W,R,G,B) Sample Test
-    scheduleFile.println((String)hour+","+(String)(minute+3)+","+"50,50,200,250"); //(H,M,W,R,G,B) Sample Test
-    scheduleFile.println((String)hour+","+(String)(minute+4)+","+"30,50,200,250"); //(H,M,W,R,G,B) Sample Test
+    scheduleFile.println((String)hour+","+(String)(minute+2)+","+"100,200,0,50"); //(H,M,W,R,G,B) Sample Test
+    scheduleFile.println((String)hour+","+(String)(minute+3)+","+"50,50,200,0"); //(H,M,W,R,G,B) Sample Test
+    scheduleFile.println((String)hour+","+(String)(minute+4)+","+"30,0,200,250"); //(H,M,W,R,G,B) Sample Test
     scheduleFile.println((String)hour+","+(String)(minute+5)+","+"20,50,200,250"); //(H,M,W,R,G,B) Sample Test
     scheduleFile.println((String)hour+","+(String)(minute+6)+","+"0,0,0,0"); //(H,M,W,R,G,B) Sample Test
 
@@ -81,7 +85,7 @@ void dimAllToLevel(int level){
 void checkSchedule(){
   if(currentTime().hour() >= nextSchedule.hour() && currentTime().minute() >= nextSchedule.minute()){
     dimAllToLevel();
-    Serial.println("Schedule meet: "+(String)nextSchedule.hour() + ":" + (String)nextSchedule.minute()+ " W:"+(String)nextW);
+    Serial.println("Schedule meet: "+(String)nextSchedule.hour() + ":" + (String)nextSchedule.minute()+ " W:"+(String)nextW + " R:" + (String)nextR + " G:" + (String)nextG + " B:" + (String)nextB);
     fetchNextSchedule();
   }
 }

@@ -66,6 +66,9 @@ unsigned long startPictureTime;
 void setup() {
   // initialize serial communication:
   Serial.begin(57600);
+  
+  //Setup Water System
+  setupWaterSystem();
 
   //Setup RTC (Needed first to have proper timestamp on everything else)
   setupRTC();
@@ -83,9 +86,6 @@ void setup() {
 
   //Setup server
   initializeEthernet();
-
-  //Setup Water System
-  setupWaterSystem();
 
   //Setup Light System
   setupLightSystem();
@@ -117,6 +117,10 @@ void loop() {
     doc["Soil_Moisture_0"] = measureMoisture(0);
     doc["Soil_Moisture_1"] = measureMoisture(1);
     doc["Soil_Moisture_2"] = measureMoisture(2);
+    doc["Soil_Moisture_3"] = measureMoisture(3);
+    doc["Soil_Moisture_4"] = measureMoisture(4);
+    doc["Soil_Moisture_5"] = measureMoisture(5);
+    doc["Soil_Moisture_6"] = measureMoisture(6);
     doc["Water_Level"] = measureWaterLevel();
     doc["Time"] = timeNowString();
     serializeJson(doc, Serial); 
@@ -126,7 +130,7 @@ void loop() {
   fetchCommand();
   //saveDataTimer();
   //Capture Timer
-  if(millis()-startPictureTime>=30000){ //50000
+  if(millis()-startPictureTime>=40000){ //50000
         Serial.println("Image Collection Started:");
         digitalWrite(LED_BUILTIN, HIGH);
         delay(300);
@@ -159,7 +163,7 @@ void loop() {
 
   //Water Check
   float moisture = measureMoisture();
-  if(moisture < 50){
+  if(moisture < -1){
       saveLog(20, "Watering Start", 0, "Moisture Level: "+(String)moisture);
       //waterPlant();
   }
@@ -260,6 +264,7 @@ void runCommand(String command, String value, bool serial){
     if(!serial){CommandPerformedHttp("DONE");}
   }
 
+
   /* DEBUG Commands */
   else if (command == "Http Send"){
     //JSONSendHttp();
@@ -300,7 +305,7 @@ void runCommand(String command, String value, bool serial){
   else {//INVALID Command
     Serial.println("Invalid Command");
     saveLog(19, "Invalid Command", 2, command);
-    if(!serial){CommandPerformedHttp("Invalid Command");}
+    if(!serial){CommandPerformedHttp("Invalid Command: "+command);}
   } 
 }
 

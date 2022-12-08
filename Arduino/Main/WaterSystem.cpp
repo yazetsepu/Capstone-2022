@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #include "WaterSystem.h"
 #include "DataManager.h"
 #include "Sensors.h"
@@ -5,7 +6,7 @@
 void setupWaterSystem(){
   //Set Water Pump
   pinMode(WaterPump, OUTPUT);
-  digitalWrite(WaterPump, HIGH);
+  digitalWrite(WaterPump, LOW);
 }
 
 float average(float list[], int size){
@@ -38,7 +39,7 @@ String waterPlant(){
   //Check Water Levels
   while (waterLevel < waterLevelThreshold){
     digitalWrite(LED_BUILTIN, HIGH);
-    digitalWrite(WaterPump, LOW);     //Turn Water Pump On
+    digitalWrite(WaterPump, HIGH);     //Turn Water Pump On
     //waterLevel = measureWaterLevel(); //Measure Value
     //Safety Check
     delay(100);
@@ -54,9 +55,9 @@ String waterPlant(){
     }
 
     //If some time has passed and water level has not filled
-    if(currentTime > (long int)25000){
+    if(currentTime > (long int)20000){
         digitalWrite(LED_BUILTIN, LOW);         
-        digitalWrite(WaterPump, HIGH);  //Stop the Water System
+        digitalWrite(WaterPump, LOW);  //Stop the Water System
         Serial.println("Water System Fail");
         saveLog(23, "Watering Error", 4, "Water level not rising " + (String)waterLevel);
         return "FAIL, Water level not rising " + (String)waterLevel;
@@ -64,7 +65,7 @@ String waterPlant(){
   }
   //Water level reached turn off water pump
   digitalWrite(LED_BUILTIN, LOW);
-  digitalWrite(WaterPump, HIGH);
+  digitalWrite(WaterPump, LOW);
   saveLog(22, "Watering Successful", 1, "");
   Serial.println("Water System has been successful");
   return "Successful";

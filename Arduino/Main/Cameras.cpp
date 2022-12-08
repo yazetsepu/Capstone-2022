@@ -1,3 +1,4 @@
+#include "Arduino.h"
 // ArduCAM Mini demo (C)2017 Lee
 // Web: http://www.ArduCAM.com
 // This program is a demo of how to use most of the functions
@@ -155,11 +156,14 @@ void setupCameras() {
   myCAM2.clear_fifo_flag();
   myCAM3.clear_fifo_flag();
   myCAM4.clear_fifo_flag();
+
+  digitalWrite(Cam_1_CS, HIGH);
 }
 
 String myCAMSaveToSDFile(ArduCAM myCAM, int cam);
 
 String captureImageToSD(int cam) {
+  digitalWrite(ETH_CS, HIGH); //Make sure Ethernet SPI is disable
   if(CAM1_EXIST && cam == 1)
     return myCAMSaveToSDFile(myCAM1, 1);
   else if(CAM2_EXIST && cam == 2)
@@ -199,11 +203,13 @@ String myCAMSaveToSDFile(ArduCAM myCAM, int cam){
   if (length >= MAX_FIFO_SIZE) //8M
   {
     Serial.println(F("Over size."));
+    myCAM.CS_HIGH();    //Make sure to disable Camera 
     return "";
   }
   if (length == 0 ) //0 kb
   {
     Serial.println(F("Size is 0."));
+    myCAM.CS_HIGH();    //Make sure to disable Camera 
     return "";
   }
   //Construct a file name
@@ -216,6 +222,7 @@ String myCAMSaveToSDFile(ArduCAM myCAM, int cam){
   outFile = SD.open(address, O_WRITE | O_CREAT | O_TRUNC);
   if(!outFile){
     Serial.println(F("File open failed"));
+    myCAM.CS_HIGH();    //Make sure to disable Camera 
     return "";
   }
   myCAM.CS_LOW();
@@ -238,6 +245,7 @@ String myCAMSaveToSDFile(ArduCAM myCAM, int cam){
      
       is_header = false;
       i = 0;
+      //myCAM.CS_HIGH();    //Make sure to disable Camera 
       return address;
     }  
     if (is_header == true)

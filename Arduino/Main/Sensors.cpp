@@ -167,7 +167,13 @@ void setRTC(String timeString){
 //Measure Soil Moisture (0,1,2,3,4,5,6,7) returns -1 if not valid input
 float measureMoisture(int sensor){
   int sensorPin;
-  if (sensor == 0) sensorPin = SoilMoisture0;
+  if (sensor == 0) {
+    sensorPin = SoilMoisture0;
+    float val = (float)analogRead(sensorPin); //Sense analog read
+    val = 100 - map(val, 200, 583, 0, 100); //Calibration (250(dry)-583(wet))
+    val = constrain(val, 0 , 100); //Contrain the values if needed
+    return val;
+  }
   else if (sensor == 1) {
     sensorPin = SoilMoisture1; //Pin the sensor is located
     float val = (float)analogRead(sensorPin); //Sense analog read
