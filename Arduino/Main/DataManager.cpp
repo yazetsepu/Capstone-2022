@@ -87,7 +87,7 @@ bool setupSD(){
       delay(1000); //Load Delay
       if(dataFile){
         //Add header Title
-        dataFile.println("TimeStamp(YYYY/MM/DD HH:MM:SS),Light (lux),Temperature (C),Humidity(%RH),Soil Moisture 0 (%),Soil Moisture 1 (%),Soil Moisture 2 (%),Soil Moisture 3 (%),Soil Moisture 4 (%),Soil Moisture 5 (%),Soil Moisture 6 (%),Soil Moisture 7 (%),Water Level");
+        dataFile.println("TimeStamp(YYYY/MM/DD HH:MM:SS),Light (lux),Temperature (C),Humidity(%RH),Soil Moisture 0 (%),Soil Moisture 1 (%),Soil Moisture 2 (%),Soil Moisture 3 (%),Soil Moisture 4 (%),Soil Moisture 5 (%),Soil Moisture 6 (%),Soil Moisture 7 (%),Water Level, Reservoir Water Level");
         dataFile.close();   // close the file:
       }
       
@@ -484,7 +484,14 @@ void JSONSendHttp(int pic_Id){
   doc["humidity"] = measureHumidity();
   doc["soil_Moisture_1"] = measureMoisture(0);
   doc["soil_Moisture_2"] = measureMoisture(1);
+  doc["soil_Moisture_3"] = measureMoisture(2);
+  doc["soil_Moisture_4"] = measureMoisture(3);
+  doc["soil_Moisture_5"] = measureMoisture(4);
+  doc["soil_Moisture_6"] = measureMoisture(5);
+  doc["soil_Moisture_7"] = measureMoisture(6);
+  doc["soil_Moisture_8"] = measureMoisture(7);
   doc["water_Level"] = measureWaterLevel();
+  doc["reservoir_Water_Level"] = getReservoirWaterLevel();
   if(pic_Id != -1) {doc["pictures_Id"] = pic_Id;}
   serializeJson(doc, Serial); 
    // Make a HTTP request:

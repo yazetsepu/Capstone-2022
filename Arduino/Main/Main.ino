@@ -18,6 +18,10 @@
  *  Pin 7: Red LED
  *  Pin 8: White LED
  *  Pin 31: Water Pump
+ *  Pin 22: Float Switch 1 (Highest)
+ *  Pin 23: Float Switch 2
+ *  Pin 24: Float Switch 3
+ *  Pin 25: Float Switch 4 (Lowest)
  * 
  * Analog Pins:
  *  Pin A2: Water Level
@@ -110,7 +114,7 @@ void loop() {
     }
     
     //Measure and send all data on Serial (JSON format)
-    StaticJsonDocument<100> doc;
+    StaticJsonDocument<150> doc;
     doc["Light"] = measureLight();
     doc["Temperature"] = measureTemperature();
     doc["Humidity"] = measureHumidity();
@@ -122,6 +126,7 @@ void loop() {
     doc["Soil_Moisture_5"] = measureMoisture(5);
     doc["Soil_Moisture_6"] = measureMoisture(6);
     doc["Water_Level"] = measureWaterLevel();
+    doc["Reservoir_Water_Level"] = (String)getReservoirWaterLevel(); //String VERY HIGH, HIGH, MEDIUM, LOW, VERY LOW
     doc["Time"] = timeNowString();
     serializeJson(doc, Serial); 
     Serial.write("\n"); //This is to mark end of data (expected on GUI side)
@@ -130,7 +135,7 @@ void loop() {
   fetchCommand();
   //saveDataTimer();
   //Capture Timer
-  if(millis()-startPictureTime>=40000){ //50000
+  if(millis()-startPictureTime>=70000){ //50000
         Serial.println("Image Collection Started:");
         digitalWrite(LED_BUILTIN, HIGH);
         delay(300);
@@ -179,11 +184,11 @@ void saveDataTimer(){
     Serial.println("Data Collection Started:");
     digitalWrite(LED_BUILTIN, HIGH);        //LED for Visual TEST
 
-    int ColumnNumber = 13;                  //Number of parameter
+    int ColumnNumber = 14;                  //Number of parameter
     //Measure All data and save it in array as String
     String data[ColumnNumber] = {timeNowString(), (String)measureLight(), (String)measureTemperature(), (String)measureHumidity(), (String)measureMoisture(0), (String)measureMoisture(1),
       (String)measureMoisture(2), (String)measureMoisture(3), (String)measureMoisture(4), (String)measureMoisture(5), (String)measureMoisture(6), (String)measureMoisture(7),
-      (String)measureWaterLevel()};
+      (String)measureWaterLevel(), (String)getReservoirWaterLevel()};
     saveDataToSD(data, ColumnNumber);       //Save Data in CSV File
     flagData();                             //Flag Data to send to Server
     

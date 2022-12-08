@@ -13,6 +13,10 @@
 #define SoilMoisture5 13 //Soil Moisture Sensor 5
 #define SoilMoisture6 14 //Soil Moisture Sensor 6
 #define SoilMoisture7 15 //Soil Moisture Sensor 7
+#define ReservoirFloatSensor1 22     //Digital Reservoir Float Switch Sensor 1
+#define ReservoirFloatSensor2 23     //Digital Reservoir Float Switch Sensor 2
+#define ReservoirFloatSensor3 24     //Digital Reservoir Float Switch Sensor 3
+#define ReservoirFloatSensor4 25     //Digital Reservoir Float Switch Sensor 4
 //Digital Pins
 #define DHTPIN 2         // Digital pin connected to the DHT sensor 
 
@@ -35,5 +39,8 @@ float measureMoisture();
 float measureMoisture(int sensor);
 //Analog Water Level
 float measureWaterLevel();
+//Digital Reservoir Water Level
+int measureReservoirFloatSensor(int sensor);
+String getReservoirWaterLevel();
 
 #endif
