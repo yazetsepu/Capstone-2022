@@ -246,9 +246,13 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
 
 
 
-                             }).Where(b => b.Command_Performed == null).OrderBy(x => x.Command_Id).First();
+                             }).Where(b => b.Command_Performed == null && b.Command_String != "RetrainModel").OrderBy(x => x.Command_Id).FirstOrDefault();
 
 
+        if (properties == null)
+        {
+            return Results.NoContent();
+        }
 
         var Commands = await db.Commands.FindAsync(properties.Command_Id);
 
@@ -270,14 +274,60 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
 
 
 
-                             }).Where(b => b.Command_Performed == null).OrderBy(x => x.Command_Id).First();
+                             }).Where(b => b.Command_Performed == null && b.Command_String != "RetrainModel").OrderBy(x => x.Command_Id).FirstOrDefault();
 
         return Results.Ok(properties);
 
     });
 
-    //Update a command if the commands_performed column by id exist if not reply not found.
-    app.MapPut("/Commands/Command_Performed", async (Commands a, CSSDb db) =>
+    app.MapPut("/Commands/RetrainModel/Command_Read", async (Commands a, CSSDb db) =>
+    {
+
+        var properties = (
+                      from Commands1 in db.Commands.DefaultIfEmpty()
+                      select new
+                      {
+                          Command_Id = (int?)Commands1.Command_Id,
+                          Command_Read = Commands1.Command_Read,
+                          Command_Performed = Commands1.Command_Performed,
+                          Command_String = Commands1.Command_String
+                        
+
+
+
+                      }).Where(b => b.Command_Performed == null && b.Command_String == "RetrainModel").OrderBy(x => x.Command_Id).FirstOrDefault();
+
+
+        if (properties == null)
+        {
+            return Results.NoContent();
+        }
+
+        var Commands = await db.Commands.FindAsync(properties.Command_Id);
+
+        if (Commands is null) return Results.NotFound();
+
+        Commands.Command_Read = a.Command_Read;
+
+
+        await db.SaveChangesAsync();
+        properties = (
+                         from Commands1 in db.Commands.DefaultIfEmpty()
+                         select new
+                         {
+                             Command_Id = (int?)Commands1.Command_Id,
+                             Command_Read = Commands1.Command_Read,
+                             Command_Performed = Commands1.Command_Performed,
+                             Command_String = Commands1.Command_String
+
+
+                         }).Where(b => b.Command_Performed == null && b.Command_String == "RetrainModel").OrderBy(x => x.Command_Id).FirstOrDefault();
+
+        return Results.Ok(properties);
+
+    });
+//Update a command if the commands_performed column by id exist if not reply not found.
+app.MapPut("/Commands/Command_Performed", async (Commands a, CSSDb db) =>
     {
 
         var properties = (
@@ -286,12 +336,18 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
                                {
                                    Command_Id = (int?)Commands1.Command_Id,
                                    Command_Performed = Commands1.Command_Performed,
+                                   Command_String=Commands1.Command_String,
+                                   Commands1.Command_Read,
                                    Log_Id = Commands1.Log_Id,
                                    Log_Text = Commands1.Logs.Log_Text
 
-                               }).Where(b => b.Command_Performed == null).OrderBy(x => x.Command_Id).First();
+                               }).Where(b => b.Command_Performed == null&& b.Command_Read!=null && b.Command_String != "RetrainModel").OrderBy(x => x.Command_Id).FirstOrDefault();
 
 
+        if (properties == null)
+        {
+            return Results.NoContent();
+        }
 
         var Commands = await db.Commands.FindAsync(properties.Command_Id);
         var Logs = await db.Logs.FindAsync(properties.Log_Id);
@@ -309,17 +365,67 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
                                {
                                    Command_Id = (int?)Commands1.Command_Id,
                                    Command_Performed = Commands1.Command_Performed,
+                                   Command_String = Commands1.Command_String,
+                                   Commands1.Command_Read,
                                    Log_Id = Commands1.Log_Id,
                                    Log_Text = Commands1.Logs.Log_Text
 
-                               }).Where(b => b.Command_Id == Commands.Command_Id).OrderBy(x => x.Command_Id).First();
+                               }).Where(b => b.Command_Id == Commands.Command_Id && b.Command_Read != null && b.Command_String != "RetrainModel").OrderBy(x => x.Command_Id).FirstOrDefault();
 
         return Results.Ok(properties);
 
     });
 
-    //Delete a command by id.
-    app.MapDelete("/Commands/{id:int}", async (int id, CSSDb db) =>
+    app.MapPut("/Commands/RetrainModel/Command_Performed", async (Commands a, CSSDb db) =>
+    {
+
+        var properties = (
+                           from Commands1 in db.Commands.DefaultIfEmpty()
+                           select new
+                           {
+                               Command_Id = (int?)Commands1.Command_Id,
+                               Command_Performed = Commands1.Command_Performed,
+                               Command_String = Commands1.Command_String,
+                               Commands1.Command_Read,
+                               Log_Id = Commands1.Log_Id,
+                               Log_Text = Commands1.Logs.Log_Text
+
+                           }).Where(b => b.Command_Performed == null && b.Command_Read != null && b.Command_String == "RetrainModel").OrderBy(x => x.Command_Id).FirstOrDefault();
+
+        if (properties == null)
+        {
+            return Results.NoContent();
+        }
+
+
+        var Commands = await db.Commands.FindAsync(properties.Command_Id);
+        var Logs = await db.Logs.FindAsync(properties.Log_Id);
+
+        if (Commands is null) return Results.NotFound();
+        if (Logs is null) return Results.NotFound();
+
+        //  
+        Logs.Log_Text = (string?)a.Logs.Log_Text;
+        Commands.Command_Performed = a.Command_Performed;
+        await db.SaveChangesAsync();
+        properties = (
+                               from Commands1 in db.Commands.DefaultIfEmpty()
+                           select new
+                           {
+                               Command_Id = (int?)Commands1.Command_Id,
+                               Command_Performed = Commands1.Command_Performed,
+                               Command_String = Commands1.Command_String,
+                               Commands1.Command_Read,
+                               Log_Id = Commands1.Log_Id,
+                               Log_Text = Commands1.Logs.Log_Text
+
+                           }).Where(b => b.Command_Id == Commands.Command_Id && b.Command_Read != null && b.Command_String == "RetrainModel").OrderBy(x => x.Command_Id).FirstOrDefault();
+
+        return Results.Ok(properties);
+
+    });
+//Delete a command by id.
+app.MapDelete("/Commands/{id:int}", async (int id, CSSDb db) =>
     {
         var Commands = await db.Commands.FindAsync(id);
         if (Commands is null) return Results.NotFound();
@@ -331,6 +437,7 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
     });
     app.MapGet("/Commands/LastCommand", (CSSDb db) =>
     {
+
         var properties = (
                            from Commands in db.Commands.DefaultIfEmpty()
                            select new
@@ -345,7 +452,14 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
                                Log_Id = Commands.Log_Id,
                                AdminsUser_Id = Commands.AdminsUser_Id
 
-                           }).Where(b => b.Command_Performed == null && b.Command_Performed != null ).OrderBy(x => x.Command_Id).First();
+                           });
+       
+       
+        
+        return Results.Ok(properties.Where(b => b.Command_Performed == null && b.Command_Read == null).OrderBy(x => x.Command_Id).FirstOrDefault());
+       
+                           
+        
         /*
         var httpWebRequest = (HttpWebRequest) WebRequest.Create($"https://cssrumapi.azurewebsites.net/Commands/Command_Read/{properties.Command_Id}", properties);
         httpWebRequest.Method = "PUT";
@@ -358,7 +472,7 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
         var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
         httpResponse.Close();
         */
-        return Results.Ok(properties);
+        
 
     });
 
@@ -412,7 +526,7 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
                               Classification_Id_4 = (int?)Pictures.Classification_Id_4
 
 
-                          }).OrderBy(x => x.Entry_Id);
+                          }).OrderByDescending(x => x.Entry_Id);
 
         return Results.Ok(properties);
 
@@ -606,14 +720,16 @@ app.MapGet("/EnvironmentalData/Classid", async (CSSDb db) =>
         return Results.Ok(properties);
 
     });
+    
 
-    //Uodate pictures data from an existind id.
+//Uodate pictures data from an existind id.
     app.MapPut("/Pictures/{id:int}", async (int id, Pictures a, CSSDb db) =>
     {
         var Pictures = await db.Pictures.FindAsync(id);
 
         if (Pictures is null) return Results.NotFound();
 
+        Pictures.Classification_Accurracy_1 = a.Classification_Accurracy_1 != null ? a.Classification_Accurracy_1 : Pictures.Classification_Accurracy_1;
         if (a.Classification_Accurracy_1 != null)
         {
             Pictures.Classification_Accurracy_1 = a.Classification_Accurracy_1;
