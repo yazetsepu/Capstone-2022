@@ -163,10 +163,48 @@ app.MapGet("/Admins/Auth",  (string pk,string password, CSSDb db) =>
     //Post Commands send new commands object to database.
     app.MapPost("/Commands/", async (Commands a, CSSDb db) =>
     {
-        db.Commands.Add(a);
-        await db.SaveChangesAsync();
+        
+        var properties = (
+                        from Commands1 in db.Commands.DefaultIfEmpty()
+                        select new
+                        {
+                            Command_Id = (int?)Commands1.Command_Id,
+                            Command_Read = Commands1.Command_Read,
+                            Command_String = Commands1.Command_String,
+                            Log_Id = Commands1.Log_Id,
+                            Log_Text = Commands1.Logs.Timestamps
+                        }).Where(b => b.Command_String == a.Command_String && b.Command_Read ==null).OrderBy(x => x.Command_Id).FirstOrDefault();
 
-        return Results.Created($"/admins/{a.Command_Id}", a);
+
+        if (properties == null)
+        {
+            db.Commands.Add(a);
+            db.SaveChanges();
+            return Results.Created($"/Commands/{a.Command_Id}", a);
+        }
+        else
+        {
+            
+            var commands = await db.Commands.FindAsync(properties.Command_Id);
+            var Logs = await db.Logs.FindAsync(properties.Log_Id);
+            if (commands is null) return Results.NotFound();
+            if (Logs is null) return Results.NotFound();
+
+            //  
+            Logs.Timestamps = a.Logs.Timestamps;
+            commands.Command_Received = a.Command_Received;
+            /* db.Commands.Remove(commands);
+             await db.SaveChangesAsync();
+             db.Commands.Add(a);*/
+            db.SaveChanges();
+            return Results.Ok(commands);
+
+
+        }
+
+     
+
+      
     });
 
     //Get command by id if not reply not found.
