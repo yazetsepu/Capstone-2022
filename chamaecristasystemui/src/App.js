@@ -55,9 +55,9 @@ function App (){
                         <div className='bottom-container-water'>
                             <WaterPlantButton/>
                         </div>
-                        <div className='bottom-container-light'>
+                        {/* <div className='bottom-container-light'>
                             <ChangeLightLevelButton/>
-                        </div>
+                        </div> */}
                         <div className='bottom-container-moisture'>
                             <CalibrateMoistureButton />
                         </div>

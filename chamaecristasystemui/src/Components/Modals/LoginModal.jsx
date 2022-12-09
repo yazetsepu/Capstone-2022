@@ -9,7 +9,11 @@ import Spinner from 'react-bootstrap/Spinner';
 function LoginModal(props) {
 
     //handles Showing and closing the modal
-    const handleClose = () => props.setShowing(false)
+    const handleClose = () => {
+      props.setShowing(false);
+      props.setIsInvalid(false)
+      setIsLogging(false)
+    }
     
     const [isLogging, setIsLogging] = useState(false)
   
@@ -28,7 +32,7 @@ function LoginModal(props) {
                     type="password"
                     placeholder="Password"
                     aria-describedby="inputGroupPrepend"
-                    isInvalid={props.Invalid}
+                    isInvalid={props.isInvalid}
                     required
                     onChange={changeEvent => {props.setEnteredPass(changeEvent.target.value)}}/>
                         <Button 
@@ -39,7 +43,7 @@ function LoginModal(props) {
                               setIsLogging(true)
                             }}
                             >
-                              {isLogging?  <Spinner animation="border" variant="secondary" size='sm'/> : 'Login'}
+                              {isLogging && !props.isInvalid?  <Spinner animation="border" variant="secondary" size='sm'/> : 'Login'}
                         </Button>
 
                         
