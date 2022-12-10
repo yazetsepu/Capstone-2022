@@ -4,7 +4,6 @@ import CardGroup from 'react-bootstrap/CardGroup';
 import SingleCard from './SingleCard';
 import PicturePaginator from './PicturePaginator';
 
-
 function PictureCard(props) {
 
     //Designates how many picture rows (of 4 pictures each) a single page will hold
@@ -15,7 +14,6 @@ function PictureCard(props) {
     const [limPicData, setLimPicData] = useState([])
     //Whether or not the Next arrow button is clickable in the Pagination section
     const [isNextActive, setIsNextActive] = useState(false);
-
 
     //Performs a GET Request that will return the data present in the Pictures table in the DB
     const fetchData = async () => {
@@ -82,10 +80,10 @@ function PictureCard(props) {
                 <div>
                     <div className='picture-row'>   
                         <CardGroup>
-                            <SingleCard id={data.pic_Id} src={data.camera_Pic_Path_1} camNum={"1"} time={data.timestamps} classif_id={data.classification_Id_1} classif_acc={data.classification_Accurracy_1} encKey={props.encKey}/>
-                            <SingleCard id={data.pic_Id} src={data.camera_Pic_Path_2} camNum={"2"} time={data.timestamps} classif_id={data.classification_Id_2} classif_acc={data.classification_Accurracy_2} encKey={props.encKey}/>
-                            <SingleCard id={data.pic_Id} src={data.camera_Pic_Path_3} camNum={"3"} time={data.timestamps} classif_id={data.classification_Id_3} classif_acc={data.classification_Accurracy_3} encKey={props.encKey}/>
-                            <SingleCard id={data.pic_Id} src={data.camera_Pic_Path_3} camNum={"4"} time={data.timestamps} classif_id={data.classification_Id_4} classif_acc={data.classification_Accurracy_4} encKey={props.encKey}/>
+                            <SingleCard id={data.pic_Id} src={data.camera_Pic_Path_1} camNum={"1"} time={data.timestamps} classif_id={data.classification_Id_1} classif_acc={data.classification_Accurracy_1} />
+                            <SingleCard id={data.pic_Id} src={data.camera_Pic_Path_2} camNum={"2"} time={data.timestamps} classif_id={data.classification_Id_2} classif_acc={data.classification_Accurracy_2} />
+                            <SingleCard id={data.pic_Id} src={data.camera_Pic_Path_3} camNum={"3"} time={data.timestamps} classif_id={data.classification_Id_3} classif_acc={data.classification_Accurracy_3} />
+                            <SingleCard id={data.pic_Id} src={data.camera_Pic_Path_3} camNum={"4"} time={data.timestamps} classif_id={data.classification_Id_4} classif_acc={data.classification_Accurracy_4} />
                         </CardGroup>
                     </div>
                 </div>

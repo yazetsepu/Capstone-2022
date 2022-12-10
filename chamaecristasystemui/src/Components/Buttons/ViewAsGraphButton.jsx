@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState, useContext }  from 'react';
 import { useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
+import { StateContext } from '../../App';
 
-function ViewAsGraphButton(props) {
+function ViewAsGraphButton() {
   //Creates the navigation objectthat will handle page switching
   const navigate = useNavigate();
-  let key = props.encKey;
+  const { key } = useContext(StateContext);
   
   return (
     <Button

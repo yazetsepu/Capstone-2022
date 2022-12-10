@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-
+import { PictureContext } from '../Pages/ViewCapturesPage';
+import '../styles/SingleCard.css'
 
 async function changeClassification(pid, camNum, classfId) {
   let correctClassfId = classfId === 0? 1 : 0 
@@ -17,8 +18,7 @@ async function changeClassification(pid, camNum, classfId) {
   };
   console.log(requestOptions)
   console.log(pid)
-  const response = await fetch('https://cssrumapi.azurewebsites.net/Pictures/' + pid, requestOptions)
-  const data = await response.json();
+  await fetch('https://cssrumapi.azurewebsites.net/Pictures/' + pid, requestOptions)
   return new Promise((resolve) => {});
 }
 
@@ -40,6 +40,8 @@ function SingleCard(props) {
 const [classifId, setClassifId] = useState(0)
 const [classifAcc, setClassifAcc] = useState(0)
 const [wasClicked, setWasClicked] = useState(false)
+
+const { isRetraining, encKey } = useContext(PictureContext)
 
 const handleClick = () => {
   setClassifId(props.classif_id === 0? 1 : 0)
@@ -72,18 +74,21 @@ const handleClick = () => {
             </b> 
           </Card.Text>
           {/* Renders the button */}
-          { props.encKey !==0?
-            <Button
-                variant="danger"
-                size="med"
-                onClick={handleClick}
-            >
-              Change Classification
-            </Button>
-            :
-            <></>
-            }
-            { props.encKey !==0?
+          <div className='change-btn'>
+            { encKey !==0?
+              <Button
+                  variant="danger"
+                  size="med"
+                  disabled={isRetraining}
+                  onClick={handleClick}
+              >
+                Change Classification
+              </Button>
+              :
+              <></>
+              }
+            </div>
+            { encKey !==0?
             <Card.Text>
               <i>If you wish to change the classification again, please refresh and click once more.</i>
             </Card.Text>

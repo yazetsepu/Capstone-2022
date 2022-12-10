@@ -71,11 +71,11 @@ function CalibrateSensorModalRange(props) {
           <Modal.Title>Calibrate Moisture Levels</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        V.Low:0-250<b>|</b>Low:251-499<b>|</b>Med:500<b>|</b>High:501-750<b>|</b>V.High:751-1023
+        Set the <b>Volumetric Water Content</b> of this sensor for both dry and wet conditions respectively.
         <hr></hr>
           <div className='dropdowns'>
                     <Form>
-                        <Form.Label>Soil Sensor {props.number} - Dry - Value that is considered <b>Dry</b></Form.Label>
+                        <Form.Label><b>Dry the sensor well before setting the value</b></Form.Label>
                             <RangeSlider
                                 max={maxSliderVal}
                                 value={soilSensorD}
@@ -83,7 +83,7 @@ function CalibrateSensorModalRange(props) {
                             />
                     </Form>
                     <Form>
-                        <Form.Label>Soil Sensor {props.number} - Wet - Value that is considered <b>Wet</b></Form.Label>
+                        <Form.Label><b>Put the sensor in water before setting the value</b></Form.Label>
                             <RangeSlider
                                 max={maxSliderVal}
                                 value={soilSensorW}
@@ -98,13 +98,13 @@ function CalibrateSensorModalRange(props) {
                 setDryIsCalibrating(true)
                 calibrate("CalibrateDry", props.number)
             }}>
-            {isDryCalibrating? <Spinner animation="border" variant="secondary" size='sm'/> : 'Calibrate Sensors Dry Value'}
+            {isDryCalibrating? <Spinner animation="border" variant="secondary" size='sm'/> : 'Calibrate Sensor Dry Value'}
           </Button>
           <Button variant="primary" onClick={async (event) => {
                 setWetIsCalibrating(true)
                 calibrate("CalibrateWet", props.number)
             }}>
-            {isWetCalibrating? <Spinner animation="border" variant="secondary" size='sm'/> : 'Calibrate Sensors Wet Value'}
+            {isWetCalibrating? <Spinner animation="border" variant="secondary" size='sm'/> : 'Calibrate Sensor Wet Value'}
           </Button>
           <Button variant="secondary" onClick={handleClose}>
             Close

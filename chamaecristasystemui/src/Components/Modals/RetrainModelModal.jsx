@@ -12,6 +12,7 @@ function RetrainModelModal(props) {
         </Modal.Header>
         <Modal.Body><b> Please make sure to make any relevant changes to the pictures in the View Captures Page before moving on</b></Modal.Body>
         <Modal.Footer>
+          {/* Buttons to trigger request */}
           <Button variant="primary" onClick={props.handleClose}>
             No, dont retrain the model. Close this popup
           </Button>

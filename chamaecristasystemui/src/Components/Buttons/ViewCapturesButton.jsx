@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
+import { StateContext } from '../../App';
 
-function ViewCapturesButton(props) {
+function ViewCapturesButton() {
   //Creates the navigation objectthat will handle page switching
   const navigate = useNavigate();
-  let key = props.encKey;
+  const { isRetrainExecuting, key } = useContext(StateContext);
 
   return (
     <Button
@@ -16,6 +17,7 @@ function ViewCapturesButton(props) {
       {
         state: {
           userKey: key,
+          retrain: isRetrainExecuting,
         }
       })
     }

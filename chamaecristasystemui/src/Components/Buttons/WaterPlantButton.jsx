@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import { StateContext } from '../../App';
 
 async function simulateNetworkRequest() {
   const requestOptions = {
@@ -27,6 +28,8 @@ async function simulateNetworkRequest() {
 function WaterPlantButton(props) {
   const [isLoading, setLoading] = useState(false);
 
+  const { isRetrainExecuting } = useContext(StateContext);
+
   useEffect(() => {
     if (isLoading) {
       simulateNetworkRequest().then(() => {
@@ -42,7 +45,7 @@ function WaterPlantButton(props) {
       <Button
         variant="primary"
         size="lg"
-        disabled={isLoading}
+        disabled={isLoading || isRetrainExecuting}
         onClick={!isLoading ? handleClick : null}
       >
         {isLoading ? 'Loading…' : 'Water Plant'}
