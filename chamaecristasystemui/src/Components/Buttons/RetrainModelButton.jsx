@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import './button-styles/RetrainModelButton.css'
 import RetrainModelModal from '../Modals/RetrainModelModal';
@@ -74,6 +74,17 @@ function RetrainModelButton() {
     }
   };
 
+  useEffect(() => {
+    if(localStorage.getItem("EXC") === '1' || isExecuting){
+      setIsExecuting(true)
+      setIsRetrainExecuting(true)
+    }
+    else{
+      setIsExecuting(false)
+      setIsRetrainExecuting(false)
+    }
+  }, []);
+
 
   const handleClick = () => setShowing(true);
   const handleClose = () => {
@@ -82,11 +93,8 @@ function RetrainModelButton() {
 
   //Triggers when the internal modal submit button is pressed to execute the button
   const handleSubmit = async () => {
-      console.log(localStorage.getItem("EXC"))
-    
     retrainModel();
     setShowing(false)
-    console.log("Submitted")
     setIsExecuting(true)
     setIsRetrainExecuting(true)
     localStorage.setItem("EXC", "1");
