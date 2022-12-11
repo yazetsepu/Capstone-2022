@@ -70,9 +70,6 @@ unsigned long startPictureTime;
 void setup() {
   // initialize serial communication:
   Serial.begin(57600);
-  
-  //Setup Water System
-  setupWaterSystem();
 
   //Setup RTC (Needed first to have proper timestamp on everything else)
   setupRTC();
@@ -91,6 +88,9 @@ void setup() {
   //Setup server
   initializeEthernet();
 
+  //Setup Water System
+  setupWaterSystem();
+
   //Setup Light System
   setupLightSystem();
 
@@ -108,8 +108,14 @@ void loop() {
   if(Serial){
     //Perform Commands sent by PC connection
     if(Serial.available()){
+      //Expected format "Command";"Value"
       String data = Serial.readString();
-      String value = Serial.readString();
+      String value = "";
+      int delimiter = data.indexOf(';');
+      if(delimiter>0){
+        value = data.substring(delimiter+1);  
+        data = data.substring(0, delimiter);
+      }
       runCommand(data, value, true);
     }
     
@@ -139,6 +145,7 @@ void loop() {
         Serial.println("Image Collection Started:");
         digitalWrite(LED_BUILTIN, HIGH);
         delay(300);
+
         String path1 = captureImageToSD(1);                      //Take Picture
         if(path1 != ""){                                         //Image sucessful
           Serial.println("Image Location: "+ path1);               //Write Path
@@ -152,8 +159,20 @@ void loop() {
           sendImageTCP(path2, 1);                                  //Send Picture to Server
         }else Serial.println("Error Camera 2 capture");          //Error Capture
 
+        String path3 = captureImageToSD(3);                      //Take Picture
+        if(path3 != ""){                                         //Image sucessful
+          Serial.println("Image Location: "+ path2);               //Write Path
+          sendImageTCP(path3, 1);                                  //Send Picture to Server
+        }else Serial.println("Error Camera 3 capture");          //Error Capture
+
+        String path4 = captureImageToSD(4);                      //Take Picture
+        if(path4 != ""){                                         //Image sucessful
+          Serial.println("Image Location: "+ path4);               //Write Path
+          sendImageTCP(path4, 1);                                  //Send Picture to Server
+        }else Serial.println("Error Camera 4 capture");          //Error Capture
+
         int pic_Id = -1;
-        if(path1 != "" || path2 != "") {
+        if(path1 != "" || path2 != "" || path3 != "" || path4 != "") {
           pic_Id = EndCapture();             //End of Capture if any picture was taken
         }
         saveLog(10, "Capture Image", 0, "");                     //Log the Success of Capture Image
@@ -215,7 +234,7 @@ void fetchCommand(){
 //Run commands according to string received
 void runCommand(String command, String value, bool serial){
   //Log Command
-  Serial.println("Command received: " + command+"\n");
+  Serial.println("Command received: " + command+ "\tValue received: "+ value);
   saveLog(16, "Command Received", 0, command);
   //Find Command
   /* Light System Commands */
@@ -252,7 +271,7 @@ void runCommand(String command, String value, bool serial){
     DeserializationError error = deserializeJson(doc, value); //12 is "Schedule Dim" size
     if (error) {
       Serial.print(F("deserializeJson() failed: ")); Serial.println(error.f_str()); 
-      CommandPerformedHttp("Invalid Value");
+      if(!serial)CommandPerformedHttp("Invalid Value");
       return;
     }
     addSchedule((int)doc["hour"], (int)doc["minute"], (int)doc["W"], (int)doc["R"], (int)doc["G"], (int)doc["B"]);
@@ -268,7 +287,37 @@ void runCommand(String command, String value, bool serial){
     setRTC(value); //the order YYMMDDwHHMMSS, with an 'x' at the end.
     if(!serial){CommandPerformedHttp("DONE");}
   }
-
+  else if (command.indexOf("CalibrateWet") >= 0){
+    //Parse Values
+    StaticJsonDocument<200> doc;
+    DeserializationError error = deserializeJson(doc, value); 
+    if (error) {
+      Serial.print(F("deserializeJson() failed: ")); Serial.println(error.f_str()); 
+      if(!serial)CommandPerformedHttp("Invalid Value");
+      return;
+    }
+    //Calibrate Sensor
+    recalibrateSensor(false, (int) doc["sensor"], (int) doc["vwc"]); 
+    if(!serial){CommandPerformedHttp("Calibrated");}
+  }
+  else if (command.indexOf("CalibrateDry") >= 0){
+    //Parse Values
+    StaticJsonDocument<200> doc;
+    DeserializationError error = deserializeJson(doc, value); 
+    if (error) {
+      Serial.print(F("deserializeJson() failed: ")); Serial.println(error.f_str()); 
+      if(!serial)CommandPerformedHttp("Invalid Value");
+      return;
+    }
+    //Calibrate Sensor
+    recalibrateSensor(true, (int) doc["sensor"], (int) doc["vwc"]); 
+    if(!serial){CommandPerformedHttp("Calibrated");}
+  }
+  else if (command.indexOf("DefaultCalibrate") >= 0){
+    //Calibrate Sensor
+    createCalibrationFile();
+    setupCalibration();
+  }
 
   /* DEBUG Commands */
   else if (command == "Http Send"){

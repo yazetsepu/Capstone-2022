@@ -33,6 +33,7 @@ void flagImage(String path);
 //File Addresses
 String getImageFolder(); //Return Image Folder (To save Images)
 String getLightScheduleAddress(); //Return the Address to the Light Schedule File 
+String getCalibrationAddress();   //Get Soil Moisture Calibration Settings
 void infoSD(); //To Serial
 
 #endif

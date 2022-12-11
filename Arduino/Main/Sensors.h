@@ -37,6 +37,9 @@ void setRTC(String timeString);
 //Analog Soil Moisture
 float measureMoisture();
 float measureMoisture(int sensor);
+void createCalibrationFile();
+void setupCalibration();
+void recalibrateSensor(bool dry, int sensor, int vwc);
 //Analog Water Level
 float measureWaterLevel();
 //Digital Reservoir Water Level

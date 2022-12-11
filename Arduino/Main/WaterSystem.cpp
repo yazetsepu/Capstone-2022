@@ -26,6 +26,12 @@ String waterPlant(){
   int waterSamples = 7;                             //Samples to Average
   float waterLevels[waterSamples] = {0,0,0,0,0};    //Average of Water Levels
   int i = 0;                                        //Index of Water Levels 
+
+  // if(getReservoirWaterLevel()  == "VERY LOW"){
+  //   Serial.println("No Water on the Water Tank");  
+  //   saveLog(25, "Low Water Reservoir", 3, "No Water on the Water Tank");
+  //   return "FAIL, No Water on the Water Tank";
+  // }
   //Check Initial Water Level
   if(startWaterLevel >= waterLevelThreshold){
     Serial.println("Water Level already Full");  

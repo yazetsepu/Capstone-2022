@@ -20,6 +20,7 @@ String getImageFolder() {return FileAddress+F("Images/");}           //Return Fo
 String getLogAddress() {return FileAddress+F("LOG.csv");}            //Return Log File Address
 String getDataAddress() {return FileAddress+F("DATA.csv");}          //Return Data File Address
 String getLightScheduleAddress() {return FileAddress+F("Light.csv");}//Return Light Schedule list File Address
+String getCalibrationAddress() {return (String)RootFolder+F("Cal.csv");}//Return Light Schedule list File Address
 String getPlantStatusAddress() {return FileAddress+F("Plant.csv");}//Return Light Schedule list File Address
 
 
