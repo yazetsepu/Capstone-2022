@@ -14,16 +14,16 @@ function CalibrateSensorModalContainer(props){
         <Modal.Body>
             <div className='dropdowns'>
                 <div>
+                    <CalibrateSensorModalRange  number={0} />
                     <CalibrateSensorModalRange  number={1} />
                     <CalibrateSensorModalRange  number={2} />
                     <CalibrateSensorModalRange  number={3} />
-                    <CalibrateSensorModalRange  number={4} />
                 </div>
                 <div>
+                    <CalibrateSensorModalRange  number={4} />
                     <CalibrateSensorModalRange  number={5} />
                     <CalibrateSensorModalRange  number={6} />
                     <CalibrateSensorModalRange  number={7} />
-                    <CalibrateSensorModalRange  number={8} />
                 </div>
             </div>
         </Modal.Body>

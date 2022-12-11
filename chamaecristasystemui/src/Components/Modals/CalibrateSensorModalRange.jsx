@@ -63,7 +63,7 @@ function CalibrateSensorModalRange(props) {
             disabled={isLoading}
             onClick={!isLoading ? handleClick : null}
         >
-            {isLoading ? 'Loading…' : 'Sensor ' + props.number + ' Calibration Values'}
+            {isLoading ? 'Loading…' : 'Sensor ' + (props.number+1) + ' Calibration Values'}
         </Button>
 
         <Modal show={isLoading} onHide={handleClose} size="lg">

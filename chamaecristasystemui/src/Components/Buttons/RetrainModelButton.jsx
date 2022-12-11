@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
 import './button-styles/RetrainModelButton.css'
 import RetrainModelModal from '../Modals/RetrainModelModal';
 import { StateContext } from '../../App';
@@ -23,13 +24,16 @@ async function retrainModel(){
     )
   };
   await fetch('https://cssrumapi.azurewebsites.net//Commands/', requestOptions)
-  return new Promise((resolve) => {});
+  return new Promise((resolve) => {setTimeout(resolve, 500)});
 }
 
 function RetrainModelButton() {
   //Dictates whether the button was recently pressed or if it can be pressed again
   const [isShowing, setShowing] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
+
+  const [isSuccesful, setIsSuccesful] = useState(false);
+  const [isFailure, setIsFailure] = useState(false);
   //Sets the context for the app page and the view captures
   const { setIsRetrainExecuting } = useContext(StateContext);
 
@@ -50,15 +54,16 @@ function RetrainModelButton() {
   const untilAsync = async (fn, time = 1000) => {
     let result = await fn()
     console.log(result)
-    let wait = result === "fail"? 10000 : 10000 
+    let wait = result === "fail"? 10000 : 60000 
     let startTime = new Date().getTime();  
     let shouldContinue = false;
     for (;;) {
       try {
         if (result === "finished") {  
           localStorage.setItem("EXC", "0");
-          setIsExecuting(false) 
-          setIsRetrainExecuting(false)                 
+          setIsExecuting(false); 
+          setIsRetrainExecuting(false);
+          setIsSuccesful(true);                 
           return true;
         }
       } catch (e) {                          
@@ -69,13 +74,14 @@ function RetrainModelButton() {
         if(result==="continue" && !shouldContinue){
           result = await fn()
           shouldContinue = true;
-          wait = 10000;
+          wait = 60000;
           startTime = new Date().getTime();
           continue;
         }
         localStorage.setItem("EXC", "0");
         setIsExecuting(false)
         setIsRetrainExecuting(false)
+        setIsFailure(true)
         throw new Error('Max wait reached'); 
       } else {
         result = await fn()
@@ -86,6 +92,8 @@ function RetrainModelButton() {
   };
 
   useEffect(() => {
+    setIsSuccesful(false);
+    setIsFailure(false)
     const interval = setInterval(() => {
       if(localStorage.getItem("EXC") === '1' || isExecuting){
         setIsExecuting(true)
@@ -108,7 +116,7 @@ function RetrainModelButton() {
 
   //Triggers when the internal modal submit button is pressed to execute the button
   const handleSubmit = async () => {
-    retrainModel();
+    await retrainModel();
     setShowing(false)
     setIsExecuting(true)
     setIsRetrainExecuting(true)
@@ -130,6 +138,26 @@ function RetrainModelButton() {
       </div>
       {/* Pops up a notification to ask the user if  they're sure they want to retrain the model */}
       <RetrainModelModal isShowing={isShowing} handleClose={handleClose} handleSubmit={handleSubmit} />
+      <div className='alerts'>
+        <Alert 
+          show={isFailure}
+          variant="danger" 
+          onClose={() => {
+          setIsSuccesful(false);
+          setIsFailure(false)}} 
+          dismissible>
+            Retraining timeout, took too long to be performed
+        </Alert>
+        <Alert 
+          show={isSuccesful}
+          variant="success" 
+          onClose={() => {
+          setIsSuccesful(false);
+          setIsFailure(false)}} 
+          dismissible>
+            Retraining successful!
+        </Alert>
+      </div>
     </div>
   );
 }
