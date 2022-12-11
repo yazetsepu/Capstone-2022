@@ -22,6 +22,24 @@ async function changeClassification(pid, camNum, classfId) {
   return new Promise((resolve) => {});
 }
 
+//Finish this
+async function markAsUnneeded(pid, camNum) {
+  let correctClassfId = -1 
+  // Contains the necessary headers and body information that make up a POST request
+  const requestOptions = {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    // A -1 in classification accuracy indicates that the value was manually changed
+    body: camNum === "1" ? JSON.stringify({ classification_Id_1 : correctClassfId, classification_Accurracy_1: -1}) : 
+          camNum === "2" ? JSON.stringify({ classification_Id_2 : correctClassfId, classification_Accurracy_2: -1}) :
+          camNum === "3" ? JSON.stringify({ classification_Id_3 : correctClassfId, classification_Accurracy_3: -1}) :
+          JSON.stringify({ classification_Id_4 : correctClassfId, classification_Accurracy_4: -1})
+  };
+  await fetch('https://cssrumapi.azurewebsites.net/Pictures/' + pid, requestOptions)
+  return new Promise((resolve) => {});
+}
+
+
 /**
  * @param `src` denotes the image source URL and is responsible for showing the actual picture
  * 
@@ -50,6 +68,13 @@ const handleClick = () => {
   setWasClicked(true);
 }
 
+const handleUnneeded = () => {
+  setClassifId(props.classif_id === -1)
+  setClassifAcc(-1)
+  markAsUnneeded(props.id, props.camNum);
+  setWasClicked(true);
+}
+
   return (
       <Card>
         <Card.Img variant="top" src={props.src && props.src !== "string"? props.src : "https://cdn.shopify.com/s/files/1/0082/7339/5794/products/dahua-analog-dome-5-mp-2-8-to-12mm-lens-dh-hac-hdbw1500-rp-z-2712-s2-dh-hac-hdbw1500rp-z-2712-s2-29173595832402_1024x1024.jpg?v=1660641051"}/>
@@ -61,7 +86,7 @@ const handleClick = () => {
               {
               !wasClicked? (props.classif_id === 0? "Open" : props.classif_id === 1? "Closed" : "Not Available")
                 :
-                           (classifId === 0? "Open" : classifId === 1? "Closed" : "Not Available")
+                           (classifId === 0? "Open" : classifId === 1? "Closed" : "Not Available or Used")
               }
             </b> 
             &nbsp;with&nbsp; 
@@ -74,29 +99,37 @@ const handleClick = () => {
             </b> 
           </Card.Text>
           {/* Renders the button */}
-          <div className='change-btn'>
+          <div className='admin-btns'>
             { encKey !==0?
-              <Button
+              <div className='classif-btns'>
+                <div className='change-individual'>
+                  <Button
+                      variant="danger"
+                      size="med"
+                      disabled={isRetraining}
+                      onClick={handleClick}
+                  >
+                    Change Classification
+                  </Button>
+                </div>
+                <div className='mark-unneeded'>
+                  <Button
                   variant="danger"
                   size="med"
                   disabled={isRetraining}
-                  onClick={handleClick}
-              >
-                Change Classification
-              </Button>
+                  onClick={handleUnneeded}
+                  >
+                    Do not use for training.
+                  </Button>
+                </div>
+                <Card.Text>
+                  <i>If you wish to change the classification again, please refresh and click once more.</i>
+                </Card.Text>
+              </div>
               :
               <></>
-              }
-            </div>
-            { encKey !==0?
-            <Card.Text>
-              <i>If you wish to change the classification again, please refresh and click once more.</i>
-            </Card.Text>
-            :
-            <></>
             }
-            
-          
+            </div>
         </Card.Body>
         <Card.Footer>
           {/* Formats the timestamp string into a readable format for the user */}

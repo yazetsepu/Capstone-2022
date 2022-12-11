@@ -1,3 +1,10 @@
-.change-btn{
+.classif-btns{
+    display:flex;
+    flex-direction: column;
+}
+.change-individual{
+    margin-bottom: 0.5rem;
+}
+.mark-unneeded{
     margin-bottom: 0.5rem;
 }

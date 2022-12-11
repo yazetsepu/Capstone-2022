@@ -36,24 +36,26 @@ function RetrainModelButton() {
   const fetchData = async () => {
     const response = await fetch('https://cssrumapi.azurewebsites.net/Commands/RetrainModel/Command_Performed/Verify')
     const data = await response.json()
-
     if(data.command_Read !== null){
       //Make something happen right here that extends the wait timer or makes indefinite.
       if(data.command_Performed !== null){
-        console.log("Finished Executing")
-        return true
+        return "finished"
       }
+      return "continue";
     }else{
-      console.log("Failed to execute")
-      return false
+      return "fail"
     }
   }
   //Executes a function every x seconds until it succeeds or until y seconds pass
-  const untilAsync = async (fn, time = 1000, wait = 10000) => {
-    const startTime = new Date().getTime();  
-    for (;;) {                               
+  const untilAsync = async (fn, time = 1000) => {
+    let result = await fn()
+    console.log(result)
+    let wait = result === "fail"? 10000 : 10000 
+    let startTime = new Date().getTime();  
+    let shouldContinue = false;
+    for (;;) {
       try {
-        if (await fn()) {  
+        if (result === "finished") {  
           localStorage.setItem("EXC", "0");
           setIsExecuting(false) 
           setIsRetrainExecuting(false)                 
@@ -64,25 +66,38 @@ function RetrainModelButton() {
       }
   
       if (new Date().getTime() - startTime > wait) {
+        if(result==="continue" && !shouldContinue){
+          result = await fn()
+          shouldContinue = true;
+          wait = 10000;
+          startTime = new Date().getTime();
+          continue;
+        }
         localStorage.setItem("EXC", "0");
         setIsExecuting(false)
         setIsRetrainExecuting(false)
         throw new Error('Max wait reached'); 
-      } else {                              
+      } else {
+        result = await fn()
+        console.log(result)    
         await new Promise((resolve) => setTimeout(resolve, time));
       }
     }
   };
 
   useEffect(() => {
-    if(localStorage.getItem("EXC") === '1' || isExecuting){
-      setIsExecuting(true)
-      setIsRetrainExecuting(true)
-    }
-    else{
-      setIsExecuting(false)
-      setIsRetrainExecuting(false)
-    }
+    const interval = setInterval(() => {
+      if(localStorage.getItem("EXC") === '1' || isExecuting){
+        setIsExecuting(true)
+        setIsRetrainExecuting(true)
+      }
+      else{
+        setIsExecuting(false)
+        setIsRetrainExecuting(false)
+      }
+    }); 
+    return () => clearInterval(interval);
+    
   }, []);
 
 
