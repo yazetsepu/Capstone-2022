@@ -83,7 +83,7 @@ function PictureCard(props) {
                             <SingleCard id={data.pic_Id} src={data.camera_Pic_Path_1} camNum={"1"} time={data.timestamps} classif_id={data.classification_Id_1} classif_acc={data.classification_Accurracy_1} />
                             <SingleCard id={data.pic_Id} src={data.camera_Pic_Path_2} camNum={"2"} time={data.timestamps} classif_id={data.classification_Id_2} classif_acc={data.classification_Accurracy_2} />
                             <SingleCard id={data.pic_Id} src={data.camera_Pic_Path_3} camNum={"3"} time={data.timestamps} classif_id={data.classification_Id_3} classif_acc={data.classification_Accurracy_3} />
-                            <SingleCard id={data.pic_Id} src={data.camera_Pic_Path_3} camNum={"4"} time={data.timestamps} classif_id={data.classification_Id_4} classif_acc={data.classification_Accurracy_4} />
+                            <SingleCard id={data.pic_Id} src={data.camera_Pic_Path_4} camNum={"4"} time={data.timestamps} classif_id={data.classification_Id_4} classif_acc={data.classification_Accurracy_4} />
                         </CardGroup>
                     </div>
                 </div>

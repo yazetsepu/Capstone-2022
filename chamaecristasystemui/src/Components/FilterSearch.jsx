@@ -9,8 +9,8 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 
 function FilterSearch(props) {
 
-    const [startValue, setStartValue] = React.useState([null, null]);
-    const [endValue, setEndValue] = React.useState([null, null]);
+    const [startValue, setStartValue] = useState([null, null]);
+    const [endValue, setEndValue] = useState([null, null]);
 
     const fetchFilteredData = async (dateRange) => {
       const response = await fetch("https://cssrumapi.azurewebsites.net/EnvironmentalData/Filter?" + dateRange);

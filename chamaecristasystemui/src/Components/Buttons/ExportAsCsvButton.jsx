@@ -31,13 +31,13 @@ function ExportAsCsvButton() {
     console.log(envData)
 
     // Headers for each column
-    let headers = ['Entry Id,Timestamp,Temperature,Humidity,Light,Resevoir Water Level,Water Level,Soil Moisture S1,Soil Moisture S2,Soil Moisture S3,Soil Moisture S4,Soil Moisture S5,Soil Moisture S6,Soil Moisture S7,Soil Moisture S8']
+    let headers = ['Entry Id,Timestamp (UTC),Temperature,Humidity,Light,Resevoir Water Level,Water Level,Soil Moisture S1,Soil Moisture S2,Soil Moisture S3,Soil Moisture S4,Soil Moisture S5,Soil Moisture S6,Soil Moisture S7,Soil Moisture S8']
 
     //Convert data to csv
     let envCsv = envData.reduce((data, key) => {
-      const { entry_Id,timestamps,temperature,humidity,light,resevoir_Water_Level,water_Level,soil_Moisture_1,soil_Moisture_2,
+      const { entry_Id,timestamps,temperature,humidity,light,reservoir_Water_Level,water_Level,soil_Moisture_1,soil_Moisture_2,
               soil_Moisture_3,soil_Moisture_4,soil_Moisture_5,soil_Moisture_6,soil_Moisture_7,soil_Moisture_8 } = key
-      data.push([entry_Id,timestamps,temperature,humidity,light,resevoir_Water_Level,water_Level,soil_Moisture_1,soil_Moisture_2,
+      data.push([entry_Id,(timestamps.replace("-", "/").replace("-", "/").split('T').join(' ').split('.')[0] + " +0000").toLocaleString("en-US", {timeZone: 'America/Grenada'}),temperature,humidity,light,reservoir_Water_Level,water_Level,soil_Moisture_1,soil_Moisture_2,
                 soil_Moisture_3,soil_Moisture_4,soil_Moisture_5,soil_Moisture_6,soil_Moisture_7,soil_Moisture_8].join(','))
       return data
     }, [])
