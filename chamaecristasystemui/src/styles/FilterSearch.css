@@ -1,8 +1,43 @@
 .filter-date{
     display:flex;
     margin-bottom: 1rem;
+    align-items: center;
 }
 
 .filter-btn{
     margin-left: 0.5rem;
+}
+
+.date-pickers{
+    display:flex;
+}
+
+.end-date{
+    margin-left: 0.5rem;
+}
+
+.start-date{
+    margin:0;
+}
+
+@media only screen and (max-width: 600px){
+    .filter-btn{
+        display: flex;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .end-date{
+        margin-top: 1rem;
+        margin-left: 0;
+    }
+
+    .date-pickers{
+       flex-direction: column;
+       text-align: center;
+    }
+
+    .filter-date{
+        flex-direction: column;
+    }
 }

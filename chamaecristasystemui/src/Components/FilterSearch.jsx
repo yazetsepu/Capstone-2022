@@ -3,15 +3,14 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import '../styles/FilterSearch.css'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { MobileDateRangePicker } from '@mui/x-date-pickers-pro/MobileDateRangePicker';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 
 function FilterSearch(props) {
 
-    const handleClose = () => props.setShowing(false);
-    const [value, setValue] = React.useState([null, null]);
+    const [startValue, setStartValue] = React.useState([null, null]);
+    const [endValue, setEndValue] = React.useState([null, null]);
 
     const fetchFilteredData = async (dateRange) => {
       const response = await fetch("https://cssrumapi.azurewebsites.net/EnvironmentalData/Filter?" + dateRange);
@@ -27,19 +26,28 @@ function FilterSearch(props) {
             dateAdapter={AdapterDayjs}
             localeText={{ start: 'Mobile start', end: 'Mobile end' }}
           >
-            <MobileDateRangePicker
-              value={value}
-              onChange={(newValue) => {
-                setValue(newValue);
-              }}
-              renderInput={(startProps, endProps) => (
-                <React.Fragment>
-                  <TextField {...startProps} />
-                  <Box sx={{ mx: 2 }}> to </Box>
-                  <TextField {...endProps} />
-                </React.Fragment>
-              )}
-            />
+            <div className='date-pickers'>
+              <div className='start-date'>
+                <h4>Start Date:</h4>
+                <MobileDatePicker
+                  value={startValue}
+                  onChange={(newValue) => {
+                    setStartValue(newValue);
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </div>
+              <div className='end-date'>
+                <h4>End Date:</h4>
+                <MobileDatePicker
+                  value={endValue}
+                  onChange={(newValue) => {
+                    setEndValue(newValue);
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </div>
+            </div>
           </LocalizationProvider>
         </Form.Group>
         <div className='filter-btn'>
@@ -47,11 +55,11 @@ function FilterSearch(props) {
                       variant="warning"
                       size='lg'
                       onClick={async () => {
-                        await props.setFilteredData(await fetchFilteredData("start=" + (value[0].$M+1) + "%2F" + (value[0].$D <= 9? "0" + value[0].$D : value[0].$D) + "%2F" + value[0].$y + 
-                                                                            "&end=" + (value[1].$M+1) + "%2F" + (value[1].$D <= 9? "0" + value[1].$D : value[1].$D) + "%2F" + value[1].$y))
+                        
+                        await props.setFilteredData(await fetchFilteredData("start=" + (startValue.$M+1) + "%2F" + (startValue.$D <= 9? "0" + startValue.$D : startValue.$D) + "%2F" + startValue.$y + 
+                                                                            "&end=" + (endValue.$M+1) + "%2F" + (endValue.$D <= 9? "0" + endValue.$D : endValue.$D) + "%2F" + endValue.$y))
                         await props.setWasPressed(true)
                         await props.setReset(true)
-                        handleClose()
                       }}
                   >
                       Filter Table

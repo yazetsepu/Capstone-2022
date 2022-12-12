@@ -92,58 +92,60 @@ function BasicTable() {
 
     return (
         //Test id for handling tests on this component
-        <div data-testid="datatable-1">
+        <div data-testid="datatable-1" className='data-table-1'>
             <FilterSearch setFilteredData={setFilteredData} setWasPressed={setWasPressed} setReset={setReset}/>
-            <Table responsive="sm" striped bordered hover variant="dark" className='table'>
-                <thead className='table-head'>
-                    {/* Containes the headers for the table */}
-                    <tr>
-                        <th>#</th>
-                        <th>Timestamp</th>
-                        <th colSpan={4}>Leaf Status</th>
-                        <th>Resv Water Level</th>
-                        <th>Water Level</th>
-                        <th>Temperature (C)</th>
-                        <th colSpan={8}>Soil Moisture (%)</th>
-                        <th>Air Humidity (%)</th>
-                        <th>Light Level (lux)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {/* Maps each element of the data approved to be rendered to a row on the table */}
-                    {(wasPressed? limFilteredData:limEnvData).map((data, key) => (
-                        <tr key = {key}>
-                            <td>{data.entry_Id}</td>
-                            <td>{new Date(data.timestamps.replace("-", "/").replace("-", "/").split('T').join(' ').split('.')[0] + " +0000").toLocaleString("en-US", {timeZone: 'America/Grenada'})}</td>
-                            <td>{data.classification_Id_1 === 0? "Open" :
-                                data.classification_Id_1 === 1? "Closed" :
-                                "Empty"}</td>
-                            <td>{data.classification_Id_2 === 0? "Open" :
-                                data.classification_Id_2 === 1? "Closed" :
-                                "Empty"}</td>
-                            <td>{data.classification_Id_3 === 0? "Open" :
-                                data.classification_Id_3 === 1? "Closed" :
-                                "Empty"}</td>
-                                <td>{data.classification_Id_4 === 0? "Open" :
-                                data.classification_Id_4 === 1? "Closed" :
-                                "Empty"}</td>
-                            <td>{data.resevoir_Water_Level}</td>
-                            <td>{data.water_Level <= 100? "Low" : "High"}</td>
-                            <td>{data.temperature}</td>
-                            <td>{"S1 - " + Math.round(((data.soil_Moisture_1) + Number.EPSILON) * 100) / 100}</td>
-                            <td>{"S2 - " + Math.round(((data.soil_Moisture_2) + Number.EPSILON) * 100) / 100}</td>
-                            <td>{"S3 - " + Math.round(((data.soil_Moisture_3) + Number.EPSILON) * 100) / 100}</td>
-                            <td>{"S4 - " + Math.round(((data.soil_Moisture_4) + Number.EPSILON) * 100) / 100}</td>
-                            <td>{"S5 - " + Math.round(((data.soil_Moisture_5) + Number.EPSILON) * 100) / 100}</td>
-                            <td>{"S6 - " + Math.round(((data.soil_Moisture_6) + Number.EPSILON) * 100) / 100}</td>
-                            <td>{"S7 - " + Math.round(((data.soil_Moisture_7) + Number.EPSILON) * 100) / 100}</td>
-                            <td>{"S8 - " + Math.round(((data.soil_Moisture_8) + Number.EPSILON) * 100) / 100}</td>
-                            <td>{data.humidity}</td>
-                            <td>{Math.round(((data.light) + Number.EPSILON) * 100) / 100}</td>
+            <div className='data-table'>
+                <Table responsive size="sm" striped bordered hover variant="dark" className='table'>
+                    <thead className='table-head'>
+                        {/* Containes the headers for the table */}
+                        <tr>
+                            <th>#</th>
+                            <th>Timestamp</th>
+                            <th colSpan={4}>Leaf Status</th>
+                            <th>Resv Water Level</th>
+                            <th>Water Level</th>
+                            <th>Temperature (C)</th>
+                            <th colSpan={8}>Soil Moisture (%)</th>
+                            <th>Air Humidity (%)</th>
+                            <th>Light Level (lux)</th>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
+                    </thead>
+                    <tbody>
+                        {/* Maps each element of the data approved to be rendered to a row on the table */}
+                        {(wasPressed? limFilteredData:limEnvData).map((data, key) => (
+                            <tr key = {key}>
+                                <td>{data.entry_Id}</td>
+                                <td>{new Date(data.timestamps.replace("-", "/").replace("-", "/").split('T').join(' ').split('.')[0] + " +0000").toLocaleString("en-US", {timeZone: 'America/Grenada'})}</td>
+                                <td>{data.classification_Id_1 === 0? "Open" :
+                                    data.classification_Id_1 === 1? "Closed" :
+                                    "Empty"}</td>
+                                <td>{data.classification_Id_2 === 0? "Open" :
+                                    data.classification_Id_2 === 1? "Closed" :
+                                    "Empty"}</td>
+                                <td>{data.classification_Id_3 === 0? "Open" :
+                                    data.classification_Id_3 === 1? "Closed" :
+                                    "Empty"}</td>
+                                    <td>{data.classification_Id_4 === 0? "Open" :
+                                    data.classification_Id_4 === 1? "Closed" :
+                                    "Empty"}</td>
+                                <td>{data.reservoir_Water_Level}</td>
+                                <td>{data.water_Level <= 100? "Low" : "High"}</td>
+                                <td>{data.temperature}</td>
+                                <td>{"S1 - " + Math.round(((data.soil_Moisture_1) + Number.EPSILON) * 100) / 100}</td>
+                                <td>{"S2 - " + Math.round(((data.soil_Moisture_2) + Number.EPSILON) * 100) / 100}</td>
+                                <td>{"S3 - " + Math.round(((data.soil_Moisture_3) + Number.EPSILON) * 100) / 100}</td>
+                                <td>{"S4 - " + Math.round(((data.soil_Moisture_4) + Number.EPSILON) * 100) / 100}</td>
+                                <td>{"S5 - " + Math.round(((data.soil_Moisture_5) + Number.EPSILON) * 100) / 100}</td>
+                                <td>{"S6 - " + Math.round(((data.soil_Moisture_6) + Number.EPSILON) * 100) / 100}</td>
+                                <td>{"S7 - " + Math.round(((data.soil_Moisture_7) + Number.EPSILON) * 100) / 100}</td>
+                                <td>{"S8 - " + Math.round(((data.soil_Moisture_8) + Number.EPSILON) * 100) / 100}</td>
+                                <td>{data.humidity}</td>
+                                <td>{Math.round(((data.light) + Number.EPSILON) * 100) / 100}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            </div>
             {/* Controls Pagination: the movement between pages with data */}
             
             <div className='paginator'>
