@@ -173,9 +173,10 @@ app.MapPost("/Admins/Auth",  (Admins a, CSSDb db) =>
                             Command_Read = Commands1.Command_Read,
                             Command_String = Commands1.Command_String,
                             Command_Value = Commands1.Command_Value,
+                            Command_Performed=Commands1.Command_Performed,
                             Log_Id = Commands1.Log_Id,
                             Log_Text = Commands1.Logs.Timestamps
-                        }).Where(b => b.Command_String == a.Command_String && b.Command_Read ==null && b.Command_Value == a.Command_Value).OrderBy(x => x.Command_Id).FirstOrDefault();
+                        }).Where(b => b.Command_String == a.Command_String && b.Command_Performed == null && b.Command_Value == a.Command_Value).OrderBy(x => x.Command_Id).FirstOrDefault();
 
         if (properties == null)
         {
@@ -213,7 +214,7 @@ app.MapPost("/Admins/Auth",  (Admins a, CSSDb db) =>
     app.MapGet("/CommandsAll",  (CSSDb db) =>
     {
         var properties = (
-                           from Commands in db.Commands.DefaultIfEmpty()
+                           from Commands in db.Commands
                            select new
                            {
                                Command_Id = (int?)Commands.Command_Id,
@@ -226,8 +227,8 @@ app.MapPost("/Admins/Auth",  (Admins a, CSSDb db) =>
                                Log_Id = Commands.Log_Id,
                                AdminsUser_Id = Commands.AdminsUser_Id
 
-                           }).OrderByDescending(b => b.Command_Id).ToList();
-
+                           }).OrderByDescending(b => b.Command_Id).ToList().DefaultIfEmpty();
+        if (properties == null) return Results.NoContent();
         return Results.Ok(properties);
 
     });
@@ -658,7 +659,7 @@ app.MapPost("/Admins/Auth",  (Admins a, CSSDb db) =>
     });
 
     //Get all logs.
-    app.MapGet("/LogsAll",  (CSSDb db) => db.Logs.OrderByDescending(x=>x.Log_Id).ToListAsync());
+    app.MapGet("/LogsAll",  (CSSDb db) => db.Logs.OrderByDescending(x=>x.Log_Id).DefaultIfEmpty().ToListAsync());
 
     //Update an existing log by id.
     app.MapPut("/Logs/{id:int}", async (int id, Logs a, CSSDb db) =>
@@ -709,7 +710,7 @@ app.MapPost("/Admins/Auth",  (Admins a, CSSDb db) =>
         : Results.NotFound();
     });
     //Get all pictures.
-    app.MapGet("/PicturesAll",  (CSSDb db) =>  db.Pictures.OrderBy(x => x.Pic_Id).ToListAsync());
+    app.MapGet("/PicturesAll",  (CSSDb db) =>  db.Pictures.OrderBy(x => x.Pic_Id).DefaultIfEmpty().ToListAsync());
 
     app.MapGet("/Pictures/Desc/Filter", (string start, string end, CSSDb db) =>
     {
@@ -813,8 +814,11 @@ app.MapPost("/Admins/Auth",  (Admins a, CSSDb db) =>
     {   //Send a raw sql query to the postgresql server.
         db.Database.ExecuteSqlRaw("TRUNCATE TABLE public.\"Commands\",public.\"Logs\" RESTART IDENTITY;");
     });
-   
 
+app.MapDelete("/Delete/allEnvironmentalData&Pictures", async (CSSDb db) =>
+{ //Send a raw sql query to the postgresql server.
+    db.Database.ExecuteSqlRaw("TRUNCATE TABLE Public.\"EnvironmentalData\",Public.\"Pictures\" RESTART IDENTITY;");
+});
 
 app.Run();
 
