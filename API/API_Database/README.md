@@ -225,16 +225,16 @@ https://cssrumapi.azurewebsites.net/commands/1
 commands: get all commands
 https://cssrumapi.azurewebsites.net/commandsAll
 
-commands: put commands_read by id
-https://cssrumapi.azurewebsites.net/commands/Command_read/1
+commands: put commands_read
+https://cssrumapi.azurewebsites.net/commands/Command_read
 ```json
 {
 //This have to be blank.
 }
 ```
 
-commands: put commands_performed by id
-https://cssrumapi.azurewebsites.net/commands/Command_performed/1
+commands: put commands_performed
+https://cssrumapi.azurewebsites.net/commands/Command_performed
 ```json
 {
   "logs": {
@@ -242,16 +242,17 @@ https://cssrumapi.azurewebsites.net/commands/Command_performed/1
   }
 }
 ```
-commands: put RetrainModel/commands_read by id
-https://cssrumapi.azurewebsites.net/commands/Command_read/1
+
+commands: put RetrainModel/commands_read
+https://cssrumapi.azurewebsites.net/commands/Command_read
 ```json
 {
 //This have to be blank.
 }
 ```
 
-commands: put RetrainModel/commands_performed by id
-https://cssrumapi.azurewebsites.net/commands/Command_performed/1
+commands: put RetrainModel/commands_performed
+https://cssrumapi.azurewebsites.net/commands/Command_performed
 ```json
 {
   "logs": {
@@ -259,6 +260,11 @@ https://cssrumapi.azurewebsites.net/commands/Command_performed/1
   }
 }
 ```
+
+commands: get RetrainModel/commands_performed
+https://cssrumapi.azurewebsites.net/commands/Command_performed/Verify
+
+
 ## EnvironmentalData
 
 environmentaldata:Post
