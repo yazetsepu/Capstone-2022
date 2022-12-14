@@ -237,7 +237,26 @@ commands: put commands_performed by id
 https://cssrumapi.azurewebsites.net/commands/Command_performed/1
 ```json
 {
-  //This have to be blank.
+  "logs": {
+    "log_Text": "string"
+  }
+}
+```
+commands: put RetrainModel/commands_read by id
+https://cssrumapi.azurewebsites.net/commands/Command_read/1
+```json
+{
+//This have to be blank.
+}
+```
+
+commands: put RetrainModel/commands_performed by id
+https://cssrumapi.azurewebsites.net/commands/Command_performed/1
+```json
+{
+  "logs": {
+    "log_Text": "string"
+  }
 }
 ```
 ## EnvironmentalData
