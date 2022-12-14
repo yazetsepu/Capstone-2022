@@ -3,6 +3,8 @@ using System.Text;
 
 namespace MinimalAPIPostgresSqlCSS
 {
+    //Crypt and Decrypt for data validation for login 
+    //Process as part of security.
     public static class Crypt
     {
         public static string Encrypt(string encryptString)
