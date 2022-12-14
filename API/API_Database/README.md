@@ -244,7 +244,7 @@ https://cssrumapi.azurewebsites.net/commands/Command_performed
 ```
 
 commands: put RetrainModel/commands_read
-https://cssrumapi.azurewebsites.net/commands/Command_read
+https://cssrumapi.azurewebsites.net/Commands/RetrainModel/Command_read
 ```json
 {
 //This have to be blank.
@@ -252,7 +252,7 @@ https://cssrumapi.azurewebsites.net/commands/Command_read
 ```
 
 commands: put RetrainModel/commands_performed
-https://cssrumapi.azurewebsites.net/commands/Command_performed
+https://cssrumapi.azurewebsites.net/Commands/RetrainModel/Command_performed
 ```json
 {
   "logs": {
@@ -261,9 +261,11 @@ https://cssrumapi.azurewebsites.net/commands/Command_performed
 }
 ```
 
-commands: get RetrainModel/commands_performed
-https://cssrumapi.azurewebsites.net/commands/Command_performed/Verify
+commands: get RetrainModel/commands_performed/Verify
+https://cssrumapi.azurewebsites.net/Commands/RetrainModel/Command_performed/Verify
 
+commands: get Commands/LastCommand
+https://cssrumapi.azurewebsites.net/Commands/LastCommand
 
 ## EnvironmentalData
 
@@ -353,6 +355,9 @@ https://cssrumapi.azurewebsites.net/environmentaldata/1
 environmentaldata:delete by id
 https://cssrumapi.azurewebsites.net/environmentaldata/1
 
+environmentaldata: get all with Filter
+https://cssrumapi.azurewebsites.net/environmentaldata/Filter
+
 environmentaldata: get all with classid
 https://cssrumapi.azurewebsites.net/environmentaldata/classid
 
@@ -437,6 +442,23 @@ https://cssrumapi.azurewebsites.net/Pictures/1
 Pictures: get  all
 https://cssrumapi.azurewebsites.net/Picturesall
 
+Pictures: get all desc/Filter
+https://cssrumapi.azurewebsites.net/Pictures/desc/Filter
+
 Pictures: get all desc
 https://cssrumapi.azurewebsites.net/Pictures/desc
+
+## System
+
+System: delete  all
+https://cssrumapi.azurewebsites.net/Delete/all
+
+System: delete  all Commands & Logs 
+https://cssrumapi.azurewebsites.net/Delete/allCommands&Logs
+
+System: delete  all EnvironmentalData& Pictures
+https://cssrumapi.azurewebsites.net/Delete/allEnvironmentalData&Pictures
+
+
+
 
