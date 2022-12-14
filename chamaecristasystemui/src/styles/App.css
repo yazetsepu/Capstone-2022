@@ -41,7 +41,7 @@
 
 .bottom-container-water{
   display: flex;
-  /* margin-right: 1rem ; */
+  margin-right: 1rem ;
 }
 
 .bottom-container-light{
@@ -86,7 +86,7 @@
     margin-bottom: 1rem;
   }
   
-  .bottom-container-light{
+  .bottom-container-datacapture{
     display: flex;
     margin-bottom: 1rem;
   }

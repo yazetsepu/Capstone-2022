@@ -36,23 +36,22 @@ function DataGraph (props) {
                 {/* Sets the Title of the page to that of the corresponding data that is being graphed. */}
                 <h2 style={{ textAlign: "center" }}>{
                     // yVal is a prop or property variable that is handed over from a parent component
-                    props.yVal === "soil8"? "Soil Moisture Sensor 8" :
-                    props.yVal === "humidity"? "Humidity" :
+                    props.yVal === "soil8"? "Soil Moisture Sensor 8 - In Volumetric Water Content Percentage" :
+                    props.yVal === "humidity"? "Humidity in percentage" :
                     props.yVal === "leaf1"? "Camera 1 Leaf Status - 0 for Open : 1 for Closed : -1 for Manually Changed" :
                     props.yVal === "leaf2"? "Camera 2 Leaf Status - 0 for Open : 1 for Closed : -1 for Manually Changed" :
                     props.yVal === "leaf3"? "Camera 3 Leaf Status - 0 for Open : 1 for Closed : -1 for Manually Changed" :
                     props.yVal === "leaf4"? "Camera 4 Leaf Status - 0 for Open : 1 for Closed : -1 for Manually Changed" :
-                    props.yVal === "resevoir"? "Resevoir Water Level" :
-                    props.yVal === "water"? "Water Level" : 
-                    props.yVal === "light"? "Light Level" :
-                    props.yVal === "soil1"? "Soil Moisture Sensor 1" :
-                    props.yVal === "soil2"? "Soil Moisture Sensor 2" :
-                    props.yVal === "soil3"? "Soil Moisture Sensor 3" :
-                    props.yVal === "soil4"? "Soil Moisture Sensor 4" :
-                    props.yVal === "soil5"? "Soil Moisture Sensor 5" :
-                    props.yVal === "soil6"? "Soil Moisture Sensor 6" :
-                    props.yVal === "soil7"? "Soil Moisture Sensor 7" :
-                    "Temperature"
+                    props.yVal === "water"? "Water Level - 0 for Low Water Level, 1 for Hight Water Level" : 
+                    props.yVal === "light"? "Light Level in lux" :
+                    props.yVal === "soil1"? "Soil Moisture Sensor 1 - In Volumetric Water Content Percentage" :
+                    props.yVal === "soil2"? "Soil Moisture Sensor 2 - In Volumetric Water Content Percentage" :
+                    props.yVal === "soil3"? "Soil Moisture Sensor 3 - In Volumetric Water Content Percentage" :
+                    props.yVal === "soil4"? "Soil Moisture Sensor 4 - In Volumetric Water Content Percentage" :
+                    props.yVal === "soil5"? "Soil Moisture Sensor 5 - In Volumetric Water Content Percentage" :
+                    props.yVal === "soil6"? "Soil Moisture Sensor 6 - In Volumetric Water Content Percentage" :
+                    props.yVal === "soil7"? "Soil Moisture Sensor 7 - In Volumetric Water Content Percentage" :
+                    "Temperature in degrees Celsius"
                 }
                 </h2>
                 
@@ -74,7 +73,7 @@ function DataGraph (props) {
                                             props.yVal === "leaf3"? data.classification_Id_3 :
                                             props.yVal === "leaf4"? data.classification_Id_4 :
                                             props.yVal === "resevoir"? data.resevoir_Water_Level :
-                                            props.yVal === "water"? data.water_Level : 
+                                            props.yVal === "water"? (data.water_Level <= 100? 0 : 1) : 
                                             props.yVal === "light"? data.light :
                                             props.yVal === "soil1"? data.soil_Moisture_1 :
                                             props.yVal === "soil2"? data.soil_Moisture_2 :

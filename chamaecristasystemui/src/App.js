@@ -9,6 +9,7 @@ import WaterPlantButton from './Components/Buttons/WaterPlantButton';
 import ExportAsCsvButton from './Components/Buttons/ExportAsCsvButton';
 import ViewAsGraphButton from './Components/Buttons/ViewAsGraphButton';
 import CalibrateMoistureButton from './Components/Buttons/CalibrateMoistureButton';
+import ChangeDataCaptureRateButton from './Components/Buttons/ChangeDataCaptureRateButton';
 import { useLocation } from "react-router-dom";
 import {AES, enc} from 'crypto-js';
 
@@ -60,9 +61,9 @@ function App (){
                             <div className='bottom-container-water'>
                                 <WaterPlantButton/>
                             </div>
-                            {/* <div className='bottom-container-light'>
-                                <ChangeLightLevelButton/>
-                            </div> */}
+                            <div className='bottom-container-datacapture'>
+                                <ChangeDataCaptureRateButton/>
+                            </div>
                             <div className='bottom-container-moisture'>
                                 <CalibrateMoistureButton />
                             </div>

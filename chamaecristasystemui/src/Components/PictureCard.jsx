@@ -88,9 +88,6 @@ function PictureCard(props) {
                     </div>
                 </div>
             ))}
-            <PicturePaginator dataPerPage={dataPerPage} picData={picData} 
-                              setLimPicData={setLimPicData} limPicData={limPicData}
-                              isNextActive={isNextActive}/>
     </div>
     );
 }

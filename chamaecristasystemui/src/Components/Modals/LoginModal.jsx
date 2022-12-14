@@ -45,8 +45,9 @@ function LoginModal(props) {
                             >
                               {isLogging && !props.isInvalid?  <Spinner animation="border" variant="secondary" size='sm'/> : 'Login'}
                         </Button>
-
-                        
+                        <Form.Control.Feedback type="invalid">
+                          Incorrect password, please try again.
+                        </Form.Control.Feedback>
               </InputGroup>
             </Form.Group>
           </Modal.Body>

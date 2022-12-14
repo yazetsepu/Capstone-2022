@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import '../styles/FilterSearch.css'
@@ -12,12 +12,26 @@ function FilterSearch(props) {
     const [startValue, setStartValue] = useState([null, null]);
     const [endValue, setEndValue] = useState([null, null]);
 
+    //Check if dates entered are valid
+    const [validateDates, setValidateDates] = useState(false)
+
     const fetchFilteredData = async (dateRange) => {
       const response = await fetch("https://cssrumapi.azurewebsites.net/EnvironmentalData/Filter?" + dateRange);
       console.log("https://cssrumapi.azurewebsites.net/EnvironmentalData/Filter?" + dateRange)
       const data = await response.json();
       return data;
     }
+
+    useEffect(() => {
+      if(startValue !== null && endValue !== null){
+        if(startValue.$M > endValue.$M || startValue.$y > endValue.$y || (startValue.$M === endValue.$M && startValue.$D > endValue.$D )){
+          setValidateDates(true)
+        }
+        else{
+          setValidateDates(false)
+        }
+      }
+    }, [startValue, endValue]);
 
     return(
       <div className='filter-date'>
@@ -51,18 +65,19 @@ function FilterSearch(props) {
           </LocalizationProvider>
         </Form.Group>
         <div className='filter-btn'>
-          <Button
-                      variant="warning"
-                      size='lg'
-                      onClick={async () => {
-                        
-                        await props.setFilteredData(await fetchFilteredData("start=" + (startValue.$M+1) + "%2F" + (startValue.$D <= 9? "0" + startValue.$D : startValue.$D) + "%2F" + startValue.$y + 
-                                                                            "&end=" + (endValue.$M+1) + "%2F" + (endValue.$D <= 9? "0" + endValue.$D : endValue.$D) + "%2F" + endValue.$y))
-                        await props.setWasPressed(true)
-                        await props.setReset(true)
-                      }}
-                  >
-                      Filter Table
+          <Button     
+            disabled={validateDates}          
+            variant={!validateDates ? "warning" : "danger"}
+            size='lg'
+            onClick={async () => {
+              
+              await props.setFilteredData(await fetchFilteredData("start=" + (startValue.$M+1) + "%2F" + (startValue.$D <= 9? "0" + startValue.$D : startValue.$D) + "%2F" + startValue.$y + 
+                                                                  "&end=" + (endValue.$M+1) + "%2F" + (endValue.$D <= 9? "0" + endValue.$D : endValue.$D) + "%2F" + endValue.$y))
+              await props.setWasPressed(true)
+              await props.setReset(true)
+            }}
+        >
+            {!validateDates? "Filter Table" : "Invalid Dates Entered"}
             </Button>
         </div>
       </div>

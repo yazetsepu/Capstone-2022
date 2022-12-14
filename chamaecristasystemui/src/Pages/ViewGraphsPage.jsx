@@ -14,7 +14,7 @@ function ViewGraphsPage() {
                 <div className="graph-selector">
                     <div>
                         {/* Dropdown selector for what the user wishes to graph */}
-                        <Form.Control 
+                        <Form.Select 
                             size="lg"
                             as="select"
                             value={graphValue}
@@ -28,7 +28,6 @@ function ViewGraphsPage() {
                             <option value="leaf4">Leaf Status - Camara 4</option>
                             <option value="humidity">Humidity</option>
                             <option value="water">Water Level</option>
-                            <option value="resevoir">Resevoir Water Level</option>
                             <option value="light">Light Level</option>
                             <option value="soil1">Soil Moisture Sensor 1</option>
                             <option value="soil2">Soil Moisture Sensor 2</option>
@@ -38,8 +37,7 @@ function ViewGraphsPage() {
                             <option value="soil6">Soil Moisture Sensor 6</option>
                             <option value="soil7">Soil Moisture Sensor 7</option>
                             <option value="soil8">Soil Moisture Sensor 8</option>
-
-                        </Form.Control>
+                        </Form.Select>
                     </div>
                     <hr></hr>
                     {/* Renders the Graph of what the user picks on the selector */}
