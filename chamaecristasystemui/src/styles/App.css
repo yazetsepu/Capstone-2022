@@ -69,6 +69,11 @@
   display: flex;
 }
 
+.table-below{
+  display: flex;
+  flex-direction: column-reverse;
+}
+
 @media only screen and (max-width: 1100px) {
   .top-container-btns-admin{
     display: flex;
@@ -115,6 +120,16 @@
   .bottom-container-right{
     display: flex;
     flex-direction: column;
+  }
+
+  .table-below{
+    display:flex;
+    flex-direction: column-reverse;
+  }
+
+  .bottom-container{
+    display: flex;
+    flex-direction: row;
   }
 }
 

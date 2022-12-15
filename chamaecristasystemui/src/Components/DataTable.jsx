@@ -95,7 +95,7 @@ function BasicTable() {
         <div data-testid="datatable-1" className='data-table-1'>
             <FilterSearch setFilteredData={setFilteredData} setWasPressed={setWasPressed} setReset={setReset}/>
             <div className='data-table'>
-                <Table responsive size="sm" striped bordered hover variant="dark" className='table'>
+                <Table responsive striped bordered hover variant="dark" className='table'>
                     <thead className='table-head'>
                         {/* Containes the headers for the table */}
                         <tr>

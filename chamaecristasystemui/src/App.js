@@ -52,30 +52,32 @@ function App (){
                             }
                         </div>
                     </div>
-                    <div className='middle-container'>
-                        <BasicTable />
-                    </div>
-                    <div className='bottom-container'>
-                    {decryptedString === 'Admin'?
-                        <div className='bottom-container-left'>
-                            <div className='bottom-container-water'>
-                                <WaterPlantButton/>
-                            </div>
-                            <div className='bottom-container-datacapture'>
-                                <ChangeDataCaptureRateButton/>
-                            </div>
-                            <div className='bottom-container-moisture'>
-                                <CalibrateMoistureButton />
-                            </div>
+                    <div className='table-below'>
+                        <div className='middle-container'>
+                            <BasicTable />
                         </div>
-                        : <></>
-                    }
-                        <div className='bottom-container-right'>
-                            <div className='bottom-container-export'>
-                                <ExportAsCsvButton/>
-                            </div>
-                            <div className='bottom-container-graph'>
-                                <ViewAsGraphButton />
+                        <div className='bottom-container'>
+                            {decryptedString === 'Admin'?
+                                <div className='bottom-container-left'>
+                                    <div className='bottom-container-water'>
+                                        <WaterPlantButton/>
+                                    </div>
+                                    <div className='bottom-container-datacapture'>
+                                        <ChangeDataCaptureRateButton/>
+                                    </div>
+                                    <div className='bottom-container-moisture'>
+                                        <CalibrateMoistureButton />
+                                    </div>
+                                </div>
+                                : <></>
+                            }
+                            <div className='bottom-container-right'>
+                                <div className='bottom-container-export'>
+                                    <ExportAsCsvButton/>
+                                </div>
+                                <div className='bottom-container-graph'>
+                                    <ViewAsGraphButton />
+                                </div>
                             </div>
                         </div>
                     </div>
