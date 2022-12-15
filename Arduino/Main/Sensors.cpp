@@ -152,7 +152,8 @@ void setupCalibration(){
   }
 }
 
-float analogMeasureMoisture(int sensor);
+float analogMeasureMoisture(int sensor);  //Private Function
+
 //Change the recalibration File for the Soil Moisture
 void recalibrateSensor(bool dry, int sensor, int vwc){
   File calibrationFile = SD.open(getCalibrationAddress());
@@ -504,7 +505,17 @@ float analogMeasureMoisture(int sensor){
 }
 
 float measureMoisture(){
-  return measureMoisture(1);
+  int sensorSize = 0;
+  int avg = 0;
+  if(measureMoisture(0)!=100){avg+=measureMoisture(0); sensorSize++;}
+  if(measureMoisture(1)!=100){avg+=measureMoisture(1); sensorSize++;}
+  if(measureMoisture(2)!=100){avg+=measureMoisture(2); sensorSize++;}
+  if(measureMoisture(3)!=100){avg+=measureMoisture(3); sensorSize++;}
+  if(measureMoisture(4)!=100){avg+=measureMoisture(4); sensorSize++;}
+  if(measureMoisture(5)!=100){avg+=measureMoisture(5); sensorSize++;}
+  if(measureMoisture(6)!=100){avg+=measureMoisture(6); sensorSize++;}
+  if(measureMoisture(7)!=100){avg+=measureMoisture(7); sensorSize++;}
+  return avg/sensorSize;
 }
 
 //Water Level Sensor

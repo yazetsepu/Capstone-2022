@@ -64,8 +64,14 @@
 uint32_t delayMS = 500;
 
 //Timer Variable
+unsigned long CaptureTime = 50000;
 unsigned long startDataTime;
 unsigned long startPictureTime;
+unsigned long startWater;
+
+
+void(* resetFunc) (void) = 0; //declare reset function @ address 0
+
 
 void setup() {
   // initialize serial communication:
@@ -97,6 +103,7 @@ void setup() {
   //Set up timer
   startDataTime = millis();
   startPictureTime = millis();
+  startWater = millis();
 
   //Log the boot of system
   saveLog(1, "Boot Complete", 0, "Boot Time: "+millis());
@@ -120,7 +127,7 @@ void loop() {
     }
     
     //Measure and send all data on Serial (JSON format)
-    StaticJsonDocument<150> doc;
+    StaticJsonDocument<200> doc;
     doc["Light"] = measureLight();
     doc["Temperature"] = measureTemperature();
     doc["Humidity"] = measureHumidity();
@@ -131,8 +138,9 @@ void loop() {
     doc["Soil_Moisture_4"] = measureMoisture(4);
     doc["Soil_Moisture_5"] = measureMoisture(5);
     doc["Soil_Moisture_6"] = measureMoisture(6);
+    doc["Soil_Moisture_7"] = measureMoisture(7);
     doc["Water_Level"] = measureWaterLevel();
-    doc["Reservoir_Water_Level"] = (String)getReservoirWaterLevel(); //String VERY HIGH, HIGH, MEDIUM, LOW, VERY LOW
+    doc["reservoir_Water_Level"] = (String)getReservoirWaterLevel(); //String VERY HIGH, HIGH, MEDIUM, LOW, VERY LOW
     doc["Time"] = timeNowString();
     serializeJson(doc, Serial); 
     Serial.write("\n"); //This is to mark end of data (expected on GUI side)
@@ -141,10 +149,10 @@ void loop() {
   fetchCommand();
   //saveDataTimer();
   //Capture Timer
-  if(millis()-startPictureTime>=70000){ //50000
+  if(millis()-startPictureTime>=CaptureTime){ //50000
         Serial.println("Image Collection Started:");
         digitalWrite(LED_BUILTIN, HIGH);
-        delay(300);
+        delay(2000);
 
         String path1 = captureImageToSD(1);                      //Take Picture
         if(path1 != ""){                                         //Image sucessful
@@ -157,18 +165,20 @@ void loop() {
         if(path2 != ""){                                         //Image sucessful
           Serial.println("Image Location: "+ path2);               //Write Path
           sendImageTCP(path2, 1);                                  //Send Picture to Server
+          delay(2000);
         }else Serial.println("Error Camera 2 capture");          //Error Capture
 
         String path3 = captureImageToSD(3);                      //Take Picture
         if(path3 != ""){                                         //Image sucessful
-          Serial.println("Image Location: "+ path2);               //Write Path
-          sendImageTCP(path3, 1);                                  //Send Picture to Server
+          Serial.println("Image Location: "+ path3);               //Write Path
+          sendImageTCP(path3, 2);                                  //Send Picture to Server
+          delay(2000);
         }else Serial.println("Error Camera 3 capture");          //Error Capture
 
         String path4 = captureImageToSD(4);                      //Take Picture
         if(path4 != ""){                                         //Image sucessful
           Serial.println("Image Location: "+ path4);               //Write Path
-          sendImageTCP(path4, 1);                                  //Send Picture to Server
+          sendImageTCP(path4, 3);                                  //Send Picture to Server
         }else Serial.println("Error Camera 4 capture");          //Error Capture
 
         int pic_Id = -1;
@@ -185,11 +195,13 @@ void loop() {
         Serial.println("Image Collection Done");
   }
 
-  //Water Check
+  //Water Plants by Soil Moisture
   float moisture = measureMoisture();
-  if(moisture < -1){
+  Serial.println("Average Moisture: " + (String)moisture);
+  if(moisture < 50 && (millis()-startWater) >= 60000*2){ //Soil Moisture Therhold reached and safety timer 
       saveLog(20, "Watering Start", 0, "Moisture Level: "+(String)moisture);
-      //waterPlant();
+      waterPlant();           //Water the plant
+      startWater = millis();  //Reset Safety Timer (Wait Moisture to increase)
   }
   
   checkSchedule(); //Check Light Schedule
@@ -317,6 +329,40 @@ void runCommand(String command, String value, bool serial){
     //Calibrate Sensor
     createCalibrationFile();
     setupCalibration();
+    return;
+  }
+  //Change Time for Capture Intervals
+  else if (command.indexOf("CaptureTime")>=0){
+    //Parse Values
+    StaticJsonDocument<100> doc;
+    DeserializationError error = deserializeJson(doc, value); 
+    if (error) {
+      Serial.print(F("deserializeJson() failed: ")); Serial.println(error.f_str()); 
+      if(!serial)CommandPerformedHttp("Invalid Value");
+      return;
+    }
+    CaptureTime = (int)doc["minutes"] * 60000;     //Change Timer (60000 is to change minutes to milliseconds)
+    if(!serial){CommandPerformedHttp("Capture time set to "+(String)CaptureTime + " ms");}
+    return;
+  }
+
+    //Change Time for Capture Intervals
+  else if (command.indexOf("CaptureTimeMS")>=0){
+    //Parse Values
+    StaticJsonDocument<100> doc;
+    DeserializationError error = deserializeJson(doc, value); 
+    if (error) {
+      Serial.print(F("deserializeJson() failed: ")); Serial.println(error.f_str()); 
+      if(!serial)CommandPerformedHttp("Invalid Value");
+      return;
+    }
+    CaptureTime = (int)doc["ms"];     //Change Timer in milliseconds
+    if(!serial){CommandPerformedHttp("Capture time set to "+(String)CaptureTime + " ms");}
+    return;
+  }
+  //Reset
+  else if (command.indexOf("Reset")>=0){
+      resetFunc();  //call reset
   }
 
   /* DEBUG Commands */

@@ -195,7 +195,13 @@ String myCAMSaveToSDFile(ArduCAM myCAM, int cam){
   //Start capture
   myCAM.start_capture();
   Serial.println(F("start Capture"));
-  while(!myCAM.get_bit(ARDUCHIP_TRIG , CAP_DONE_MASK));
+  unsigned long captureFetchTimer = millis();
+  while(!myCAM.get_bit(ARDUCHIP_TRIG , CAP_DONE_MASK)){
+    if((millis() - captureFetchTimer) >= 10000){
+    Serial.println("Camera Timer Up (No Capture)"); 
+    break;
+    }
+  }
   Serial.println(F("Capture Done."));  
   length = myCAM.read_fifo_length();
   Serial.print(F("The fifo length is :"));
